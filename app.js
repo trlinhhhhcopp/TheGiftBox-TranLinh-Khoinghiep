@@ -76,7 +76,8 @@ class App3D {
     this.scene.fog = new THREE.FogExp2(0x281f25, 0.012);
 
     const aspect = window.innerWidth / window.innerHeight;
-    this.camera = new THREE.PerspectiveCamera(40, aspect, 0.1, 1000);
+    const baseFov = aspect < 1.0 ? Math.min(68, 40 / (aspect * 1.05)) : 40;
+    this.camera = new THREE.PerspectiveCamera(baseFov, aspect, 0.1, 1000);
     this.camera.position.copy(this.cameraPresets.overview.pos);
 
     this.renderer = new THREE.WebGLRenderer({
@@ -257,6 +258,34 @@ class App3D {
     this.container.addEventListener('click', (e) => {
       this.checkRaycastClick(e);
     });
+
+    // Touch tap detection for mobile devices (avoids accidental clicks during 360° swipe rotation)
+    let touchStartX = 0, touchStartY = 0;
+    let touchStartTime = 0;
+
+    this.container.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1) {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+        touchStartTime = Date.now();
+      }
+    }, { passive: true });
+
+    this.container.addEventListener('touchend', (e) => {
+      if (e.changedTouches.length === 1) {
+        const dx = e.changedTouches[0].clientX - touchStartX;
+        const dy = e.changedTouches[0].clientY - touchStartY;
+        const dist = Math.hypot(dx, dy);
+        const dt = Date.now() - touchStartTime;
+
+        // Clean tap detection (< 12px drag, < 350ms duration)
+        if (dist < 12 && dt < 350) {
+          this.mouse.x = (e.changedTouches[0].clientX / window.innerWidth) * 2 - 1;
+          this.mouse.y = -(e.changedTouches[0].clientY / window.innerHeight) * 2 + 1;
+          this.checkRaycastClick(e);
+        }
+      }
+    }, { passive: true });
   }
 
   checkRaycastHover(e) {
@@ -374,7 +403,16 @@ class App3D {
 
     // Zoom camera in from high top-down angle
     const preset = this.cameraPresets[productId] || this.cameraPresets.overview;
-    this.glideCameraTo(preset.pos, preset.target, 0.85);
+    let targetPos = preset.pos.clone();
+    let targetLookAt = preset.target.clone();
+
+    // On mobile portrait, shift camera target slightly to keep product visible in upper half above bottom drawer
+    if (window.innerWidth <= 768 && productId !== 'box') {
+      targetLookAt.z -= 1.6;
+      targetPos.z -= 1.6;
+    }
+
+    this.glideCameraTo(targetPos, targetLookAt, 0.85);
 
     this.showDrawer(info);
     this.updateShelfActive(productId);
@@ -479,6 +517,12 @@ class App3D {
         btnExpandMenu.classList.remove('visible');
         this.playClickSound();
       });
+
+      // Auto-collapse menu on mobile portrait for clean, uncluttered view
+      if (window.innerWidth <= 768) {
+        menuContainer.classList.add('collapsed');
+        btnExpandMenu.classList.add('visible');
+      }
     }
 
     // Color Edition Switcher (Pink vs White)
@@ -628,9 +672,19 @@ class App3D {
   }
 
   onWindowResize() {
-    this.camera.aspect = window.innerWidth / window.innerHeight;
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    const aspect = w / h;
+    this.camera.aspect = aspect;
+
+    // Mobile adaptive FOV: automatically adjusts FOV on portrait mobile so 3D objects fit gracefully without cropping
+    if (aspect < 1.0) {
+      this.camera.fov = Math.min(68, 40 / (aspect * 1.05));
+    } else {
+      this.camera.fov = 40;
+    }
     this.camera.updateProjectionMatrix();
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
+    this.renderer.setSize(w, h);
   }
 
   animate() {
