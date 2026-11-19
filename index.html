@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Gift Box "Giấy Gieo Hạt" - Trải Nghiệm 3D 360° Tương Tác</title>
+  
+  <!-- Google Fonts: Plus Jakarta Sans & Playfair Display -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Loading Screen Overlay -->
+  <div id="loading-overlay" class="loading-overlay">
+    <div class="loading-box-spinner"></div>
+    <div class="loading-title">THE GIFT · GIẤY GIEO HẠT</div>
+    <div class="loading-subtitle">Đang khởi tạo không gian 3D chân thực 360°...</div>
+  </div>
+
+  <!-- 3D WebGL Canvas Container -->
+  <div id="canvas-container"></div>
+
+  <!-- 3D Hover Tooltip -->
+  <div id="hover-tooltip" class="hover-tooltip"></div>
+
+  <!-- Top Navigation Bar -->
+  <header class="top-nav">
+    <div class="brand-wrapper">
+      <span class="author-badge">Author: Trần Linh</span>
+      <div class="brand-logo-badge">THE GIFT</div>
+      <div class="brand-text">
+        <h1>Gift Box "Giấy Gieo Hạt"</h1>
+        <p>Mẫu sản phẩm thực tế · Trải nghiệm 3D 360° chuẩn xác</p>
+      </div>
+    </div>
+
+    <!-- Top Right Actions -->
+    <div class="top-actions">
+      <button id="btn-reset" class="glass-btn" title="Đặt lại góc nhìn toàn cảnh">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        <span>Toàn Cảnh</span>
+      </button>
+
+      <button id="btn-screenshot" class="glass-btn" title="Chụp ảnh 3D độ nét cao">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        <span>Chụp Ảnh 3D</span>
+      </button>
+
+      <button id="btn-fullscreen" class="glass-btn glass-btn-icon" title="Chế độ toàn màn hình">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Floating Expand Button when menu is collapsed -->
+  <button id="btn-expand-menu" class="btn-expand-menu" title="Mở bảng điều khiển">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+    <span>Bảng Điều Khiển</span>
+  </button>
+
+  <!-- Floating Controls (Top Right) -->
+  <aside id="floating-controls" class="floating-controls">
+    <!-- Header with Collapse Button -->
+    <div class="control-panel" style="padding: 12px 16px;">
+      <div class="panel-header-row">
+        <div class="panel-title" style="margin: 0;">Tùy Chọn Hiển Thị</div>
+        <button id="btn-collapse-menu" class="btn-collapse-icon" title="Thu gọn bảng điều khiển">&times;</button>
+      </div>
+    </div>
+
+    <!-- Chọn Màu Hộp Quà (Phiên Bản) -->
+    <div class="control-panel">
+      <div class="panel-title">Màu Sắc Hộp Quà</div>
+      <div class="button-group">
+        <button id="btn-edition-pink" class="pill-toggle active" title="Bản Hộp Hồng Ngọt Ngào (Ảnh 3)">🌸 Bản Hồng (Ảnh 3)</button>
+        <button id="btn-edition-white" class="pill-toggle" title="Bản Trắng Tối Giản (Ảnh 1)">🤍 Bản Trắng (Ảnh 1)</button>
+      </div>
+    </div>
+
+    <!-- Nắp Hộp: Mở / Đóng -->
+    <div class="control-panel">
+      <div class="panel-title">Trạng Thái Hộp Quà</div>
+      <div class="button-group">
+        <button id="btn-lid-open" class="pill-toggle active">🎁 Mở Nắp</button>
+        <button id="btn-lid-close" class="pill-toggle">🔒 Đóng Hộp</button>
+      </div>
+    </div>
+
+    <!-- Tách Lớp 3D & Xoay Tự Động -->
+    <div class="control-panel">
+      <div class="panel-title">Chế Độ Hiển Thị</div>
+      <button id="btn-explode" class="glass-btn" style="width: 100%; justify-content: center;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m21.12 6.4-6.05-4.06a2 2 0 0 0-2.17-.05L2.95 8.41a2 2 0 0 0-.95 1.7v5.82a2 2 0 0 0 .88 1.66l6.05 4.07a2 2 0 0 0 2.17.05l9.95-6.12a2 2 0 0 0 .95-1.7V8.06a2 2 0 0 0-.88-1.66z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+        <span>Xem Tách Lớp 3D</span>
+      </button>
+
+      <button id="btn-autorotate" class="glass-btn" style="width: 100%; justify-content: center; margin-top: 4px;">
+        <span id="rotate-dot" class="status-dot" style="background: #a0948e;"></span>
+        <span>Xoay 360° Tự Động</span>
+      </button>
+    </div>
+
+    <!-- Môi Trường Ánh Sáng -->
+    <div class="control-panel">
+      <div class="panel-title">Ánh Sáng Studio</div>
+      <div class="button-group">
+        <button class="pill-toggle active" data-mood="candlelight">🕯️ Nến Ấm Áp</button>
+        <button class="pill-toggle" data-mood="sunset">🌅 Hoàng Hôn</button>
+        <button class="pill-toggle" data-mood="studio">💡 Studio Sang</button>
+      </div>
+    </div>
+
+    <!-- Góc Nhìn Nhanh -->
+    <div class="control-panel">
+      <div class="panel-title">Góc Nhìn Camera</div>
+      <div class="button-group">
+        <button class="pill-toggle" data-view="overview">Toàn Cảnh</button>
+        <button class="pill-toggle" data-view="top">Từ Trên (Top)</button>
+        <button class="pill-toggle" data-view="front">Chính Diện</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Floating Instruction Toast -->
+  <div class="hint-toast">
+    💡 Nhấp vào bất kỳ món đồ nào để soi chi tiết hoặc kéo chuột để xoay 360°
+  </div>
+
+  <!-- Bottom Products Carousel / Shelf -->
+  <nav class="bottom-shelf">
+    <button class="shelf-item-pill" data-product="bunny">
+      <span class="pill-icon">🐰</span>
+      <span>Thỏ Vải Linen</span>
+    </button>
+
+    <button class="shelf-item-pill" data-product="candle">
+      <span class="pill-icon">🕯️</span>
+      <span>Nến Thơm Mama Blend</span>
+    </button>
+
+    <button class="shelf-item-pill" data-product="teajar">
+      <span class="pill-icon">🍵</span>
+      <span>Lọ Trà Hoa Hồng Nắp Gỗ</span>
+    </button>
+
+    <button class="shelf-item-pill" data-product="diffuser">
+      <span class="pill-icon">🏺</span>
+      <span>Bếp Gốm Xông Tinh Dầu</span>
+    </button>
+
+    <button class="shelf-item-pill" data-product="letter">
+      <span class="pill-icon">💌</span>
+      <span>Thư Giấy Gieo Hạt & Dấu Sáp</span>
+    </button>
+
+    <button class="shelf-item-pill" data-product="photo">
+      <span class="pill-icon">🖼️</span>
+      <span>Khung Ảnh Kỷ Niệm & Ruy Băng</span>
+    </button>
+
+    <button class="shelf-item-pill" data-product="card">
+      <span class="pill-icon">📜</span>
+      <span>Thẻ Liệu Trình 3 Bước</span>
+    </button>
+
+    <button class="shelf-item-pill" data-product="greeting">
+      <span class="pill-icon">🌸</span>
+      <span>Thiệp "The Gift"</span>
+    </button>
+
+    <button class="shelf-item-pill" data-product="box">
+      <span class="pill-icon">🎁</span>
+      <span>Vỏ Hộp "The Gift"</span>
+    </button>
+  </nav>
+
+  <!-- Product Detail Modal / Slide-over Drawer -->
+  <div id="detail-drawer" class="detail-drawer">
+    <div class="drawer-header">
+      <div>
+        <span id="drawer-tag" class="drawer-tag">Thủ công 100%</span>
+        <h2 id="drawer-title" class="drawer-title">Tên Sản Phẩm</h2>
+        <div id="drawer-subtitle" class="drawer-subtitle">Phụ đề sản phẩm</div>
+      </div>
+      <button id="drawer-close" class="drawer-close" title="Đóng">&times;</button>
+    </div>
+
+    <p id="drawer-desc" class="drawer-desc">Mô tả sản phẩm chi tiết...</p>
+
+    <!-- Specifications Table -->
+    <div id="drawer-specs" class="specs-grid"></div>
+
+    <button id="drawer-back-btn" class="drawer-action-btn">Quay Lại Toàn Cảnh 3D</button>
+  </div>
+
+  <!-- JavaScript Libraries: Local Three.js & OrbitControls -->
+  <script src="assets/three.min.js"></script>
+  <script src="assets/OrbitControls.js"></script>
+
+  <!-- Embedded High-Definition Texture Assets -->
+  <script src="assets/textures-data.js"></script>
+
+  <!-- Application Modules -->
+  <script src="textures.js"></script>
+  <script src="models.js"></script>
+  <script src="app.js"></script>
+
+  <script>
+    // Safeguard to dismiss loading overlay
+    const overlay = document.getElementById('loading-overlay');
+    if (overlay) {
+      overlay.addEventListener('click', () => {
+        overlay.classList.add('fade-out');
+        setTimeout(() => { overlay.style.display = 'none'; }, 600);
+      });
+    }
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        if (overlay) {
+          overlay.classList.add('fade-out');
+          setTimeout(() => { overlay.style.display = 'none'; }, 600);
+        }
+      }, 800);
+    });
+  </script>
+</body>
+</html>
