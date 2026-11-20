@@ -50,10 +50,21 @@ class App3D {
       this.animate();
     } catch (err) {
       console.error('Initialization error:', err);
+      const loader = document.getElementById('loading-overlay');
+      if (loader) {
+        loader.classList.remove('fade-out');
+        loader.style.display = 'flex';
+        loader.innerHTML = `<div style="color:#d3446c;font-family:sans-serif;padding:24px;text-align:center;background:rgba(255,255,255,0.92);border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.2);">
+          <h3 style="margin-top:0;">Đã xảy ra sự cố khởi tạo 3D</h3>
+          <p style="font-size:13px;color:#666;">${err.message}</p>
+          <button onclick="location.reload()" style="background:#d3446c;color:#fff;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;margin-top:8px;">Tải lại trang</button>
+        </div>`;
+      }
+      return;
     } finally {
       setTimeout(() => {
         const loader = document.getElementById('loading-overlay');
-        if (loader) {
+        if (loader && !loader.innerHTML.includes('Đã xảy ra sự cố')) {
           loader.classList.add('fade-out');
           setTimeout(() => { loader.style.display = 'none'; }, 600);
         }

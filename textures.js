@@ -1108,6 +1108,76 @@ const TextureManager = {
     return texture;
   },
 
+  // 15. Greeting Card "THE GIFT" Texture
+  createGreetingCardTexture() {
+    if (typeof TEXTURE_ASSETS !== 'undefined' && TEXTURE_ASSETS.pink_greeting) {
+      const img = new Image();
+      const texture = new THREE.Texture(img);
+      img.onload = () => { texture.needsUpdate = true; };
+      img.src = TEXTURE_ASSETS.pink_greeting;
+      return texture;
+    }
+
+    const canvas = document.createElement('canvas');
+    canvas.width = 600;
+    canvas.height = 900;
+    const ctx = canvas.getContext('2d');
+
+    // Luxurious blush pink background
+    const grad = ctx.createLinearGradient(0, 0, 600, 900);
+    grad.addColorStop(0, '#feebf1');
+    grad.addColorStop(0.5, '#fcdbe5');
+    grad.addColorStop(1, '#f8cad6');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 600, 900);
+
+    // Stitched frame border
+    ctx.strokeStyle = '#e27796';
+    ctx.lineWidth = 3;
+    ctx.setLineDash([10, 8]);
+    ctx.strokeRect(35, 35, 530, 830);
+    ctx.setLineDash([]);
+
+    // Elegant inner border
+    ctx.strokeStyle = 'rgba(235, 120, 150, 0.4)';
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(50, 50, 500, 800);
+
+    // Header "THE GIFT"
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#b83b60';
+    ctx.font = 'bold 54px "Playfair Display", Georgia, serif';
+    try { ctx.letterSpacing = '6px'; } catch (e) {}
+    ctx.fillText('THE GIFT', 300, 220);
+
+    // Subtitle
+    ctx.fillStyle = '#8f5567';
+    ctx.font = '500 24px "Plus Jakarta Sans", sans-serif';
+    try { ctx.letterSpacing = '3px'; } catch (e) {}
+    ctx.fillText('SPECIAL EDITION', 300, 270);
+
+    // Central Heart
+    const hx = 300, hy = 450, hs = 55;
+    ctx.fillStyle = '#e8618b';
+    ctx.beginPath();
+    ctx.moveTo(hx, hy + hs * 0.3);
+    ctx.bezierCurveTo(hx - hs * 0.6, hy - hs * 0.6, hx - hs * 1.2, hy + hs * 0.2, hx, hy + hs * 1.2);
+    ctx.bezierCurveTo(hx + hs * 1.2, hy + hs * 0.2, hx + hs * 0.6, hy - hs * 0.6, hx, hy + hs * 0.3);
+    ctx.fill();
+
+    // Message
+    ctx.fillStyle = '#523a43';
+    ctx.font = 'italic 500 30px "Playfair Display", Georgia, serif';
+    try { ctx.letterSpacing = '1px'; } catch (e) {}
+    ctx.fillText('A Little Hug,', 300, 620);
+    ctx.fillText('A Meaningful Feeling ♡', 300, 670);
+
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.generateMipmaps = true;
+    texture.minFilter = THREE.LinearMipmapLinearFilter;
+    return texture;
+  },
+
   createBunnyBumpTexture() {
     const canvas = document.createElement('canvas');
     canvas.width = 256;
