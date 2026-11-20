@@ -1348,7 +1348,7 @@ class GiftBoxScene {
           prod.scale.lerp(new THREE.Vector3(1.0, 1.0, 1.0), 0.08);
         }
       }
-    } else if (this.targetExplodeFactor !== undefined && this.explodeFactor > 0.01) {
+    } else if (this.targetExplodeFactor !== undefined && (this.targetExplodeFactor > 0.01 || this.explodeFactor > 0.01)) {
       this.explodeFactor = THREE.MathUtils.lerp(this.explodeFactor, this.targetExplodeFactor, 0.07);
 
       const explodeOffsets = {
