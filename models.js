@@ -754,7 +754,9 @@ class GiftBoxScene {
       isProduct: true,
       productId: 'bunny',
       productInfo: ProductData.bunny,
-      basePos: bunnyGroup.position.clone()
+      basePos: bunnyGroup.position.clone(),
+      baseRot: bunnyGroup.rotation.clone(),
+      baseScale: bunnyGroup.scale.clone()
     };
     this.interactiveObjects.push(bunnyGroup);
     this.insideGroup.add(bunnyGroup);
@@ -833,7 +835,9 @@ class GiftBoxScene {
       isProduct: true,
       productId: 'candle',
       productInfo: ProductData.candle,
-      basePos: candleGroup.position.clone()
+      basePos: candleGroup.position.clone(),
+      baseRot: candleGroup.rotation.clone(),
+      baseScale: candleGroup.scale.clone()
     };
     this.interactiveObjects.push(candleGroup);
     this.insideGroup.add(candleGroup);
@@ -890,7 +894,9 @@ class GiftBoxScene {
       isProduct: true,
       productId: 'teajar',
       productInfo: ProductData.teajar,
-      basePos: jarGroup.position.clone()
+      basePos: jarGroup.position.clone(),
+      baseRot: jarGroup.rotation.clone(),
+      baseScale: jarGroup.scale.clone()
     };
     this.interactiveObjects.push(jarGroup);
     this.insideGroup.add(jarGroup);
@@ -953,7 +959,9 @@ class GiftBoxScene {
       isProduct: true,
       productId: 'diffuser',
       productInfo: ProductData.diffuser,
-      basePos: diffuserGroup.position.clone()
+      basePos: diffuserGroup.position.clone(),
+      baseRot: diffuserGroup.rotation.clone(),
+      baseScale: diffuserGroup.scale.clone()
     };
     this.interactiveObjects.push(diffuserGroup);
     this.insideGroup.add(diffuserGroup);
@@ -1007,7 +1015,9 @@ class GiftBoxScene {
       isProduct: true,
       productId: 'photo',
       productInfo: ProductData.photo,
-      basePos: photoGroup.position.clone()
+      basePos: photoGroup.position.clone(),
+      baseRot: photoGroup.rotation.clone(),
+      baseScale: photoGroup.scale.clone()
     };
     this.interactiveObjects.push(photoGroup);
     this.insideGroup.add(photoGroup);
@@ -1057,7 +1067,9 @@ class GiftBoxScene {
       isProduct: true,
       productId: 'letter',
       productInfo: ProductData.letter,
-      basePos: letterGroup.position.clone()
+      basePos: letterGroup.position.clone(),
+      baseRot: letterGroup.rotation.clone(),
+      baseScale: letterGroup.scale.clone()
     };
     this.interactiveObjects.push(letterGroup);
     this.insideGroup.add(letterGroup);
@@ -1081,7 +1093,9 @@ class GiftBoxScene {
       isProduct: true,
       productId: 'card',
       productInfo: ProductData.card,
-      basePos: cardGroup.position.clone()
+      basePos: cardGroup.position.clone(),
+      baseRot: cardGroup.rotation.clone(),
+      baseScale: cardGroup.scale.clone()
     };
     this.interactiveObjects.push(cardGroup);
     this.insideGroup.add(cardGroup);
@@ -1106,7 +1120,9 @@ class GiftBoxScene {
       isProduct: true,
       productId: 'greeting',
       productInfo: ProductData.greeting,
-      basePos: greetGroup.position.clone()
+      basePos: greetGroup.position.clone(),
+      baseRot: greetGroup.rotation.clone(),
+      baseScale: greetGroup.scale.clone()
     };
     this.interactiveObjects.push(greetGroup);
     this.rootGroup.add(greetGroup);
@@ -1232,6 +1248,22 @@ class GiftBoxScene {
   setExplodeState(exploded) {
     this.isExploded = exploded;
     this.targetExplodeFactor = exploded ? 1.0 : 0.0;
+    if (exploded) {
+      this.isolatedProductId = null;
+    }
+  }
+
+  // Isolate product for 360 degree individual inspection
+  isolateProduct(productId, isolate = true) {
+    if (!isolate || !productId || productId === 'box' || !this.products[productId]) {
+      this.isolatedProductId = null;
+      return;
+    }
+    this.isolatedProductId = productId;
+    if (this.isExploded) {
+      this.setExplodeState(false);
+    }
+    if (this.insideGroup) this.insideGroup.visible = true;
   }
 
   update(delta, elapsed) {
@@ -1249,7 +1281,49 @@ class GiftBoxScene {
       }
     }
 
-    if (this.targetExplodeFactor !== undefined) {
+    // 1. Product 3D Isolation / Inspection Mode ("Tách riêng sản phẩm ra ngoài")
+    if (this.isolatedProductId && this.products[this.isolatedProductId]) {
+      const keys = ['bunny', 'candle', 'teajar', 'diffuser', 'photo', 'letter', 'card', 'greeting'];
+      for (const key of keys) {
+        const prod = this.products[key];
+        if (!prod || !prod.userData || !prod.userData.basePos) continue;
+
+        if (key === this.isolatedProductId) {
+          // Floating high above the box center for 360 inspection
+          const floatY = 11.2 + Math.sin(elapsed * 2.5) * 0.22;
+          prod.position.x = THREE.MathUtils.lerp(prod.position.x, 0, 0.08);
+          prod.position.y = THREE.MathUtils.lerp(prod.position.y, floatY, 0.08);
+          prod.position.z = THREE.MathUtils.lerp(prod.position.z, 0, 0.08);
+
+          // Optimal inspection angle
+          if (key === 'letter' || key === 'card') {
+            prod.rotation.x = THREE.MathUtils.lerp(prod.rotation.x, 0.26, 0.08);
+          } else if (key === 'greeting') {
+            prod.rotation.x = THREE.MathUtils.lerp(prod.rotation.x, 0.0, 0.08);
+            prod.rotation.y = THREE.MathUtils.lerp(prod.rotation.y, 0.0, 0.08);
+            prod.rotation.z = THREE.MathUtils.lerp(prod.rotation.z, 0.0, 0.08);
+          } else if (prod.userData.baseRot) {
+            prod.rotation.x = THREE.MathUtils.lerp(prod.rotation.x, prod.userData.baseRot.x, 0.08);
+            prod.rotation.y = THREE.MathUtils.lerp(prod.rotation.y, prod.userData.baseRot.y, 0.08);
+            prod.rotation.z = THREE.MathUtils.lerp(prod.rotation.z, prod.userData.baseRot.z, 0.08);
+          }
+
+          prod.scale.lerp(new THREE.Vector3(1.15, 1.15, 1.15), 0.08);
+        } else {
+          // Keep other items resting peacefully in their slots
+          const bp = prod.userData.basePos;
+          prod.position.x = THREE.MathUtils.lerp(prod.position.x, bp.x, 0.08);
+          prod.position.y = THREE.MathUtils.lerp(prod.position.y, bp.y, 0.08);
+          prod.position.z = THREE.MathUtils.lerp(prod.position.z, bp.z, 0.08);
+          if (prod.userData.baseRot) {
+            prod.rotation.x = THREE.MathUtils.lerp(prod.rotation.x, prod.userData.baseRot.x, 0.08);
+            prod.rotation.y = THREE.MathUtils.lerp(prod.rotation.y, prod.userData.baseRot.y, 0.08);
+            prod.rotation.z = THREE.MathUtils.lerp(prod.rotation.z, prod.userData.baseRot.z, 0.08);
+          }
+          prod.scale.lerp(new THREE.Vector3(1.0, 1.0, 1.0), 0.08);
+        }
+      }
+    } else if (this.targetExplodeFactor !== undefined && this.explodeFactor > 0.01) {
       this.explodeFactor = THREE.MathUtils.lerp(this.explodeFactor, this.targetExplodeFactor, 0.07);
 
       const explodeOffsets = {
@@ -1272,6 +1346,26 @@ class GiftBoxScene {
           prod.position.y = bp.y + offset.y * factor + floatOffset;
           prod.position.x = bp.x + offset.x * factor;
           prod.position.z = bp.z + offset.z * factor;
+        }
+      }
+    } else {
+      // Normal return-to-base state when neither isolated nor exploded
+      const keys = ['bunny', 'candle', 'teajar', 'diffuser', 'photo', 'letter', 'card', 'greeting'];
+      for (const key of keys) {
+        const prod = this.products[key];
+        if (prod && prod.userData && prod.userData.basePos) {
+          const bp = prod.userData.basePos;
+          if (prod.position.distanceTo(bp) > 0.005) {
+            prod.position.x = THREE.MathUtils.lerp(prod.position.x, bp.x, 0.08);
+            prod.position.y = THREE.MathUtils.lerp(prod.position.y, bp.y, 0.08);
+            prod.position.z = THREE.MathUtils.lerp(prod.position.z, bp.z, 0.08);
+            if (prod.userData.baseRot) {
+              prod.rotation.x = THREE.MathUtils.lerp(prod.rotation.x, prod.userData.baseRot.x, 0.08);
+              prod.rotation.y = THREE.MathUtils.lerp(prod.rotation.y, prod.userData.baseRot.y, 0.08);
+              prod.rotation.z = THREE.MathUtils.lerp(prod.rotation.z, prod.userData.baseRot.z, 0.08);
+            }
+            prod.scale.lerp(new THREE.Vector3(1.0, 1.0, 1.0), 0.08);
+          }
         }
       }
     }

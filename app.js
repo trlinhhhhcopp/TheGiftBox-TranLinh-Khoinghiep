@@ -76,9 +76,11 @@ class App3D {
     this.scene.fog = new THREE.FogExp2(0x281f25, 0.012);
 
     const aspect = window.innerWidth / window.innerHeight;
-    const baseFov = aspect < 1.0 ? Math.min(68, 40 / (aspect * 1.05)) : 40;
+    const baseFov = aspect < 1.0 ? 52 : 40;
     this.camera = new THREE.PerspectiveCamera(baseFov, aspect, 0.1, 1000);
-    this.camera.position.copy(this.cameraPresets.overview.pos);
+
+    const initialFit = this.getFitPosition(this.cameraPresets.overview.pos, this.cameraPresets.overview.target, 34.0);
+    this.camera.position.copy(initialFit.pos);
 
     this.renderer = new THREE.WebGLRenderer({
       antialias: true,
@@ -99,11 +101,34 @@ class App3D {
     this.controls.enableDamping = true;
     this.controls.dampingFactor = 0.05;
     this.controls.maxPolarAngle = Math.PI / 2.05;
-    this.controls.minDistance = 10;
-    this.controls.maxDistance = 65;
-    this.controls.target.copy(this.cameraPresets.overview.target);
+    this.controls.minDistance = 6;
+    this.controls.maxDistance = 120;
+    this.controls.target.copy(initialFit.target);
     this.controls.autoRotate = false;
     this.controls.autoRotateSpeed = 1.2;
+  }
+
+  // Dynamic camera positioning: guarantees that a bounding width fits completely with generous margins on any screen/phone
+  getFitPosition(basePos, target, fitWidth = 34.0) {
+    const aspect = this.camera ? this.camera.aspect : (window.innerWidth / window.innerHeight);
+    if (aspect >= 1.0) {
+      return { pos: basePos.clone(), target: target.clone() };
+    }
+
+    const currentFov = this.camera ? this.camera.fov : 52;
+    const halfFovVRad = THREE.MathUtils.degToRad(currentFov / 2);
+    const tanHalfH = aspect * Math.tan(halfFovVRad);
+    const requiredDist = (fitWidth / 2) / Math.max(tanHalfH, 0.001);
+
+    const dir = basePos.clone().sub(target).normalize();
+    const currentDist = basePos.distanceTo(target);
+    const actualDist = Math.max(currentDist, requiredDist);
+
+    const adjustedTarget = target.clone();
+    adjustedTarget.y += 0.6; // Slightly lift target for mobile bottom drawer clearance
+
+    const pos = adjustedTarget.clone().add(dir.multiplyScalar(actualDist));
+    return { pos, target: adjustedTarget };
   }
 
   // 2. Realistic Warm & Cozy Lighting
@@ -373,23 +398,27 @@ class App3D {
         this.selectProduct(productId);
       }, 400);
     } else {
-      this.glideCameraTo(this.cameraPresets.overview.pos, this.cameraPresets.overview.target, 0.9);
+      this.giftBoxScene.isolateProduct(null, false);
+      const fitOverview = this.getFitPosition(this.cameraPresets.overview.pos, this.cameraPresets.overview.target, 34.0);
+      this.glideCameraTo(fitOverview.pos, fitOverview.target, 0.9);
       document.querySelectorAll('.shelf-item-pill').forEach(pill => pill.classList.remove('active'));
     }
   }
 
-  // 8. Select & Zoom in from High Top-Down Angle
+  // 8. Select & Isolate Product for 3D Inspection Mode ("Tách riêng sản phẩm ra ngoài")
   selectProduct(productId) {
     if (productId === 'box') {
       this.selectedProductId = 'box';
       const info = ProductData.box;
-      this.glideCameraTo(this.cameraPresets.box.pos, this.cameraPresets.box.target, 0.85);
-      this.showDrawer(info);
+      this.giftBoxScene.isolateProduct(null, false);
+      const fitBox = this.getFitPosition(this.cameraPresets.box.pos, this.cameraPresets.box.target, 34.0);
+      this.glideCameraTo(fitBox.pos, fitBox.target, 0.85);
+      this.showDrawer(info, false);
       this.updateShelfActive('box');
       return;
     }
 
-    // If box is closed and an inside item is selected, OPEN BOX FIRST!
+    // If box is closed and an inside item is selected, open box first!
     if (!this.giftBoxScene.isBoxOpen) {
       this.openLidAndSelect(productId);
       return;
@@ -401,25 +430,25 @@ class App3D {
 
     this.playChimeSound();
 
-    // Zoom camera in from high top-down angle
-    const preset = this.cameraPresets[productId] || this.cameraPresets.overview;
-    let targetPos = preset.pos.clone();
-    let targetLookAt = preset.target.clone();
+    // Elevate and separate product out of the box into individual inspection view
+    this.giftBoxScene.isolateProduct(productId, true);
 
-    // On mobile portrait, shift camera target slightly to keep product visible in upper half above bottom drawer
-    if (window.innerWidth <= 768 && productId !== 'box') {
-      targetLookAt.z -= 1.6;
-      targetPos.z -= 1.6;
-    }
+    // Frame camera directly on the floating isolated product (Y = 11.2)
+    const inspectTarget = new THREE.Vector3(0, 11.2, 0);
+    const inspectCamPos = new THREE.Vector3(0, 13.5, 17.5);
+    const fitInspect = this.getFitPosition(inspectCamPos, inspectTarget, 16.0);
 
-    this.glideCameraTo(targetPos, targetLookAt, 0.85);
+    this.glideCameraTo(fitInspect.pos, fitInspect.target, 0.85);
 
-    this.showDrawer(info);
+    this.showDrawer(info, true);
     this.updateShelfActive(productId);
   }
 
-  showDrawer(info) {
-    document.getElementById('drawer-tag').innerText = info.tag;
+  showDrawer(info, isIsolated = false) {
+    const badgeHtml = isIsolated 
+      ? `<div class="drawer-mode-badge"><span class="mode-pulse"></span> Chế độ Tách Riêng 3D · Xoay 360° Tự Do</div>` 
+      : '';
+    document.getElementById('drawer-tag').innerHTML = `${badgeHtml}<span>${info.tag}</span>`;
     document.getElementById('drawer-title').innerHTML = `${info.icon} ${info.name}`;
     document.getElementById('drawer-subtitle').innerText = info.subtitle;
     document.getElementById('drawer-desc').innerText = info.desc;
@@ -432,6 +461,11 @@ class App3D {
       row.innerHTML = `<span class="spec-label">${s.label}</span><span class="spec-val">${s.value}</span>`;
       specsContainer.appendChild(row);
     });
+
+    const backBtn = document.getElementById('drawer-back-btn');
+    if (backBtn) {
+      backBtn.innerText = isIsolated ? '← Đặt Lại Vào Hộp Quà' : 'Quay Lại Toàn Cảnh 3D';
+    }
 
     this.drawer.classList.add('visible');
   }
@@ -449,7 +483,9 @@ class App3D {
 
   resetToOverview() {
     this.selectedProductId = null;
-    this.glideCameraTo(this.cameraPresets.overview.pos, this.cameraPresets.overview.target, 0.9);
+    this.giftBoxScene.isolateProduct(null, false);
+    const fitOverview = this.getFitPosition(this.cameraPresets.overview.pos, this.cameraPresets.overview.target, 34.0);
+    this.glideCameraTo(fitOverview.pos, fitOverview.target, 0.9);
     this.drawer.classList.remove('visible');
     document.querySelectorAll('.shelf-item-pill').forEach(pill => pill.classList.remove('active'));
     this.playClickSound();
@@ -677,14 +713,27 @@ class App3D {
     const aspect = w / h;
     this.camera.aspect = aspect;
 
-    // Mobile adaptive FOV: automatically adjusts FOV on portrait mobile so 3D objects fit gracefully without cropping
-    if (aspect < 1.0) {
-      this.camera.fov = Math.min(68, 40 / (aspect * 1.05));
-    } else {
-      this.camera.fov = 40;
-    }
+    // Mobile adaptive FOV & Frustum fit
+    this.camera.fov = aspect < 1.0 ? 52 : 40;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(w, h);
+
+    // If currently at overview or box view, maintain perfect framing without clipping
+    if (!this.selectedProductId && !this.isCameraAnimating) {
+      const fit = this.getFitPosition(this.cameraPresets.overview.pos, this.cameraPresets.overview.target, 34.0);
+      this.camera.position.copy(fit.pos);
+      this.controls.target.copy(fit.target);
+    } else if (this.selectedProductId === 'box' && !this.isCameraAnimating) {
+      const fit = this.getFitPosition(this.cameraPresets.box.pos, this.cameraPresets.box.target, 34.0);
+      this.camera.position.copy(fit.pos);
+      this.controls.target.copy(fit.target);
+    } else if (this.selectedProductId && !this.isCameraAnimating) {
+      const inspectTarget = new THREE.Vector3(0, 11.2, 0);
+      const inspectCamPos = new THREE.Vector3(0, 13.5, 17.5);
+      const fitInspect = this.getFitPosition(inspectCamPos, inspectTarget, 16.0);
+      this.camera.position.copy(fitInspect.pos);
+      this.controls.target.copy(fitInspect.target);
+    }
   }
 
   animate() {
