@@ -519,38 +519,59 @@ const TextureManager = {
     return new THREE.CanvasTexture(canvas);
   },
 
-  // 5. Candle Label Texture
+  // 5. Candle Label Texture (Exact Match with Photo 2: THE GIFT - Lavender - ♥)
   createCandleLabelTexture(edition = 'pink') {
-    if (edition === 'pink' && typeof TEXTURE_ASSETS !== 'undefined' && TEXTURE_ASSETS.pink_candle) {
-      const img = new Image();
-      const texture = new THREE.Texture(img);
-      img.onload = () => { texture.needsUpdate = true; };
-      img.src = TEXTURE_ASSETS.pink_candle;
-      return texture;
-    }
-
     const canvas = document.createElement('canvas');
     canvas.width = 512;
     canvas.height = 384;
     const ctx = canvas.getContext('2d');
 
     const isPink = (edition === 'pink');
-    ctx.fillStyle = isPink ? '#fdeff3' : '#faf8f5';
+
+    // Soft warm ivory / cream label card
+    ctx.fillStyle = isPink ? '#fcf9f4' : '#faf8f5';
     ctx.fillRect(0, 0, 512, 384);
 
-    ctx.strokeStyle = isPink ? '#df8ea4' : '#8c827a';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(30, 30, 452, 324);
+    // Delicate rounded border
+    ctx.strokeStyle = isPink ? '#e8ddd2' : '#8c827a';
+    ctx.lineWidth = 3;
+    const bx = 24, by = 24, bw = 464, bh = 336, br = 18;
+    ctx.beginPath();
+    ctx.moveTo(bx + br, by);
+    ctx.lineTo(bx + bw - br, by);
+    ctx.quadraticCurveTo(bx + bw, by, bx + bw, by + br);
+    ctx.lineTo(bx + bw, by + bh - br);
+    ctx.quadraticCurveTo(bx + bw, by + bh, bx + bw - br, by + bh);
+    ctx.lineTo(bx + br, by + bh);
+    ctx.quadraticCurveTo(bx, by + bh, bx, by + bh - br);
+    ctx.lineTo(bx, by + br);
+    ctx.quadraticCurveTo(bx, by, bx + br, by);
+    ctx.closePath();
+    ctx.stroke();
 
     ctx.textAlign = 'center';
 
     if (isPink) {
-      ctx.fillStyle = '#b83b60';
-      ctx.font = 'bold 38px "Arial Rounded MT Bold", sans-serif';
-      ctx.fillText('THE GIFT', 256, 175);
-      ctx.font = '500 24px "Plus Jakarta Sans", sans-serif';
-      ctx.fillStyle = '#8f5567';
-      ctx.fillText('Lavender Scented', 256, 230);
+      // "THE GIFT"
+      ctx.fillStyle = '#221d20';
+      ctx.font = 'bold 44px "Playfair Display", Georgia, serif';
+      try { ctx.letterSpacing = '3px'; } catch (e) {}
+      ctx.fillText('THE GIFT', 256, 155);
+
+      // "Lavender"
+      ctx.fillStyle = '#4e3d44';
+      ctx.font = '500 28px "Plus Jakarta Sans", sans-serif';
+      try { ctx.letterSpacing = '2px'; } catch (e) {}
+      ctx.fillText('Lavender', 256, 215);
+
+      // Sweet Pink Heart (♥)
+      ctx.fillStyle = '#e8618b';
+      const hx = 256, hy = 255, hs = 14;
+      ctx.beginPath();
+      ctx.moveTo(hx, hy + hs * 0.3);
+      ctx.bezierCurveTo(hx - hs * 0.6, hy - hs * 0.6, hx - hs * 1.2, hy + hs * 0.2, hx, hy + hs * 1.2);
+      ctx.bezierCurveTo(hx + hs * 1.2, hy + hs * 0.2, hx + hs * 0.6, hy - hs * 0.6, hx, hy + hs * 0.3);
+      ctx.fill();
     } else {
       ctx.fillStyle = '#3a3532';
       ctx.font = '400 48px "Playfair Display", Georgia, serif';
@@ -562,37 +583,196 @@ const TextureManager = {
       ctx.fillText('B L E N D', 256, 210);
     }
 
-    return new THREE.CanvasTexture(canvas);
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.generateMipmaps = true;
+    texture.minFilter = THREE.LinearMipmapLinearFilter;
+    return texture;
   },
 
-  // 6. Tea Jar Content Texture
+  // 6. Tea Jar Front Label Texture (Exact Match with Photo 2: THE GIFT - Chamomile Tea - ♥)
+  createTeaJarLabelTexture(edition = 'pink') {
+    const canvas = document.createElement('canvas');
+    canvas.width = 512;
+    canvas.height = 384;
+    const ctx = canvas.getContext('2d');
+
+    const isPink = (edition === 'pink');
+
+    // Soft warm ivory / cream label card
+    ctx.fillStyle = isPink ? '#fcf9f4' : '#faf8f5';
+    ctx.fillRect(0, 0, 512, 384);
+
+    // Delicate rounded border
+    ctx.strokeStyle = isPink ? '#e8ddd2' : '#8c827a';
+    ctx.lineWidth = 3;
+    const bx = 24, by = 24, bw = 464, bh = 336, br = 18;
+    ctx.beginPath();
+    ctx.moveTo(bx + br, by);
+    ctx.lineTo(bx + bw - br, by);
+    ctx.quadraticCurveTo(bx + bw, by, bx + bw, by + br);
+    ctx.lineTo(bx + bw, by + bh - br);
+    ctx.quadraticCurveTo(bx + bw, by + bh, bx + bw - br, by + bh);
+    ctx.lineTo(bx + br, by + bh);
+    ctx.quadraticCurveTo(bx, by + bh, bx, by + bh - br);
+    ctx.lineTo(bx, by + br);
+    ctx.quadraticCurveTo(bx, by, bx + br, by);
+    ctx.closePath();
+    ctx.stroke();
+
+    ctx.textAlign = 'center';
+
+    if (isPink) {
+      // "THE GIFT"
+      ctx.fillStyle = '#221d20';
+      ctx.font = 'bold 44px "Playfair Display", Georgia, serif';
+      try { ctx.letterSpacing = '3px'; } catch (e) {}
+      ctx.fillText('THE GIFT', 256, 155);
+
+      // "Chamomile Tea"
+      ctx.fillStyle = '#4e3d44';
+      ctx.font = '500 28px "Plus Jakarta Sans", sans-serif';
+      try { ctx.letterSpacing = '1px'; } catch (e) {}
+      ctx.fillText('Chamomile Tea', 256, 215);
+
+      // Sweet Pink Heart (♥)
+      ctx.fillStyle = '#e8618b';
+      const hx = 256, hy = 255, hs = 14;
+      ctx.beginPath();
+      ctx.moveTo(hx, hy + hs * 0.3);
+      ctx.bezierCurveTo(hx - hs * 0.6, hy - hs * 0.6, hx - hs * 1.2, hy + hs * 0.2, hx, hy + hs * 1.2);
+      ctx.bezierCurveTo(hx + hs * 1.2, hy + hs * 0.2, hx + hs * 0.6, hy - hs * 0.6, hx, hy + hs * 0.3);
+      ctx.fill();
+    } else {
+      ctx.fillStyle = '#3a3532';
+      ctx.font = '400 44px "Playfair Display", Georgia, serif';
+      try { ctx.letterSpacing = '6px'; } catch (e) {}
+      ctx.fillText('HERBAL TEA', 256, 175);
+    }
+
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.generateMipmaps = true;
+    texture.minFilter = THREE.LinearMipmapLinearFilter;
+    return texture;
+  },
+
+  // 7. Tea Jar Content Texture (Chamomile dried flower buds)
   createTeaInsideTexture(edition = 'pink') {
-    if (edition === 'pink' && typeof TEXTURE_ASSETS !== 'undefined' && TEXTURE_ASSETS.pink_teajar) {
-      const img = new Image();
-      const texture = new THREE.Texture(img);
-      img.onload = () => { texture.needsUpdate = true; };
-      img.src = TEXTURE_ASSETS.pink_teajar;
-      return texture;
-    }
-
-    if (typeof TEXTURE_ASSETS !== 'undefined' && TEXTURE_ASSETS.item_tea_inside) {
-      const img = new Image();
-      const texture = new THREE.Texture(img);
-      img.onload = () => { texture.needsUpdate = true; };
-      img.src = TEXTURE_ASSETS.item_tea_inside;
-      return texture;
-    }
-
     const canvas = document.createElement('canvas');
     canvas.width = 512;
     canvas.height = 512;
     const ctx = canvas.getContext('2d');
-    ctx.fillStyle = '#dfb572';
+
+    // Warm golden amber base
+    ctx.fillStyle = '#cca162';
     ctx.fillRect(0, 0, 512, 512);
+
+    // Dense cluster of dried golden Chamomile flower buds
+    for (let i = 0; i < 350; i++) {
+      const bx = Math.random() * 512;
+      const by = Math.random() * 512;
+      const br = 8 + Math.random() * 14;
+
+      const grad = ctx.createRadialGradient(bx, by, 2, bx, by, br);
+      grad.addColorStop(0, '#f2d68b');
+      grad.addColorStop(0.6, '#deb062');
+      grad.addColorStop(1, '#a6783c');
+      ctx.fillStyle = grad;
+
+      ctx.beginPath();
+      ctx.arc(bx, by, br, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Tiny dried petals
+      ctx.strokeStyle = 'rgba(255, 240, 200, 0.5)';
+      ctx.lineWidth = 1.5;
+      for (let p = 0; p < 6; p++) {
+        const ang = (p / 6) * Math.PI * 2;
+        ctx.beginPath();
+        ctx.moveTo(bx, by);
+        ctx.lineTo(bx + Math.cos(ang) * (br + 4), by + Math.sin(ang) * (br + 4));
+        ctx.stroke();
+      }
+    }
+
     return new THREE.CanvasTexture(canvas);
   },
 
-  // 7. Wood Texture
+  // 8. Diffuser Ceramic Stamp Texture (Photo 2: Circular stamp THE GIFT)
+  createDiffuserStampTexture() {
+    const canvas = document.createElement('canvas');
+    canvas.width = 256;
+    canvas.height = 256;
+    const ctx = canvas.getContext('2d');
+
+    // Ivory ceramic base
+    ctx.fillStyle = '#f7f4ed';
+    ctx.fillRect(0, 0, 256, 256);
+
+    const cx = 128, cy = 128;
+
+    // Outer circle impression
+    ctx.strokeStyle = '#b8ab96';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 105, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Inner circle
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 96, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#a69780';
+    ctx.font = 'bold 40px "Playfair Display", Georgia, serif';
+    try { ctx.letterSpacing = '4px'; } catch (e) {}
+    ctx.fillText('THE', cx, 115);
+    ctx.fillText('GIFT', cx, 165);
+
+    return new THREE.CanvasTexture(canvas);
+  },
+
+  // 9. Bunny Bow Medallion Texture (Photo 2: Round pink tag THE GIFT ♥)
+  createMedalTexture() {
+    const canvas = document.createElement('canvas');
+    canvas.width = 256;
+    canvas.height = 256;
+    const ctx = canvas.getContext('2d');
+
+    const cx = 128, cy = 128;
+
+    // Pink circular card
+    ctx.fillStyle = '#f9cbd8';
+    ctx.beginPath();
+    ctx.arc(cx, cy, 120, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.strokeStyle = '#e57b98';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 110, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#48353c';
+    ctx.font = 'bold 30px "Playfair Display", Georgia, serif';
+    try { ctx.letterSpacing = '2px'; } catch (e) {}
+    ctx.fillText('THE GIFT', cx, 120);
+
+    // Heart below
+    ctx.fillStyle = '#d3446c';
+    const hx = cx, hy = 150, hs = 14;
+    ctx.beginPath();
+    ctx.moveTo(hx, hy + hs * 0.3);
+    ctx.bezierCurveTo(hx - hs * 0.6, hy - hs * 0.6, hx - hs * 1.2, hy + hs * 0.2, hx, hy + hs * 1.2);
+    ctx.bezierCurveTo(hx + hs * 1.2, hy + hs * 0.2, hx + hs * 0.6, hy - hs * 0.6, hx, hy + hs * 0.3);
+    ctx.fill();
+
+    return new THREE.CanvasTexture(canvas);
+  },
+
+  // 10. Wood Texture
   createWoodTexture() {
     const canvas = document.createElement('canvas');
     canvas.width = 512;
@@ -608,100 +788,324 @@ const TextureManager = {
     return new THREE.CanvasTexture(canvas);
   },
 
-  // 8. Seed Paper Texture
+  // 11. Seed Paper Texture (Natural Botanical Flecks)
   createSeedPaperTexture(edition = 'pink') {
-    if (edition === 'pink' && typeof TEXTURE_ASSETS !== 'undefined' && TEXTURE_ASSETS.pink_letter) {
-      const img = new Image();
-      const texture = new THREE.Texture(img);
-      img.onload = () => { texture.needsUpdate = true; };
-      img.src = TEXTURE_ASSETS.pink_letter;
-      return texture;
-    }
-
     const canvas = document.createElement('canvas');
     canvas.width = 1024;
     canvas.height = 600;
     const ctx = canvas.getContext('2d');
-    ctx.fillStyle = '#f7f4ee';
+
+    // Creamy ivory base
+    ctx.fillStyle = '#faf7f0';
     ctx.fillRect(0, 0, 1024, 600);
+
+    // Botanical seed specks & fiber flecks
+    for (let i = 0; i < 1800; i++) {
+      const x = Math.random() * 1024;
+      const y = Math.random() * 600;
+      ctx.fillStyle = Math.random() > 0.5 ? 'rgba(130, 105, 80, 0.35)' : 'rgba(180, 150, 120, 0.25)';
+      const sz = Math.random() * 3 + 1;
+      ctx.beginPath();
+      ctx.ellipse(x, y, sz, sz * 0.6, Math.random() * Math.PI, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Triangle flap border lines
+    ctx.strokeStyle = 'rgba(195, 175, 155, 0.45)';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(30, 30);
+    ctx.lineTo(512, 330);
+    ctx.lineTo(994, 30);
+    ctx.stroke();
+
     return new THREE.CanvasTexture(canvas);
   },
 
-  // 9. Wax Seal Texture
+  // 12. Wax Seal Texture (Photo 2: Blush pink wax seal with embossed bunny head)
   createWaxSealTexture(edition = 'pink') {
     const canvas = document.createElement('canvas');
     canvas.width = 512;
     canvas.height = 512;
     const ctx = canvas.getContext('2d');
     const cx = 256, cy = 256;
-    const isPink = (edition === 'pink');
 
-    ctx.fillStyle = isPink ? '#e8a2b5' : '#c5b199';
+    // Organic wavy melted wax edge
+    ctx.fillStyle = '#e89db1';
     ctx.beginPath();
-    ctx.arc(cx, cy, 210, 0, Math.PI * 2);
+    const numPoints = 28;
+    for (let i = 0; i < numPoints; i++) {
+      const angle = (i / numPoints) * Math.PI * 2;
+      const r = 210 + Math.sin(i * 3.5) * 12 + Math.cos(i * 5) * 8;
+      const px = cx + Math.cos(angle) * r;
+      const py = cy + Math.sin(angle) * r;
+      if (i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+    ctx.closePath();
     ctx.fill();
 
-    ctx.fillStyle = isPink ? '#dc8da2' : '#baa38a';
+    // Inner rim
+    ctx.fillStyle = '#db8ba0';
     ctx.beginPath();
     ctx.arc(cx, cy, 145, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.fillStyle = isPink ? '#ffffff' : '#e2d3c1';
-    if (isPink) {
-      ctx.beginPath();
-      ctx.arc(cx, cy + 15, 45, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.ellipse(cx - 22, cy - 50, 15, 40, -0.2, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.ellipse(cx + 22, cy - 50, 15, 40, 0.2, 0, Math.PI * 2);
-      ctx.fill();
-    } else {
-      ctx.beginPath();
-      ctx.ellipse(cx, cy, 30, 50, 0.2, 0, Math.PI * 2);
-      ctx.fill();
-    }
+    ctx.strokeStyle = '#c67389';
+    ctx.lineWidth = 4;
+    ctx.stroke();
+
+    // Embossed Bunny Head (Photo 2)
+    ctx.fillStyle = '#fceef2';
+    ctx.strokeStyle = '#b85f76';
+    ctx.lineWidth = 4;
+
+    // Bunny Face
+    ctx.beginPath();
+    ctx.ellipse(cx, cy + 20, 52, 44, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    // Upright Ears
+    ctx.beginPath();
+    ctx.ellipse(cx - 26, cy - 45, 16, 42, -0.15, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.ellipse(cx + 26, cy - 45, 16, 42, 0.15, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    // Little dots for eyes & nose
+    ctx.fillStyle = '#b85f76';
+    ctx.beginPath();
+    ctx.arc(cx - 18, cy + 14, 5, 0, Math.PI * 2);
+    ctx.arc(cx + 18, cy + 14, 5, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.ellipse(cx, cy + 28, 6, 4, 0, 0, Math.PI * 2);
+    ctx.fill();
 
     return new THREE.CanvasTexture(canvas);
   },
 
-  // 10. Ritual Card Texture
+  // 13. 3-Step Ritual Card Texture (Exact Match with Photo 2)
   createRitualCardTexture(edition = 'pink') {
-    if (edition === 'pink' && typeof TEXTURE_ASSETS !== 'undefined' && TEXTURE_ASSETS.pink_card) {
-      const img = new Image();
-      const texture = new THREE.Texture(img);
-      img.onload = () => { texture.needsUpdate = true; };
-      img.src = TEXTURE_ASSETS.pink_card;
-      return texture;
-    }
-
     const canvas = document.createElement('canvas');
     canvas.width = 1024;
     canvas.height = 640;
     const ctx = canvas.getContext('2d');
-    ctx.fillStyle = (edition === 'pink') ? '#fff5f8' : '#fcfbf8';
+
+    // Sweet pastel pink card base with rounded corners
+    ctx.fillStyle = '#feeef3';
     ctx.fillRect(0, 0, 1024, 640);
-    return new THREE.CanvasTexture(canvas);
+
+    // 4 Corner Pink Hearts (♥)
+    const drawCornerHeart = (hx, hy) => {
+      ctx.save();
+      ctx.fillStyle = '#e8618b';
+      const hs = 14;
+      ctx.beginPath();
+      ctx.moveTo(hx, hy + hs * 0.3);
+      ctx.bezierCurveTo(hx - hs * 0.6, hy - hs * 0.6, hx - hs * 1.2, hy + hs * 0.2, hx, hy + hs * 1.2);
+      ctx.bezierCurveTo(hx + hs * 1.2, hy + hs * 0.2, hx + hs * 0.6, hy - hs * 0.6, hx, hy + hs * 0.3);
+      ctx.fill();
+      ctx.restore();
+    };
+
+    drawCornerHeart(75, 75);
+    drawCornerHeart(949, 75);
+    drawCornerHeart(75, 565);
+    drawCornerHeart(949, 565);
+
+    ctx.textAlign = 'center';
+
+    // Header Title
+    ctx.fillStyle = '#2b2326';
+    ctx.font = 'bold 50px "Playfair Display", Georgia, serif';
+    try { ctx.letterSpacing = '2px'; } catch (e) {}
+    ctx.fillText('3-step ritual card', 512, 135);
+
+    // Subtitle
+    ctx.fillStyle = '#5a424a';
+    ctx.font = 'italic 500 32px "Playfair Display", Georgia, serif';
+    try { ctx.letterSpacing = '1px'; } catch (e) {}
+    ctx.fillText('for your healing journey', 512, 190);
+
+    // 3 Columns: x1 = 250, x2 = 512, x3 = 774
+    const colY = 320;
+    ctx.strokeStyle = '#2b2326';
+    ctx.lineWidth = 4;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+
+    // Icon 1: Teacup (x = 250)
+    ctx.beginPath();
+    ctx.moveTo(215, colY + 30);
+    ctx.lineTo(285, colY + 30);
+    ctx.bezierCurveTo(285, colY + 80, 215, colY + 80, 215, colY + 30);
+    ctx.stroke();
+    // Saucer
+    ctx.beginPath();
+    ctx.moveTo(200, colY + 85);
+    ctx.lineTo(300, colY + 85);
+    ctx.stroke();
+    // Steam
+    ctx.beginPath();
+    ctx.moveTo(240, colY + 15);
+    ctx.quadraticCurveTo(235, colY - 5, 240, colY - 15);
+    ctx.moveTo(260, colY + 15);
+    ctx.quadraticCurveTo(265, colY - 5, 260, colY - 15);
+    ctx.stroke();
+
+    // Icon 2: Candle (x = 512)
+    ctx.beginPath();
+    ctx.strokeRect(487, colY + 15, 50, 70);
+    // Teardrop flame
+    ctx.beginPath();
+    ctx.moveTo(512, colY + 10);
+    ctx.lineTo(512, colY - 5);
+    ctx.moveTo(512, colY - 5);
+    ctx.bezierCurveTo(502, colY - 20, 506, colY - 35, 512, colY - 45);
+    ctx.bezierCurveTo(518, colY - 35, 522, colY - 20, 512, colY - 5);
+    ctx.stroke();
+
+    // Icon 3: Potted Plant / Seed Sprout (x = 774)
+    // Pot
+    ctx.beginPath();
+    ctx.moveTo(745, colY + 35);
+    ctx.lineTo(803, colY + 35);
+    ctx.lineTo(793, colY + 85);
+    ctx.lineTo(755, colY + 85);
+    ctx.closePath();
+    ctx.stroke();
+    // Sprout Stem & 2 Leaves
+    ctx.beginPath();
+    ctx.moveTo(774, colY + 35);
+    ctx.lineTo(774, colY - 25);
+    ctx.stroke();
+    // Leaves
+    ctx.beginPath();
+    ctx.ellipse(756, colY - 12, 18, 10, -0.4, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.ellipse(792, colY - 12, 18, 10, 0.4, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Step Text Below Each Icon
+    ctx.fillStyle = '#2b2326';
+    ctx.font = '600 28px "Plus Jakarta Sans", sans-serif';
+
+    ctx.fillText('1. Sip', 250, 470);
+    ctx.fillText('herbal tea', 250, 510);
+
+    ctx.fillText('2. Light', 512, 470);
+    ctx.fillText('the candle', 512, 510);
+
+    ctx.fillText('3. Plant', 774, 470);
+    ctx.fillText('the seed', 774, 510);
+
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.generateMipmaps = true;
+    texture.minFilter = THREE.LinearMipmapLinearFilter;
+    return texture;
   },
 
-  // 11. Greeting Card Texture
-  createGreetingCardTexture() {
-    if (typeof TEXTURE_ASSETS !== 'undefined' && TEXTURE_ASSETS.pink_greeting) {
-      const img = new Image();
-      const texture = new THREE.Texture(img);
-      img.onload = () => { texture.needsUpdate = true; };
-      img.src = TEXTURE_ASSETS.pink_greeting;
-      return texture;
+  // 14. Mini Photo "For you ♡" Texture (Exact Match with Photo 2: Sunset over purple flower field)
+  createCouplePhotoTexture(edition = 'pink') {
+    const canvas = document.createElement('canvas');
+    canvas.width = 600;
+    canvas.height = 760;
+    const ctx = canvas.getContext('2d');
+
+    // Polaroid white card base
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, 600, 760);
+
+    // Subtle polaroid photo drop shadow & border
+    ctx.strokeStyle = '#eae5df';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(30, 30, 540, 700);
+
+    // Photo Area: x=40, y=40, w=520, h=560
+    const px = 40, py = 40, pw = 520, ph = 560;
+
+    // Sunset Sky Gradient
+    const skyGrad = ctx.createLinearGradient(px, py, px, py + ph);
+    skyGrad.addColorStop(0, '#593b70');    // Deep purple twilight
+    skyGrad.addColorStop(0.35, '#8c4e7c'); // Violet pink
+    skyGrad.addColorStop(0.65, '#de7164'); // Sunset orange coral
+    skyGrad.addColorStop(0.85, '#f5b067'); // Golden amber
+    skyGrad.addColorStop(1, '#ffdf88');    // Bright warm horizon
+    ctx.fillStyle = skyGrad;
+    ctx.fillRect(px, py, pw, ph);
+
+    // Glowing Sun
+    const sunX = px + pw * 0.72;
+    const sunY = py + ph * 0.68;
+    const sunGrad = ctx.createRadialGradient(sunX, sunY, 5, sunX, sunY, 80);
+    sunGrad.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
+    sunGrad.addColorStop(0.3, 'rgba(255, 245, 190, 0.8)');
+    sunGrad.addColorStop(0.7, 'rgba(255, 210, 140, 0.35)');
+    sunGrad.addColorStop(1, 'rgba(255, 180, 100, 0)');
+    ctx.fillStyle = sunGrad;
+    ctx.beginPath();
+    ctx.arc(sunX, sunY, 80, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Silhouetted Purple Wildflower Field (Foreground)
+    const flowerCols = ['#5e3561', '#7b4074', '#9e528a', '#432646'];
+    for (let f = 0; f < 35; f++) {
+      const fx = px + Math.random() * pw;
+      const fh = 140 + Math.random() * 260;
+      const fy = py + ph - fh;
+
+      // Stem
+      ctx.strokeStyle = '#382236';
+      ctx.lineWidth = 3.5;
+      ctx.beginPath();
+      ctx.moveTo(fx, py + ph);
+      ctx.quadraticCurveTo(fx + (Math.random() - 0.5) * 40, py + ph - fh * 0.5, fx, fy);
+      ctx.stroke();
+
+      // Flower Bloom
+      ctx.fillStyle = flowerCols[Math.floor(Math.random() * flowerCols.length)];
+      const numPetals = 8;
+      const flowerR = 14 + Math.random() * 18;
+      for (let p = 0; p < numPetals; p++) {
+        const ang = (p / numPetals) * Math.PI * 2;
+        ctx.beginPath();
+        ctx.ellipse(fx + Math.cos(ang) * flowerR * 0.6, fy + Math.sin(ang) * flowerR * 0.6, flowerR * 0.55, flowerR * 0.28, ang, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Flower Center
+      ctx.fillStyle = '#ffcf52';
+      ctx.beginPath();
+      ctx.arc(fx, fy, flowerR * 0.25, 0, Math.PI * 2);
+      ctx.fill();
     }
 
-    const canvas = document.createElement('canvas');
-    canvas.width = 400;
-    canvas.height = 600;
-    const ctx = canvas.getContext('2d');
-    ctx.fillStyle = '#fde6ed';
-    ctx.fillRect(0, 0, 400, 600);
-    return new THREE.CanvasTexture(canvas);
+    // Dense Grass / Horizon Base
+    const grassGrad = ctx.createLinearGradient(px, py + ph - 80, px, py + ph);
+    grassGrad.addColorStop(0, 'rgba(45, 24, 45, 0)');
+    grassGrad.addColorStop(1, 'rgba(35, 18, 35, 0.95)');
+    ctx.fillStyle = grassGrad;
+    ctx.fillRect(px, py + ph - 80, pw, 80);
+
+    // Handwritten Script: "For you ♡" on bottom Polaroid margin
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#2d2627';
+    ctx.font = 'italic 500 52px "Playfair Display", Georgia, cursive, serif';
+    try { ctx.letterSpacing = '3px'; } catch (e) {}
+    ctx.fillText('For you ♡', 300, 685);
+
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.generateMipmaps = true;
+    texture.minFilter = THREE.LinearMipmapLinearFilter;
+    return texture;
   },
 
   createBunnyBumpTexture() {
@@ -723,22 +1127,5 @@ const TextureManager = {
     texture.wrapT = THREE.RepeatWrapping;
     texture.repeat.set(6, 6);
     return texture;
-  },
-
-  createCouplePhotoTexture(edition = 'pink') {
-    if (typeof TEXTURE_ASSETS !== 'undefined' && TEXTURE_ASSETS.item_photo) {
-      const img = new Image();
-      const texture = new THREE.Texture(img);
-      img.onload = () => { texture.needsUpdate = true; };
-      img.src = TEXTURE_ASSETS.item_photo;
-      return texture;
-    }
-    const canvas = document.createElement('canvas');
-    canvas.width = 400;
-    canvas.height = 480;
-    const ctx = canvas.getContext('2d');
-    ctx.fillStyle = '#faf7f2';
-    ctx.fillRect(0, 0, 400, 480);
-    return new THREE.CanvasTexture(canvas);
   }
 };

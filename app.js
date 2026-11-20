@@ -11,20 +11,12 @@ class App3D {
     this.drawer = document.getElementById('detail-drawer');
     this.menuPanel = document.getElementById('floating-controls');
 
-    // Camera preset views (Optimized with high top-down angle, comfortable distance & viewport offset)
+    // Camera preset views (High top-down angle, looking directly down into the box tray)
     this.cameraPresets = {
-      overview: { pos: new THREE.Vector3(0, 24, 28), target: new THREE.Vector3(0, 2.2, 0) },
-      top: { pos: new THREE.Vector3(0, 36, 0.5), target: new THREE.Vector3(0, 1.8, 0) },
-      front: { pos: new THREE.Vector3(0, 16, 24), target: new THREE.Vector3(0, 3.0, 1.0) },
-      bunny: { pos: new THREE.Vector3(-1.8, 18.0, 11.5), target: new THREE.Vector3(-1.8, 2.5, -0.2) },
-      candle: { pos: new THREE.Vector3(-8.2, 18.0, 7.5), target: new THREE.Vector3(-8.2, 2.5, -4.5) },
-      teajar: { pos: new THREE.Vector3(-8.2, 18.0, 12.8), target: new THREE.Vector3(-8.2, 2.5, 0.8) },
-      diffuser: { pos: new THREE.Vector3(5.5, 18.0, 7.5), target: new THREE.Vector3(5.5, 2.5, -4.5) },
-      photo: { pos: new THREE.Vector3(5.5, 18.0, 12.8), target: new THREE.Vector3(5.5, 2.5, 0.8) },
-      letter: { pos: new THREE.Vector3(-6.5, 18.0, 18.2), target: new THREE.Vector3(-6.5, 2.5, 6.2) },
-      card: { pos: new THREE.Vector3(3.5, 18.0, 18.2), target: new THREE.Vector3(3.5, 2.5, 6.2) },
-      greeting: { pos: new THREE.Vector3(16.5, 18.0, 14.0), target: new THREE.Vector3(17.5, 3.8, 2.0) },
-      box: { pos: new THREE.Vector3(15, 20, 24), target: new THREE.Vector3(0, 3.0, 0) }
+      overview: { pos: new THREE.Vector3(0, 36.0, 8.5), target: new THREE.Vector3(0, 2.0, 0.5) },
+      top: { pos: new THREE.Vector3(0, 38.0, 0.5), target: new THREE.Vector3(0, 2.0, 0.5) },
+      front: { pos: new THREE.Vector3(0, 24.0, 22.0), target: new THREE.Vector3(0, 2.0, 0) },
+      box: { pos: new THREE.Vector3(12, 28, 22), target: new THREE.Vector3(0, 2.0, 0) }
     };
 
     // Camera animation state
@@ -76,10 +68,10 @@ class App3D {
     this.scene.fog = new THREE.FogExp2(0x281f25, 0.012);
 
     const aspect = window.innerWidth / window.innerHeight;
-    const baseFov = aspect < 1.0 ? 52 : 40;
+    const baseFov = aspect < 1.0 ? 62 : 40;
     this.camera = new THREE.PerspectiveCamera(baseFov, aspect, 0.1, 1000);
 
-    const initialFit = this.getFitPosition(this.cameraPresets.overview.pos, this.cameraPresets.overview.target, 34.0);
+    const initialFit = this.getFitPosition(this.cameraPresets.overview.pos, this.cameraPresets.overview.target, 31.0);
     this.camera.position.copy(initialFit.pos);
 
     this.renderer = new THREE.WebGLRenderer({
@@ -109,13 +101,13 @@ class App3D {
   }
 
   // Dynamic camera positioning: guarantees that a bounding width fits completely with generous margins on any screen/phone
-  getFitPosition(basePos, target, fitWidth = 34.0) {
+  getFitPosition(basePos, target, fitWidth = 31.0) {
     const aspect = this.camera ? this.camera.aspect : (window.innerWidth / window.innerHeight);
     if (aspect >= 1.0) {
       return { pos: basePos.clone(), target: target.clone() };
     }
 
-    const currentFov = this.camera ? this.camera.fov : 52;
+    const currentFov = this.camera ? this.camera.fov : 62;
     const halfFovVRad = THREE.MathUtils.degToRad(currentFov / 2);
     const tanHalfH = aspect * Math.tan(halfFovVRad);
     const requiredDist = (fitWidth / 2) / Math.max(tanHalfH, 0.001);
@@ -125,8 +117,6 @@ class App3D {
     const actualDist = Math.max(currentDist, requiredDist);
 
     const adjustedTarget = target.clone();
-    adjustedTarget.y += 0.6; // Slightly lift target for mobile bottom drawer clearance
-
     const pos = adjustedTarget.clone().add(dir.multiplyScalar(actualDist));
     return { pos, target: adjustedTarget };
   }
@@ -411,7 +401,7 @@ class App3D {
       this.selectedProductId = 'box';
       const info = ProductData.box;
       this.giftBoxScene.isolateProduct(null, false);
-      const fitBox = this.getFitPosition(this.cameraPresets.box.pos, this.cameraPresets.box.target, 34.0);
+      const fitBox = this.getFitPosition(this.cameraPresets.box.pos, this.cameraPresets.box.target, 31.0);
       this.glideCameraTo(fitBox.pos, fitBox.target, 0.85);
       this.showDrawer(info, false);
       this.updateShelfActive('box');
@@ -433,11 +423,18 @@ class App3D {
     // Elevate and separate product out of the box into individual inspection view
     this.giftBoxScene.isolateProduct(productId, true);
 
-    // Frame camera directly on the floating isolated product (Y = 11.2)
-    const inspectTarget = new THREE.Vector3(0, 11.2, 0);
-    const inspectCamPos = new THREE.Vector3(0, 13.5, 17.5);
-    const fitInspect = this.getFitPosition(inspectCamPos, inspectTarget, 16.0);
+    const isFlat = ['letter', 'photo', 'card', 'greeting'].includes(productId);
 
+    // Frame camera directly on the floating isolated product (Y = 8.5)
+    const inspectTarget = new THREE.Vector3(0, 8.5, 0);
+
+    // For flat items (letter, photo, card): view from direct top-down angle so item lays flat and user looks straight down
+    // For 3D items: view from front elevated studio angle (360° rotation)
+    const inspectCamPos = isFlat 
+      ? new THREE.Vector3(0, 24.0, 0.4) 
+      : new THREE.Vector3(0, 11.2, 13.5);
+
+    const fitInspect = this.getFitPosition(inspectCamPos, inspectTarget, isFlat ? 14.5 : 15.0);
     this.glideCameraTo(fitInspect.pos, fitInspect.target, 0.85);
 
     this.showDrawer(info, true);
@@ -462,6 +459,18 @@ class App3D {
       specsContainer.appendChild(row);
     });
 
+    const viewControls = document.getElementById('drawer-view-controls');
+    if (viewControls) {
+      viewControls.style.display = isIsolated ? 'flex' : 'none';
+      const isFlat = ['letter', 'photo', 'card', 'greeting'].includes(this.selectedProductId);
+      const btnTopDown = document.getElementById('btn-inspect-topdown');
+      const btnFront = document.getElementById('btn-inspect-front');
+      if (btnTopDown && btnFront) {
+        btnTopDown.classList.toggle('active', isFlat);
+        btnFront.classList.toggle('active', !isFlat);
+      }
+    }
+
     const backBtn = document.getElementById('drawer-back-btn');
     if (backBtn) {
       backBtn.innerText = isIsolated ? '← Đặt Lại Vào Hộp Quà' : 'Quay Lại Toàn Cảnh 3D';
@@ -484,7 +493,7 @@ class App3D {
   resetToOverview() {
     this.selectedProductId = null;
     this.giftBoxScene.isolateProduct(null, false);
-    const fitOverview = this.getFitPosition(this.cameraPresets.overview.pos, this.cameraPresets.overview.target, 34.0);
+    const fitOverview = this.getFitPosition(this.cameraPresets.overview.pos, this.cameraPresets.overview.target, 31.0);
     this.glideCameraTo(fitOverview.pos, fitOverview.target, 0.9);
     this.drawer.classList.remove('visible');
     document.querySelectorAll('.shelf-item-pill').forEach(pill => pill.classList.remove('active'));
@@ -614,6 +623,32 @@ class App3D {
     document.getElementById('drawer-close').addEventListener('click', () => this.resetToOverview());
     document.getElementById('drawer-back-btn').addEventListener('click', () => this.resetToOverview());
 
+    // Inspection view toggle buttons (Top-Down vs 3D Front View)
+    const btnInspectTopDown = document.getElementById('btn-inspect-topdown');
+    const btnInspectFront = document.getElementById('btn-inspect-front');
+
+    if (btnInspectTopDown && btnInspectFront) {
+      btnInspectTopDown.addEventListener('click', () => {
+        btnInspectTopDown.classList.add('active');
+        btnInspectFront.classList.remove('active');
+        const inspectTarget = new THREE.Vector3(0, 8.5, 0);
+        const inspectCamPos = new THREE.Vector3(0, 24.0, 0.4);
+        const fit = this.getFitPosition(inspectCamPos, inspectTarget, 14.5);
+        this.glideCameraTo(fit.pos, fit.target, 0.7);
+        this.playClickSound();
+      });
+
+      btnInspectFront.addEventListener('click', () => {
+        btnInspectFront.classList.add('active');
+        btnInspectTopDown.classList.remove('active');
+        const inspectTarget = new THREE.Vector3(0, 8.5, 0);
+        const inspectCamPos = new THREE.Vector3(0, 11.2, 13.5);
+        const fit = this.getFitPosition(inspectCamPos, inspectTarget, 15.0);
+        this.glideCameraTo(fit.pos, fit.target, 0.7);
+        this.playClickSound();
+      });
+    }
+
     // Screenshot Capture
     document.getElementById('btn-screenshot').addEventListener('click', () => this.takeScreenshot());
 
@@ -714,23 +749,26 @@ class App3D {
     this.camera.aspect = aspect;
 
     // Mobile adaptive FOV & Frustum fit
-    this.camera.fov = aspect < 1.0 ? 52 : 40;
+    this.camera.fov = aspect < 1.0 ? 60 : 40;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(w, h);
 
     // If currently at overview or box view, maintain perfect framing without clipping
     if (!this.selectedProductId && !this.isCameraAnimating) {
-      const fit = this.getFitPosition(this.cameraPresets.overview.pos, this.cameraPresets.overview.target, 34.0);
+      const fit = this.getFitPosition(this.cameraPresets.overview.pos, this.cameraPresets.overview.target, 31.0);
       this.camera.position.copy(fit.pos);
       this.controls.target.copy(fit.target);
     } else if (this.selectedProductId === 'box' && !this.isCameraAnimating) {
-      const fit = this.getFitPosition(this.cameraPresets.box.pos, this.cameraPresets.box.target, 34.0);
+      const fit = this.getFitPosition(this.cameraPresets.box.pos, this.cameraPresets.box.target, 31.0);
       this.camera.position.copy(fit.pos);
       this.controls.target.copy(fit.target);
     } else if (this.selectedProductId && !this.isCameraAnimating) {
-      const inspectTarget = new THREE.Vector3(0, 11.2, 0);
-      const inspectCamPos = new THREE.Vector3(0, 13.5, 17.5);
-      const fitInspect = this.getFitPosition(inspectCamPos, inspectTarget, 16.0);
+      const isFlat = ['letter', 'photo', 'card', 'greeting'].includes(this.selectedProductId);
+      const inspectTarget = new THREE.Vector3(0, 8.5, 0);
+      const inspectCamPos = isFlat 
+        ? new THREE.Vector3(0, 24.0, 0.4) 
+        : new THREE.Vector3(0, 11.2, 13.5);
+      const fitInspect = this.getFitPosition(inspectCamPos, inspectTarget, isFlat ? 14.5 : 15.0);
       this.camera.position.copy(fitInspect.pos);
       this.controls.target.copy(fitInspect.target);
     }

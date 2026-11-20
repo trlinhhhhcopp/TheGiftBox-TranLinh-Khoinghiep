@@ -23,47 +23,47 @@ const ProductData = {
   },
   candle: {
     id: 'candle',
-    name: 'Nến Thơm Cao Cấp "The Gift / Mama Blend"',
-    subtitle: 'Aroma Soy Candle · Sáp đậu nành thiên nhiên & bấc cotton tinh khiết',
-    tag: 'Sáp Đậu Nành · Hương Thơm Thư Giãn',
+    name: 'Nến Thơm Lavender "The Gift"',
+    subtitle: 'Aroma Soy Candle · Sáp đậu nành thiên nhiên hương hoa Lavender thư thái',
+    tag: 'Sáp Đậu Nành · Hương Lavender Dịu Ngọt',
     icon: '🕯️',
     color: '#f0b0c2',
-    desc: 'Hũ nến thủy tinh nắp gỗ tự nhiên chứa sáp đậu nành màu hồng pastel hương hoa oải hương (Lavender) dịu ngọt ở bản Hồng, hoặc ly gốm sa thạch Mama Blend ở bản Trắng. Tỏa hương ấm áp, giúp xoa dịu tâm trí sau ngày dài.',
+    desc: 'Hũ nến thủy tinh nắp gỗ tự nhiên chứa sáp đậu nành màu hồng pastel hương hoa oải hương (Lavender) dịu ngọt kèm nhãn THE GIFT Lavender ♥. Tỏa hương ấm áp, giúp xoa dịu tâm trí và mang lại giấc ngủ an lành.',
     specs: [
-      { label: 'Vỏ nến', value: 'Hũ thủy tinh chịu nhiệt nắp gỗ tự nhiên / Ly gốm sa thạch' },
-      { label: 'Sáp & Bấc', value: '100% sáp đậu nành tự nhiên, bấc cotton không khói độc' },
-      { label: 'Hương thơm', value: 'Hoa oải hương Lavender thư thái / Gỗ tuyết tùng & hoa nhài' },
-      { label: 'Thời gian cháy', value: 'Khoảng 25 - 30 giờ cháy sạch và tỏa hương' }
+      { label: 'Vỏ nến', value: 'Hũ thủy tinh trong suốt nắp gỗ tiện tự nhiên' },
+      { label: 'Sáp & Bấc', value: '100% sáp đậu nành thiên nhiên màu hồng phấn, bấc cotton sạch' },
+      { label: 'Hương thơm', value: 'Hoa oải hương Lavender tinh khiết dịu nhẹ thư thái' },
+      { label: 'Thời gian cháy', value: 'Khoảng 25 - 30 giờ cháy sạch tỏa hương đều' }
     ]
   },
   teajar: {
     id: 'teajar',
-    name: 'Lọ Trà Hoa Nắp Gỗ Kín Khí',
-    subtitle: 'Herbal Tea Jar · Trà hoa cúc La Mã Chamomile / Nụ hoa hồng Pháp',
-    tag: 'Trà Thảo Mộc Sạch · Nắp Gỗ Kín Khí',
+    name: 'Lọ Trà Cúc Chamomile "The Gift"',
+    subtitle: 'Herbal Tea Jar · Trà hoa cúc La Mã sấy khô nguyên bông & nắp gỗ kín khí',
+    tag: 'Trà Cúc La Mã Sạch · Nắp Gỗ Kín Khí',
     icon: '🍵',
     color: '#dfa25b',
-    desc: 'Lọ thủy tinh trong suốt nắp gỗ kín khí giữ trọn vị hoa cúc La Mã (Chamomile Tea) sấy khô nguyên bông thơm ngát hoặc nụ hoa hồng Pháp dưỡng nhan. Thức uống thanh lành giúp ngủ sâu và nuôi dưỡng cảm xúc tích cực.',
+    desc: 'Lọ thủy tinh trong suốt nắp gỗ kín khí giữ trọn vị hoa cúc La Mã vàng (Chamomile Tea) sấy khô nguyên bông thơm ngát, dán nhãn THE GIFT Chamomile Tea ♥. Thức uống thanh lành giúp thư giãn sâu và nuôi dưỡng cảm xúc tích cực.',
     specs: [
       { label: 'Chất liệu lọ', value: 'Thủy tinh borosilicate trong suốt, nắp gỗ tiện vân tự nhiên' },
-      { label: 'Loại trà', value: 'Hoa cúc La Mã vàng nguyên bông (Bản Hồng) / Hoa hồng Pháp (Bản Trắng)' },
+      { label: 'Loại trà', value: 'Hoa cúc La Mã vàng nguyên bông sấy lạnh giữ trọn hương' },
       { label: 'Công dụng', value: 'Thanh nhiệt, an thần, hỗ trợ giấc ngủ ngon và đẹp da' },
       { label: 'Cách dùng', value: 'Hãm 3-5g hoa với nước sôi 90°C trong 5 phút' }
     ]
   },
   diffuser: {
     id: 'diffuser',
-    name: 'Bếp / Đá Gốm Xông Tinh Dầu Men Ngà',
-    subtitle: 'Handmade Ceramic Aroma Diffuser Stone · Men gốm thủ công hữu cơ',
-    tag: 'Gốm Sứ Thủ Công · Tĩnh Tâm Trị Liệu',
+    name: 'Bếp Gốm Xông Tinh Dầu "The Gift"',
+    subtitle: 'Handmade Ceramic Aroma Diffuser · Triện khắc The Gift & men ngà thủ công',
+    tag: 'Gốm Sứ Thủ Công · Triện Khắc The Gift',
     icon: '🏺',
     color: '#e8e2d5',
-    desc: 'Được chế tác thủ công với những đường cong mềm mại uốn lượn, lớp men gốm màu ngà thanh lịch. Khoang dưới đặt nến tealight làm ấm đĩa chứa tinh dầu phía trên, khuyếch tán hương thơm ấm áp khắp căn phòng.',
+    desc: 'Được chế tác thủ công với những đường cong mềm mại uốn lượn, lớp men gốm màu ngà thanh lịch dập triện tròn THE GIFT ở góc chân. Khoang dưới đặt nến tealight làm ấm đĩa chứa tinh dầu phía trên, khuyếch tán hương thơm ấm áp.',
     specs: [
-      { label: 'Chất liệu', value: 'Gốm sứ cao cấp tráng men ngà bán bóng' },
+      { label: 'Chất liệu', value: 'Gốm sứ cao cấp tráng men ngà bán bóng thủ công' },
       { label: 'Thiết kế', value: 'Vòm đón nến tealight, lỗ thông khí phía trên' },
-      { label: 'Đĩa chứa', value: 'Lòng trũng sâu giữ nước ấm và tinh dầu' },
-      { label: 'Dấu ấn', value: 'Khắc triện nghệ nhân thủ công ở góc chân' }
+      { label: 'Dấu ấn', value: 'Triện tròn "THE GIFT" khắc dập nổi tinh tế' },
+      { label: 'Công năng', value: 'Xông tinh dầu thư giãn, trang trí bàn trà hoặc phòng ngủ' }
     ]
   },
   letter: {
@@ -83,31 +83,31 @@ const ProductData = {
   },
   photo: {
     id: 'photo',
-    name: 'Khung Ảnh Kỷ Niệm "For You" & Dải Ruy Băng',
-    subtitle: 'Mini Personalized Photo · Lưu giữ khoảnh khắc hoàng hôn & đồng hoa',
-    tag: 'Kỷ Niệm Cá Nhân · Ruy Băng Lụa Satin',
+    name: 'Khung Ảnh Hoàng Hôn "For you ♡"',
+    subtitle: 'Mini Personalized Photo · Ảnh hoàng hôn trên cánh đồng hoa tím & lời chúc "For you ♡"',
+    tag: 'Ảnh Polaroid · "For you ♡"',
     icon: '🖼️',
     color: '#e59fb0',
-    desc: 'Tấm ảnh kỷ niệm mini phong cách Polaroid viền trắng trang nhã, in ảnh hoàng hôn trên cánh đồng hoa lãng mạn cùng lời chúc "For you ♡". Dải ruy băng lụa satin màu hồng tro mềm mại vắt ngang đầy chất thơ.',
+    desc: 'Tấm ảnh kỷ niệm mini phong cách Polaroid viền trắng trang nhã, in ảnh hoàng hôn rực rỡ trên cánh đồng hoa tím cùng dòng chữ viết tay "For you ♡". Dải ruy băng lụa satin màu hồng phấn tro mềm mại vắt ngang đầy chất thơ.',
     specs: [
-      { label: 'Khung ảnh', value: 'Khổ mini polaroid, giấy ảnh bóng chất lượng cao' },
+      { label: 'Khung ảnh', value: 'Khổ mini polaroid, viền trắng mỹ thuật' },
+      { label: 'Nội dung ảnh', value: 'Hoàng hôn rực rỡ trên cánh đồng hoa cúc tím' },
       { label: 'Lời đề tặng', value: '"For you ♡" viết tay tinh tế' },
-      { label: 'Ruy băng', value: 'Lụa satin cao cấp màu hồng phấn tro (Dusty Pink)' },
-      { label: 'Tùy biến', value: 'Có thể thay ảnh của bạn và người thương' }
+      { label: 'Ruy băng', value: 'Lụa satin cao cấp màu hồng tro (Dusty Pink)' }
     ]
   },
   card: {
     id: 'card',
-    name: 'Thẻ Hướng Dẫn "3-Step Ritual Card"',
-    subtitle: 'For Your Healing Journey · 3 bước liệu trình tự chữa lành và nuôi dưỡng',
-    tag: 'Typography Cao Cấp · Liệu Trình 3 Bước',
+    name: 'Thẻ Liệu Trình 3 Bước "3-Step Ritual Card"',
+    subtitle: 'For Your Healing Journey · 1. Sip herbal tea - 2. Light candle - 3. Plant seed',
+    tag: 'Typography Sang Trọng · Liệu Trình Tự Chữa Lành',
     icon: '📜',
     color: '#e0abbc',
-    desc: 'Tấm thiệp hồng in typography hướng dẫn 3 bước chăm sóc bản thân: 1. Sip herbal tea (Thưởng trà) - 2. Light the candle (Thắp nến) - 3. Plant the seed (Gieo mầm cây), mang lại sự cân bằng trọn vẹn trong tâm hồn.',
+    desc: 'Tấm thiệp hồng pastel in typography hướng dẫn 3 bước chăm sóc bản thân: 1. Sip herbal tea (Thưởng trà thảo mộc) - 2. Light the candle (Thắp ngọn nến thơm) - 3. Plant the seed (Gieo mầm nở hoa), mang lại sự cân bằng trọn vẹn trong tâm hồn.',
     specs: [
-      { label: 'Chất liệu', value: 'Giấy mỹ thuật Cotton Cardstock 350gsm màu hồng phấn' },
-      { label: 'Nội dung', value: 'Liệu trình 3 bước thư giãn phục hồi năng lượng' },
-      { label: 'Minh họa', value: 'Biểu tượng tách trà, ngọn nến và mầm cây hoa pastel' },
+      { label: 'Chất liệu', value: 'Giấy mỹ thuật Cotton Cardstock màu hồng phấn' },
+      { label: 'Nội dung', value: 'Liệu trình 3 bước thư giãn & phục hồi năng lượng' },
+      { label: 'Họa tiết', value: 'Biểu tượng tách trà, ngọn nến, chậu cây & 4 góc trái tim hồng' },
       { label: 'Kích thước', value: '14cm x 9cm' }
     ]
   },
@@ -732,7 +732,7 @@ class GiftBoxScene {
     mctx.font = '500 28px "Georgia", serif';
     mctx.fillText('A Little Hug', 256, 355);
 
-    const medalTex = new THREE.CanvasTexture(medalCanvas);
+    const medalTex = TextureManager.createMedalTexture();
     const medalMat = new THREE.MeshStandardMaterial({
       map: medalTex,
       roughness: 0.35,
@@ -881,13 +881,20 @@ class GiftBoxScene {
     this.teaMesh = teaMesh;
 
     const flowerMat = new THREE.MeshStandardMaterial({ color: 0xdfb466, roughness: 0.7 });
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 28; i++) {
       const bud = new THREE.Mesh(new THREE.SphereGeometry(0.24, 10, 8), flowerMat);
       const angle = Math.random() * Math.PI * 2;
       const dist = Math.random() * (jarR - 0.45);
       bud.position.set(Math.cos(angle) * dist, jarH - 0.5 + Math.random() * 0.15, Math.sin(angle) * dist);
       jarGroup.add(bud);
     }
+
+    // Front Label: THE GIFT - Chamomile Tea - ♥ (Photo 2)
+    const teaLabelTex = TextureManager.createTeaJarLabelTexture(this.currentEdition);
+    const teaLabelMat = new THREE.MeshStandardMaterial({ map: teaLabelTex, roughness: 0.5 });
+    const teaLabelMesh = new THREE.Mesh(new THREE.PlaneGeometry(2.3, 1.7), teaLabelMat);
+    teaLabelMesh.position.set(0, jarH / 2, jarR + 0.02);
+    jarGroup.add(teaLabelMesh);
 
     jarGroup.position.set(-7.2, 0.85, 0.8);
     jarGroup.userData = {
@@ -944,7 +951,9 @@ class GiftBoxScene {
     vent.rotation.x = -0.15;
     diffuserGroup.add(vent);
 
-    const stamp = new THREE.Mesh(new THREE.CircleGeometry(0.3, 16), new THREE.MeshStandardMaterial({ color: 0xcfc4b0, roughness: 0.6 }));
+    const stampTex = TextureManager.createDiffuserStampTexture();
+    const stampMat = new THREE.MeshStandardMaterial({ map: stampTex, roughness: 0.35 });
+    const stamp = new THREE.Mesh(new THREE.CircleGeometry(0.38, 24), stampMat);
     stamp.position.set(1.15, 0.7, 1.45);
     stamp.rotation.set(-0.2, 0.6, 0);
     diffuserGroup.add(stamp);
@@ -983,9 +992,9 @@ class GiftBoxScene {
     photoGroup.add(rimMesh);
 
     const photoTex = TextureManager.createCouplePhotoTexture(this.currentEdition);
-    const photoMesh = new THREE.Mesh(new THREE.PlaneGeometry(3.6, 3.8), new THREE.MeshStandardMaterial({ map: photoTex, roughness: 0.2 }));
+    const photoMesh = new THREE.Mesh(new THREE.PlaneGeometry(fw - 0.3, fh - 0.3), new THREE.MeshStandardMaterial({ map: photoTex, roughness: 0.3 }));
     photoMesh.rotation.x = -Math.PI / 2;
-    photoMesh.position.set(0, fd / 2 + 0.01, -0.35);
+    photoMesh.position.set(0, fd / 2 + 0.01, 0);
     photoGroup.add(photoMesh);
 
     const ribbonMat = new THREE.MeshStandardMaterial({
@@ -1032,10 +1041,21 @@ class GiftBoxScene {
     const ew = 8.6, eh = 0.2, ed = 4.8;
 
     const seedTex = TextureManager.createSeedPaperTexture(this.currentEdition);
-    const envelope = new THREE.Mesh(new THREE.BoxGeometry(ew, eh, ed), new THREE.MeshStandardMaterial({ map: seedTex, roughness: 0.85 }));
+    const envelope = new THREE.Mesh(
+      new THREE.BoxGeometry(ew, eh, ed),
+      new THREE.MeshStandardMaterial({ color: 0xfaf7f0, roughness: 0.85 })
+    );
     envelope.castShadow = true;
     letterGroup.add(envelope);
-    this.letterMesh = envelope;
+
+    const letterTop = new THREE.Mesh(
+      new THREE.PlaneGeometry(ew, ed),
+      new THREE.MeshStandardMaterial({ map: seedTex, roughness: 0.85 })
+    );
+    letterTop.rotation.x = -Math.PI / 2;
+    letterTop.position.y = eh / 2 + 0.01;
+    letterGroup.add(letterTop);
+    this.letterMesh = letterTop;
 
     const flowerSprigGroup = new THREE.Group();
     const stemMat = new THREE.MeshStandardMaterial({ color: 0x8a7d65, roughness: 0.9 });
@@ -1083,10 +1103,21 @@ class GiftBoxScene {
 
     const cw = 8.6, ch = 0.16, cd = 4.8;
     const cardTex = TextureManager.createRitualCardTexture(this.currentEdition);
-    const cardMesh = new THREE.Mesh(new THREE.BoxGeometry(cw, ch, cd), new THREE.MeshStandardMaterial({ map: cardTex, roughness: 0.75 }));
-    cardMesh.castShadow = true;
-    cardGroup.add(cardMesh);
-    this.cardMesh = cardMesh;
+    const cardBase = new THREE.Mesh(
+      new THREE.BoxGeometry(cw, ch, cd),
+      new THREE.MeshStandardMaterial({ color: 0xfeeef3, roughness: 0.8 })
+    );
+    cardBase.castShadow = true;
+    cardGroup.add(cardBase);
+
+    const cardTop = new THREE.Mesh(
+      new THREE.PlaneGeometry(cw, cd),
+      new THREE.MeshStandardMaterial({ map: cardTex, roughness: 0.65 })
+    );
+    cardTop.rotation.x = -Math.PI / 2;
+    cardTop.position.y = ch / 2 + 0.01;
+    cardGroup.add(cardTop);
+    this.cardMesh = cardTop;
 
     cardGroup.position.set(5.2, 1.95, 6.2);
     cardGroup.userData = {
@@ -1289,26 +1320,20 @@ class GiftBoxScene {
         if (!prod || !prod.userData || !prod.userData.basePos) continue;
 
         if (key === this.isolatedProductId) {
-          // Floating high above the box center for 360 inspection
-          const floatY = 11.2 + Math.sin(elapsed * 2.5) * 0.22;
+          // Floating gracefully above the box center for 360 inspection (Y = 8.5)
+          const floatY = 8.5 + Math.sin(elapsed * 2.0) * 0.12;
           prod.position.x = THREE.MathUtils.lerp(prod.position.x, 0, 0.08);
           prod.position.y = THREE.MathUtils.lerp(prod.position.y, floatY, 0.08);
           prod.position.z = THREE.MathUtils.lerp(prod.position.z, 0, 0.08);
 
-          // Optimal inspection angle
-          if (key === 'letter' || key === 'card') {
-            prod.rotation.x = THREE.MathUtils.lerp(prod.rotation.x, 0.26, 0.08);
-          } else if (key === 'greeting') {
-            prod.rotation.x = THREE.MathUtils.lerp(prod.rotation.x, 0.0, 0.08);
-            prod.rotation.y = THREE.MathUtils.lerp(prod.rotation.y, 0.0, 0.08);
-            prod.rotation.z = THREE.MathUtils.lerp(prod.rotation.z, 0.0, 0.08);
-          } else if (prod.userData.baseRot) {
-            prod.rotation.x = THREE.MathUtils.lerp(prod.rotation.x, prod.userData.baseRot.x, 0.08);
-            prod.rotation.y = THREE.MathUtils.lerp(prod.rotation.y, prod.userData.baseRot.y, 0.08);
-            prod.rotation.z = THREE.MathUtils.lerp(prod.rotation.z, prod.userData.baseRot.z, 0.08);
-          }
+          // Optimal inspection angle:
+          // Flat items (letter, photo, card): lay flat horizontally (rotation = 0, 0, 0)
+          // Upright items (bunny, candle, teajar, diffuser): stand upright facing front (rotation = 0, 0, 0)
+          prod.rotation.x = THREE.MathUtils.lerp(prod.rotation.x, 0, 0.08);
+          prod.rotation.y = THREE.MathUtils.lerp(prod.rotation.y, 0, 0.08);
+          prod.rotation.z = THREE.MathUtils.lerp(prod.rotation.z, 0, 0.08);
 
-          prod.scale.lerp(new THREE.Vector3(1.15, 1.15, 1.15), 0.08);
+          prod.scale.lerp(new THREE.Vector3(1.18, 1.18, 1.18), 0.08);
         } else {
           // Keep other items resting peacefully in their slots
           const bp = prod.userData.basePos;

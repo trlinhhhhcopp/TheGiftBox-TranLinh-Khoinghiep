@@ -1,6 +1,6 @@
 # The Gift Box "Giấy Gieo Hạt" · 3D Interactive Web Viewer
 
-> **Author:** Trần Linh  
+> **Web author:** Trần Linh  
 > **Trải nghiệm 3D 360° tương tác chân thực dành cho bộ quà tặng cao cấp "Giấy Gieo Hạt" / "THE GIFT".**
 
 ---
@@ -9,18 +9,20 @@
 
 - **Không gian 3D 360° tương tác:** Xoay tự do mọi góc độ, phóng to thu nhỏ mượt mà.
 - **Cơ chế đóng / mở nắp nam châm chân thực:** Khám phá vỏ hộp quà pastel với nắp gập nam châm; nhấp mở nắp để thưởng lãm trọn bộ 7 món quà bên trong.
-- **Mô phỏng 3D chi tiết từng sản phẩm:**
-  1. 🐰 **Chú Thỏ Bông Thủ Công:** Mắt hạt cườm đen long lanh bắt sáng, mũi tim thêu hồng baby, nụ cười chúm chím, tai dài mềm mại rũ hai bên vai, nơ lụa satin hồng phấn kèm huy hiệu tròn "THE GIFT".
-  2. 🕯️ **Nến Thơm Cao Cấp "Mama Blend":** Sáp đậu nành thiên nhiên, hũ thủy tinh nắp gỗ hoặc ly sa thạch cao cấp.
-  3. 🍵 **Lọ Trà Hoa Hồng Nắp Gỗ:** Thủy tinh trong suốt chịu nhiệt với nụ hoa hồng khô tự nhiên.
-  4. 🏺 **Bếp Gốm Xông Tinh Dầu:** Gốm thủ công men mộc, tỏa ánh sáng vàng ấm cúng.
-  5. 🖼️ **Khung Ảnh Kỷ Niệm & Ruy Băng Lụa:** Khung ảnh polaroid viền mạ vàng với dải ruy băng lụa satin hồng uốn lượn.
-  6. 💌 **Thư Giấy Gieo Hạt & Dấu Sáp:** Giấy mỹ thuật thủ công chứa hạt giống hoa dại, niêm phong dấu sáp hồng dập nổi và nhành hoa baby khô.
-  7. 📜 **Thẻ Liệu Trình 3 Bước:** Hướng dẫn nghi thức chữa lành tinh tế.
-  8. 🌸 **Thiệp "The Gift":** Tấm thiệp đứng trang trọng gửi gắm trọn vẹn thông điệp yêu thương.
+- **Góc nhìn tối ưu từ trên xuống (Top-down overview):** Góc camera từ trên xuống giúp quan sát toàn bộ các sản phẩm trong khay hộp mà không bị thành hộp che chắn.
+- **Chế độ tách riêng sản phẩm (Inspect mode):** Khi nhấp vào từng món quà, sản phẩm được nâng lên độc lập; các sản phẩm phẳng (thư, ảnh, thẻ liệu trình) nằm phẳng chuẩn góc nhìn từ trên xuống; chuyển đổi linh hoạt giữa góc nhìn 3D và góc nhìn từ trên xuống.
+- **Mô phỏng 3D chi tiết từng sản phẩm theo Ảnh mẫu 2:**
+  1. 🐰 **Chú Thỏ Bông Thủ Công:** Lông tơ mềm mịn, mắt hạt cườm đen long lanh, nơ lụa satin hồng kèm tag tròn dập chữ "THE GIFT ♥".
+  2. 🕯️ **Nến Thơm Lavender "THE GIFT":** Sáp đậu nành màu hồng pastel, hũ thủy tinh nắp gỗ tự nhiên, nhãn THE GIFT Lavender ♥.
+  3. 🍵 **Lọ Trà Cúc Chamomile "THE GIFT":** Thủy tinh trong suốt với nụ hoa cúc La Mã vàng sấy khô nguyên bông, nhãn THE GIFT Chamomile Tea ♥.
+  4. 🏺 **Bếp Gốm Xông Tinh Dầu "THE GIFT":** Gốm thủ công tráng men ngà, triện tròn "THE GIFT" khắc dập nổi ở góc chân.
+  5. 🖼️ **Khung Ảnh Hoàng Hôn "For you ♡":** Ảnh polaroid hoàng hôn rực rỡ trên cánh đồng hoa tím với chữ viết tay "For you ♡" và dải ruy băng lụa satin hồng.
+  6. 💌 **Thư Giấy Gieo Hạt & Dấu Sáp Con Thỏ:** Giấy mỹ thuật thủ công chứa hạt giống hoa dại, niêm phong dấu sáp hồng dập nổi đầu thỏ kèm nhành hoa baby khô.
+  7. 📜 **Thẻ Liệu Trình 3 Bước "3-Step Ritual Card":** Hướng dẫn 3 bước chăm sóc bản thân (1. Sip herbal tea - 2. Light the candle - 3. Plant the seed) với 4 góc trái tim hồng.
+  8. 🎁 **Vỏ Hộp Quà Pastel "THE GIFT":** Bìa hộp pastel với họa tiết ren bèo nhún trái tim, chú thỏ mascot say ngủ và khóa hít nam châm.
 - **2 Phiên bản màu sắc:** Chuyển đổi linh hoạt giữa **Bản Hồng Pastel (Ảnh 3)** và **Bản Trắng Mộc / Linen (Ảnh 1)**.
 - **Ánh sáng Studio ấm áp:** Chế độ ánh sáng nến ấm áp (Candlelight Mood) mặc định kết hợp bụi vàng lung linh.
-- **Tương thích hoàn toàn:** 100% thuần JavaScript & Three.js, hoạt động mượt mà không cần cài đặt server hay backend.
+- **Tương thích hoàn toàn:** 100% thuần JavaScript & Three.js, hoạt động mượt mà trên cả điện thoại di động và máy tính.
 
 ---
 

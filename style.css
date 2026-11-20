@@ -91,16 +91,17 @@ html, body {
 }
 
 .author-badge {
-  background: rgba(255, 255, 255, 0.92);
-  color: #c9355f;
-  font-size: 11.5px;
-  font-weight: 600;
-  letter-spacing: 0.6px;
-  padding: 4px 10px;
-  border-radius: 12px;
-  border: 1px solid rgba(240, 180, 195, 0.6);
+  background: rgba(255, 255, 255, 0.45);
+  color: #a46274;
+  font-size: 7.5px;
+  font-weight: 500;
+  letter-spacing: 0.1px;
+  padding: 1.5px 6px;
+  border-radius: 6px;
+  border: 1px solid rgba(230, 180, 195, 0.35);
   margin-right: 4px;
   white-space: nowrap;
+  opacity: 0.65;
 }
 
 .brand-logo-badge {
@@ -527,6 +528,41 @@ html, body {
   color: #ffffff;
 }
 
+.drawer-view-controls {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.view-pill-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(220, 180, 190, 0.4);
+  border-radius: 20px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.view-pill-btn:hover {
+  background: rgba(253, 219, 229, 0.5);
+  color: var(--accent-pink);
+}
+
+.view-pill-btn.active {
+  background: linear-gradient(135deg, #d3446c, #e05e83);
+  color: #ffffff;
+  border-color: #d3446c;
+  box-shadow: 0 4px 12px rgba(211, 68, 108, 0.25);
+}
+
 .drawer-desc {
   font-size: 13.5px;
   line-height: 1.6;
@@ -700,9 +736,10 @@ html, body {
   }
 
   .author-badge {
-    font-size: 10.5px;
-    padding: 3px 8px;
+    font-size: 7px;
+    padding: 1px 5px;
     margin-right: 0;
+    opacity: 0.6;
   }
 
   .brand-logo-badge {
@@ -838,7 +875,9 @@ html, body {
   }
 
   .author-badge {
-    font-size: 10px;
+    font-size: 7px;
+    padding: 1px 4px;
+    opacity: 0.6;
   }
 
   .brand-logo-badge {
