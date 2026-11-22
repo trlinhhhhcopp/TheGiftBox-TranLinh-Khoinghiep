@@ -5,13 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Gift Box "Giấy Gieo Hạt" - Trải Nghiệm 3D 360° Tương Tác</title>
   
+  <!-- Meta Tags for Anti-Caching and Mobile Viewport -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+
   <!-- Google Fonts: Plus Jakarta Sans & Playfair Display -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   
-  <!-- CSS Stylesheet -->
-  <link rel="stylesheet" href="style.css">
+  <!-- CSS Stylesheet (Versioned for Instant Global Cache-Busting) -->
+  <link rel="stylesheet" href="style.css?v=20261122_v4">
 </head>
 <body>
 
@@ -168,6 +173,11 @@
       <span>Thẻ Liệu Trình 3 Bước</span>
     </button>
 
+    <button class="shelf-item-pill" data-product="greeting">
+      <span class="pill-icon">🌸</span>
+      <span>Thiệp "The Gift"</span>
+    </button>
+
     <button class="shelf-item-pill" data-product="box">
       <span class="pill-icon">🎁</span>
       <span>Hộp Quà "The Gift"</span>
@@ -208,12 +218,12 @@
   <script src="assets/OrbitControls.js"></script>
 
   <!-- Embedded High-Definition Texture Assets -->
-  <script src="assets/textures-data.js"></script>
+  <script src="assets/textures-data.js?v=20261122_v4"></script>
 
-  <!-- Application Modules -->
-  <script src="textures.js"></script>
-  <script src="models.js"></script>
-  <script src="app.js"></script>
+  <!-- Application Modules (Versioned for Instant Global Cache-Busting) -->
+  <script src="textures.js?v=20261122_v4"></script>
+  <script src="models.js?v=20261122_v4"></script>
+  <script src="app.js?v=20261122_v4"></script>
 
   <script>
     // Safeguard to dismiss loading overlay

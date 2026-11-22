@@ -75,8 +75,8 @@ class App3D {
   // 1. Three.js Core Setup
   initThree() {
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(0x281f25);
-    this.scene.fog = new THREE.FogExp2(0x281f25, 0.012);
+    this.scene.background = new THREE.Color(0xf7f0f3);
+    this.scene.fog = new THREE.FogExp2(0xf7f0f3, 0.0035);
 
     const aspect = window.innerWidth / window.innerHeight;
     const baseFov = aspect < 1.0 ? 62 : 40;
@@ -87,7 +87,7 @@ class App3D {
 
     this.renderer = new THREE.WebGLRenderer({
       antialias: true,
-      powerPreference: 'high-performance',
+      powerPreference: 'default',
       preserveDrawingBuffer: true
     });
     this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -95,8 +95,18 @@ class App3D {
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 1.25;
+    this.renderer.toneMappingExposure = 1.15;
     if (THREE.sRGBEncoding) this.renderer.outputEncoding = THREE.sRGBEncoding;
+
+    this.renderer.domElement.style.touchAction = 'none';
+    this.renderer.domElement.addEventListener('webglcontextlost', (e) => {
+      e.preventDefault();
+      console.warn('WebGL context lost, pausing render.');
+    }, false);
+    this.renderer.domElement.addEventListener('webglcontextrestored', () => {
+      console.log('WebGL context restored, re-initializing scene.');
+      this.initSceneObjects();
+    }, false);
 
     this.container.appendChild(this.renderer.domElement);
 
@@ -170,61 +180,70 @@ class App3D {
   setLightingMood(mood) {
     if (mood === 'candlelight') {
       // Warm Cozy Candlelight Studio (Default)
-      this.scene.background.set(0x281f25);
-      this.scene.fog.color.set(0x281f25);
-      this.lights.hemi.color.set(0xffecd6);
-      this.lights.hemi.groundColor.set(0x38222d);
-      this.lights.hemi.intensity = 0.55;
+      this.scene.background.set(0xfaf3ee);
+      this.scene.fog.color.set(0xfaf3ee);
+      if (this.giftBoxScene && this.giftBoxScene.studioFloorMat) {
+        this.giftBoxScene.studioFloorMat.color.set(0xfaf3ee);
+      }
+      this.lights.hemi.color.set(0xfff5ea);
+      this.lights.hemi.groundColor.set(0xebe0d8);
+      this.lights.hemi.intensity = 0.75;
 
-      this.lights.key.color.set(0xff9944);
-      this.lights.key.intensity = 1.35;
+      this.lights.key.color.set(0xffb066);
+      this.lights.key.intensity = 1.3;
 
-      this.lights.fill.color.set(0x8a3a55);
-      this.lights.fill.intensity = 0.5;
+      this.lights.fill.color.set(0xf4cbd6);
+      this.lights.fill.intensity = 0.65;
 
-      this.lights.rim.color.set(0xffca85);
-      this.lights.rim.intensity = 0.35;
+      this.lights.rim.color.set(0xffdfba);
+      this.lights.rim.intensity = 0.4;
 
-      this.renderer.toneMappingExposure = 1.3;
+      this.renderer.toneMappingExposure = 1.15;
       if (this.particles) this.particles.visible = true;
     } else if (mood === 'sunset') {
       // Golden Sunset
-      this.scene.background.set(0x382220);
-      this.scene.fog.color.set(0x382220);
-      this.lights.hemi.color.set(0xffd5b3);
-      this.lights.hemi.groundColor.set(0x241514);
-      this.lights.hemi.intensity = 0.5;
+      this.scene.background.set(0xfbf0f2);
+      this.scene.fog.color.set(0xfbf0f2);
+      if (this.giftBoxScene && this.giftBoxScene.studioFloorMat) {
+        this.giftBoxScene.studioFloorMat.color.set(0xfbf0f2);
+      }
+      this.lights.hemi.color.set(0xffe8dc);
+      this.lights.hemi.groundColor.set(0xebd6dd);
+      this.lights.hemi.intensity = 0.7;
 
-      this.lights.key.color.set(0xff8833);
-      this.lights.key.intensity = 1.5;
-
-      this.lights.fill.color.set(0x993d58);
-      this.lights.fill.intensity = 0.45;
-
-      this.renderer.toneMappingExposure = 1.35;
-      if (this.particles) this.particles.visible = true;
-    } else if (mood === 'studio') {
-      // Clean Luxury Warm Studio
-      this.scene.background.set(0x3a3036);
-      this.scene.fog.color.set(0x3a3036);
-      this.lights.hemi.color.set(0xfff3ea);
-      this.lights.hemi.groundColor.set(0x2e2428);
-      this.lights.hemi.intensity = 0.65;
-
-      this.lights.key.color.set(0xffe2cc);
+      this.lights.key.color.set(0xff9455);
       this.lights.key.intensity = 1.4;
 
-      this.lights.fill.color.set(0xbb6f85);
-      this.lights.fill.intensity = 0.55;
+      this.lights.fill.color.set(0xefa5b9);
+      this.lights.fill.intensity = 0.6;
 
-      this.renderer.toneMappingExposure = 1.25;
+      this.renderer.toneMappingExposure = 1.2;
+      if (this.particles) this.particles.visible = true;
+    } else if (mood === 'studio') {
+      // Clean Luxury Warm White Studio
+      this.scene.background.set(0xfcf8fa);
+      this.scene.fog.color.set(0xfcf8fa);
+      if (this.giftBoxScene && this.giftBoxScene.studioFloorMat) {
+        this.giftBoxScene.studioFloorMat.color.set(0xfcf8fa);
+      }
+      this.lights.hemi.color.set(0xffffff);
+      this.lights.hemi.groundColor.set(0xe8dee3);
+      this.lights.hemi.intensity = 0.8;
+
+      this.lights.key.color.set(0xfff6ec);
+      this.lights.key.intensity = 1.35;
+
+      this.lights.fill.color.set(0xfcdde5);
+      this.lights.fill.intensity = 0.65;
+
+      this.renderer.toneMappingExposure = 1.12;
       if (this.particles) this.particles.visible = false;
     }
   }
 
   // 4. Subtle Floating Golden Dust Particles
   initParticles() {
-    const particleCount = 130;
+    const particleCount = 110;
     const geometry = new THREE.BufferGeometry();
     const positions = new Float32Array(particleCount * 3);
 
@@ -237,10 +256,10 @@ class App3D {
     geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 
     const material = new THREE.PointsMaterial({
-      color: 0xffca7a,
-      size: 0.38,
+      color: 0xe6a86c,
+      size: 0.32,
       transparent: true,
-      opacity: 0.65,
+      opacity: 0.55,
       blending: THREE.AdditiveBlending
     });
 
@@ -269,6 +288,12 @@ class App3D {
   // 7. Raycasting & Hover Feedback
   initEvents() {
     window.addEventListener('resize', () => this.onWindowResize(), false);
+    window.addEventListener('orientationchange', () => {
+      setTimeout(() => this.onWindowResize(), 150);
+    }, false);
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', () => this.onWindowResize());
+    }
     if (window.ResizeObserver) {
       const ro = new ResizeObserver(() => this.onWindowResize());
       ro.observe(this.container);
@@ -754,8 +779,8 @@ class App3D {
   }
 
   onWindowResize() {
-    const w = window.innerWidth;
-    const h = window.innerHeight;
+    const w = (window.visualViewport && window.visualViewport.width) ? window.visualViewport.width : window.innerWidth;
+    const h = (window.visualViewport && window.visualViewport.height) ? window.visualViewport.height : window.innerHeight;
     const aspect = w / h;
     this.camera.aspect = aspect;
 

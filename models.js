@@ -1160,22 +1160,29 @@ class GiftBoxScene {
     this.greetingCardGroup = greetGroup;
   }
 
-  // 10. Studio Podium
+  // 10. Studio Infinite Floor & Seamless Soft Shadows
   buildStudioPodium() {
-    const floorGeo = new THREE.PlaneGeometry(160, 160);
-    const floorMat = new THREE.ShadowMaterial({ opacity: 0.24 });
-    const shadowPlane = new THREE.Mesh(floorGeo, floorMat);
+    // Seamless infinite studio floor plane
+    const floorGeo = new THREE.PlaneGeometry(800, 800);
+    this.studioFloorMat = new THREE.MeshStandardMaterial({
+      color: 0xfaf4f6,
+      roughness: 0.95,
+      metalness: 0.0
+    });
+    const floorMesh = new THREE.Mesh(floorGeo, this.studioFloorMat);
+    floorMesh.rotation.x = -Math.PI / 2;
+    floorMesh.position.y = -0.05;
+    floorMesh.receiveShadow = true;
+    this.scene.add(floorMesh);
+    this.studioFloorMesh = floorMesh;
+
+    // Contact soft shadow receiver right under the box
+    const shadowMat = new THREE.ShadowMaterial({ opacity: 0.18 });
+    const shadowPlane = new THREE.Mesh(new THREE.PlaneGeometry(160, 160), shadowMat);
     shadowPlane.rotation.x = -Math.PI / 2;
-    shadowPlane.position.y = -0.05;
+    shadowPlane.position.y = -0.04;
     shadowPlane.receiveShadow = true;
     this.scene.add(shadowPlane);
-
-    const pedestalGeo = new THREE.CylinderGeometry(25, 26, 0.4, 64);
-    const pedestalMat = new THREE.MeshStandardMaterial({ color: 0x30252a, roughness: 0.9 });
-    const pedestal = new THREE.Mesh(pedestalGeo, pedestalMat);
-    pedestal.position.y = -0.25;
-    pedestal.receiveShadow = true;
-    this.scene.add(pedestal);
   }
 
   // Switch between Pink Edition and White Edition
