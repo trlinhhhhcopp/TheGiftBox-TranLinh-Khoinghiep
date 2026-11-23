@@ -24,14 +24,14 @@ const ProductData = {
   candle: {
     id: 'candle',
     name: 'Nến Thơm Lavender "The Gift"',
-    subtitle: 'Aroma Soy Candle · Sáp đậu nành thiên nhiên hương hoa Lavender thư thái',
-    tag: 'Sáp Đậu Nành · Hương Lavender Dịu Ngọt',
+    subtitle: 'Aroma Soy Candle · Sáp đậu nành thiên nhiên màu trắng đục hương hoa Lavender',
+    tag: 'Sáp Đậu Nành Trắng Đục · Hương Lavender',
     icon: '🕯️',
-    color: '#f0b0c2',
-    desc: 'Hũ nến thủy tinh nắp gỗ tự nhiên chứa sáp đậu nành màu hồng pastel hương hoa oải hương (Lavender) dịu ngọt kèm nhãn THE GIFT Lavender ♥. Tỏa hương ấm áp, giúp xoa dịu tâm trí và mang lại giấc ngủ an lành.',
+    color: '#faf8f3',
+    desc: 'Hũ nến thủy tinh nắp gỗ tự nhiên chứa 100% sáp đậu nành màu trắng đục thuần khiết hương hoa oải hương (Lavender) dịu ngọt kèm nhãn THE GIFT Lavender ♥. Tỏa hương ấm áp, giúp xoa dịu tâm trí và mang lại giấc ngủ an lành.',
     specs: [
       { label: 'Vỏ nến', value: 'Hũ thủy tinh trong suốt nắp gỗ tiện tự nhiên' },
-      { label: 'Sáp & Bấc', value: '100% sáp đậu nành thiên nhiên màu hồng phấn, bấc cotton sạch' },
+      { label: 'Sáp & Bấc', value: '100% sáp đậu nành thiên nhiên màu trắng đục, bấc cotton sạch' },
       { label: 'Hương thơm', value: 'Hoa oải hương Lavender tinh khiết dịu nhẹ thư thái' },
       { label: 'Thời gian cháy', value: 'Khoảng 25 - 30 giờ cháy sạch tỏa hương đều' }
     ]
@@ -797,9 +797,29 @@ class GiftBoxScene {
     candleGroup.add(lid);
     this.candleLidMesh = lid;
 
-    const waxColor = isPink ? 0xfcdce6 : 0xfcf8ee;
-    const waxMat = new THREE.MeshStandardMaterial({ color: waxColor, roughness: 0.5 });
-    const wax = new THREE.Mesh(new THREE.CylinderGeometry(1.72, 1.72, 0.2, 32), waxMat);
+    // Opaque milky white soy wax (Sáp đậu nành trắng đục tự nhiên 100%)
+    const waxColor = 0xf8f6f0;
+    const waxMat = new THREE.MeshStandardMaterial({
+      color: waxColor,
+      roughness: 0.88,
+      metalness: 0.01
+    });
+
+    // Solid opaque wax body filling inside glass jar
+    const waxBodyGeo = new THREE.CylinderGeometry(1.72, 1.62, potHeight - 0.4, 36);
+    const waxBody = new THREE.Mesh(waxBodyGeo, waxMat);
+    waxBody.position.y = (potHeight - 0.4) / 2 + 0.15;
+    waxBody.receiveShadow = true;
+    candleGroup.add(waxBody);
+    this.candleWaxBodyMesh = waxBody;
+
+    // Top molten wax pool surface
+    const waxTopMat = new THREE.MeshStandardMaterial({
+      color: waxColor,
+      roughness: 0.65,
+      metalness: 0.01
+    });
+    const wax = new THREE.Mesh(new THREE.CylinderGeometry(1.72, 1.72, 0.15, 36), waxTopMat);
     wax.position.y = potHeight - 0.25;
     candleGroup.add(wax);
     this.candleWaxMesh = wax;
@@ -1235,7 +1255,10 @@ class GiftBoxScene {
       this.candleLabelMesh.material.needsUpdate = true;
     }
     if (this.candleWaxMesh) {
-      this.candleWaxMesh.material.color.set(isPink ? 0xfcdce6 : 0xfcf8ee);
+      this.candleWaxMesh.material.color.set(0xf8f6f0);
+    }
+    if (this.candleWaxBodyMesh) {
+      this.candleWaxBodyMesh.material.color.set(0xf8f6f0);
     }
 
     if (this.teaMesh) {

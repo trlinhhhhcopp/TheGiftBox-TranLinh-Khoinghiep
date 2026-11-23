@@ -329,12 +329,12 @@ class App3D {
         const dist = Math.hypot(dx, dy);
         const dt = Date.now() - touchStartTime;
 
-        // Clean tap detection (< 12px drag, < 350ms duration)
-        if (dist < 12 && dt < 350) {
-          this.mouse.x = (e.changedTouches[0].clientX / window.innerWidth) * 2 - 1;
-          this.mouse.y = -(e.changedTouches[0].clientY / window.innerHeight) * 2 + 1;
-          this.checkRaycastClick(e);
-        }
+    // Clean tap detection (< 8px drag, < 280ms duration - avoids triggering during 360 swipe rotation)
+    if (dist < 8 && dt < 280) {
+      this.mouse.x = (e.changedTouches[0].clientX / window.innerWidth) * 2 - 1;
+      this.mouse.y = -(e.changedTouches[0].clientY / window.innerHeight) * 2 + 1;
+      this.checkRaycastClick(e);
+    }
       }
     }, { passive: true });
   }
@@ -431,6 +431,63 @@ class App3D {
     }
   }
 
+  // Menu & Drawer Mutually Exclusive State Controller
+  openMenu() {
+    this.closeDrawer();
+    const isMobile = window.innerWidth <= 768;
+    if (isMobile) {
+      this.menuPanel.classList.add('mobile-open');
+      this.menuPanel.classList.remove('collapsed');
+      const backdrop = document.getElementById('ui-backdrop');
+      if (backdrop) backdrop.classList.add('visible');
+    } else {
+      this.menuPanel.classList.remove('collapsed');
+      const btnExpand = document.getElementById('btn-expand-menu');
+      if (btnExpand) btnExpand.classList.remove('visible');
+    }
+    const btnMenuToggle = document.getElementById('btn-menu-toggle');
+    if (btnMenuToggle) btnMenuToggle.classList.add('active');
+    this.playClickSound();
+  }
+
+  closeMenu() {
+    this.menuPanel.classList.remove('mobile-open');
+    this.menuPanel.classList.add('collapsed');
+    const backdrop = document.getElementById('ui-backdrop');
+    if (backdrop && !this.drawer.classList.contains('visible')) {
+      backdrop.classList.remove('visible');
+    }
+    const btnExpand = document.getElementById('btn-expand-menu');
+    if (btnExpand && window.innerWidth > 768 && !this.drawer.classList.contains('visible')) {
+      btnExpand.classList.add('visible');
+    } else if (btnExpand) {
+      btnExpand.classList.remove('visible');
+    }
+    const btnMenuToggle = document.getElementById('btn-menu-toggle');
+    if (btnMenuToggle) btnMenuToggle.classList.remove('active');
+  }
+
+  toggleMenu() {
+    const isMobile = window.innerWidth <= 768;
+    const isOpen = isMobile 
+      ? this.menuPanel.classList.contains('mobile-open')
+      : !this.menuPanel.classList.contains('collapsed');
+    
+    if (isOpen) {
+      this.closeMenu();
+    } else {
+      this.openMenu();
+    }
+  }
+
+  closeDrawer() {
+    this.drawer.classList.remove('visible');
+    const backdrop = document.getElementById('ui-backdrop');
+    if (backdrop && !this.menuPanel.classList.contains('mobile-open')) {
+      backdrop.classList.remove('visible');
+    }
+  }
+
   // 8. Select & Isolate Product for 3D Inspection Mode ("Tách riêng sản phẩm ra ngoài")
   selectProduct(productId) {
     if (productId === 'box') {
@@ -460,17 +517,18 @@ class App3D {
     this.giftBoxScene.isolateProduct(productId, true);
 
     const isFlat = ['letter', 'photo', 'card', 'greeting'].includes(productId);
+    const isMobile = window.innerWidth <= 768 || (this.camera && this.camera.aspect < 1.0);
 
-    // Frame camera directly on the floating isolated product (Y = 8.5)
-    const inspectTarget = new THREE.Vector3(0, 8.5, 0);
+    // On mobile portrait mode, target slightly lower so product floats in the top 56% open area above the bottom drawer
+    const inspectTarget = isMobile
+      ? new THREE.Vector3(0, 7.2, 0)
+      : new THREE.Vector3(0, 8.5, 0);
 
-    // For flat items (letter, photo, card): view from direct top-down angle so item lays flat and user looks straight down
-    // For 3D items: view from front elevated studio angle (360° rotation)
     const inspectCamPos = isFlat 
-      ? new THREE.Vector3(0, 24.0, 0.4) 
-      : new THREE.Vector3(0, 11.2, 13.5);
+      ? (isMobile ? new THREE.Vector3(0, 26.0, -1.8) : new THREE.Vector3(0, 24.0, 0.4))
+      : (isMobile ? new THREE.Vector3(0, 10.2, 14.5) : new THREE.Vector3(0, 11.2, 13.5));
 
-    const fitInspect = this.getFitPosition(inspectCamPos, inspectTarget, isFlat ? 14.5 : 15.0);
+    const fitInspect = this.getFitPosition(inspectCamPos, inspectTarget, isFlat ? (isMobile ? 16.0 : 14.5) : (isMobile ? 16.5 : 15.0));
     this.glideCameraTo(fitInspect.pos, fitInspect.target, 0.85);
 
     this.showDrawer(info, true);
@@ -478,6 +536,11 @@ class App3D {
   }
 
   showDrawer(info, isIsolated = false) {
+    // ALWAYS close menu so menu and drawer NEVER collide!
+    this.closeMenu();
+    const btnExpand = document.getElementById('btn-expand-menu');
+    if (btnExpand) btnExpand.classList.remove('visible');
+
     const badgeHtml = isIsolated 
       ? `<div class="drawer-mode-badge"><span class="mode-pulse"></span> Chế độ Tách Riêng 3D · Xoay 360° Tự Do</div>` 
       : '';
@@ -519,7 +582,7 @@ class App3D {
     document.querySelectorAll('.shelf-item-pill').forEach(pill => {
       if (pill.dataset.product === productId) {
         pill.classList.add('active');
-        pill.scrollIntoView({ behavior: 'smooth', inline: 'center' });
+        pill.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
       } else {
         pill.classList.remove('active');
       }
@@ -529,15 +592,49 @@ class App3D {
   resetToOverview() {
     this.selectedProductId = null;
     this.giftBoxScene.isolateProduct(null, false);
-    const fitOverview = this.getFitPosition(this.cameraPresets.overview.pos, this.cameraPresets.overview.target, 31.0);
+    const fitOverview = this.getFitPosition(this.cameraPresets.overview.pos, this.cameraPresets.overview.target, 33.0);
     this.glideCameraTo(fitOverview.pos, fitOverview.target, 0.9);
-    this.drawer.classList.remove('visible');
+    this.closeDrawer();
     document.querySelectorAll('.shelf-item-pill').forEach(pill => pill.classList.remove('active'));
     this.playClickSound();
   }
 
   // 9. UI Controls & Listeners
   setupUI() {
+    // Top Action: Settings / Menu Toggle Button
+    const btnMenuToggle = document.getElementById('btn-menu-toggle');
+    if (btnMenuToggle) {
+      btnMenuToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.toggleMenu();
+      });
+    }
+
+    // Backdrop click: close both menu and drawer
+    const backdrop = document.getElementById('ui-backdrop');
+    if (backdrop) {
+      backdrop.addEventListener('click', () => {
+        this.closeMenu();
+        this.resetToOverview();
+      });
+    }
+
+    // Touch and pointer event isolation: prevent drag/touch inside UI panels from bleeding to 3D OrbitControls
+    const uiPanels = [
+      this.drawer,
+      this.menuPanel,
+      document.querySelector('.bottom-shelf'),
+      document.querySelector('.top-nav')
+    ];
+    uiPanels.forEach(panel => {
+      if (!panel) return;
+      ['touchstart', 'touchmove', 'touchend', 'pointerdown', 'pointerup', 'click', 'wheel'].forEach(evtType => {
+        panel.addEventListener(evtType, (e) => {
+          e.stopPropagation();
+        }, { passive: evtType.startsWith('touch') });
+      });
+    });
+
     // Lid Open / Close
     const btnLidOpen = document.getElementById('btn-lid-open');
     const btnLidClose = document.getElementById('btn-lid-close');
@@ -552,7 +649,7 @@ class App3D {
       btnLidOpen.classList.remove('active');
       this.selectedProductId = 'box';
       this.glideCameraTo(this.cameraPresets.box.pos, this.cameraPresets.box.target, 0.9);
-      this.drawer.classList.remove('visible');
+      this.closeDrawer();
       document.querySelectorAll('.shelf-item-pill').forEach(pill => {
         pill.classList.toggle('active', pill.dataset.product === 'box');
       });
@@ -582,28 +679,26 @@ class App3D {
     // Collapsible Menu Toggle
     const btnCollapseMenu = document.getElementById('btn-collapse-menu');
     const btnExpandMenu = document.getElementById('btn-expand-menu');
-    const menuContainer = document.getElementById('floating-controls');
 
-    if (btnCollapseMenu && menuContainer) {
-      btnCollapseMenu.addEventListener('click', () => {
-        menuContainer.classList.add('collapsed');
-        if (btnExpandMenu) btnExpandMenu.classList.add('visible');
+    if (btnCollapseMenu) {
+      btnCollapseMenu.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.closeMenu();
         this.playClickSound();
       });
     }
 
-    if (btnExpandMenu && menuContainer) {
-      btnExpandMenu.addEventListener('click', () => {
-        menuContainer.classList.remove('collapsed');
-        btnExpandMenu.classList.remove('visible');
+    if (btnExpandMenu) {
+      btnExpandMenu.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.openMenu();
         this.playClickSound();
       });
+    }
 
-      // Auto-collapse menu on mobile portrait for clean, uncluttered view
-      if (window.innerWidth <= 768) {
-        menuContainer.classList.add('collapsed');
-        btnExpandMenu.classList.add('visible');
-      }
+    // Default collapse menu on mobile screens
+    if (window.innerWidth <= 768) {
+      this.closeMenu();
     }
 
     // Color Edition Switcher (Pink vs White)
@@ -789,22 +884,24 @@ class App3D {
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(w, h);
 
+    const isMobile = w <= 768 || aspect < 1.0;
+
     // If currently at overview or box view, maintain perfect framing without clipping
     if (!this.selectedProductId && !this.isCameraAnimating) {
-      const fit = this.getFitPosition(this.cameraPresets.overview.pos, this.cameraPresets.overview.target, 31.0);
+      const fit = this.getFitPosition(this.cameraPresets.overview.pos, this.cameraPresets.overview.target, isMobile ? 33.5 : 31.0);
       this.camera.position.copy(fit.pos);
       this.controls.target.copy(fit.target);
     } else if (this.selectedProductId === 'box' && !this.isCameraAnimating) {
-      const fit = this.getFitPosition(this.cameraPresets.box.pos, this.cameraPresets.box.target, 31.0);
+      const fit = this.getFitPosition(this.cameraPresets.box.pos, this.cameraPresets.box.target, isMobile ? 33.0 : 31.0);
       this.camera.position.copy(fit.pos);
       this.controls.target.copy(fit.target);
     } else if (this.selectedProductId && !this.isCameraAnimating) {
       const isFlat = ['letter', 'photo', 'card', 'greeting'].includes(this.selectedProductId);
-      const inspectTarget = new THREE.Vector3(0, 8.5, 0);
+      const inspectTarget = isMobile ? new THREE.Vector3(0, 7.2, 0) : new THREE.Vector3(0, 8.5, 0);
       const inspectCamPos = isFlat 
-        ? new THREE.Vector3(0, 24.0, 0.4) 
-        : new THREE.Vector3(0, 11.2, 13.5);
-      const fitInspect = this.getFitPosition(inspectCamPos, inspectTarget, isFlat ? 14.5 : 15.0);
+        ? (isMobile ? new THREE.Vector3(0, 26.0, -1.8) : new THREE.Vector3(0, 24.0, 0.4)) 
+        : (isMobile ? new THREE.Vector3(0, 10.2, 14.5) : new THREE.Vector3(0, 11.2, 13.5));
+      const fitInspect = this.getFitPosition(inspectCamPos, inspectTarget, isFlat ? (isMobile ? 16.0 : 14.5) : (isMobile ? 16.5 : 15.0));
       this.camera.position.copy(fitInspect.pos);
       this.controls.target.copy(fitInspect.target);
     }
