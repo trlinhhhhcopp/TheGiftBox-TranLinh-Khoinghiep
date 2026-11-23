@@ -118,10 +118,10 @@ const ProductData = {
     tag: 'Thiệp Chúc Cao Cấp · Đi Kèm Hộp Quà',
     icon: '🌸',
     color: '#e58da5',
-    desc: 'Tấm thiệp bìa đứng màu hồng phấn sang trọng, in thông điệp ấm áp "A Little Hug, A Meaningful Feeling" cùng biểu tượng trái tim đỏ, là lời chúc yêu thương dành riêng cho người nhận.',
+    desc: 'Tấm thiệp bìa nằm màu hồng phấn sang trọng, in thông điệp ấm áp "A Little Hug, A Meaningful Feeling" cùng biểu tượng trái tim đỏ, là lời chúc yêu thương dành riêng cho người nhận.',
     specs: [
       { label: 'Chất liệu', value: 'Giấy mỹ thuật nhập khẩu màu hồng pastel' },
-      { label: 'Kích thước', value: '10cm x 15cm (dáng đứng)' },
+      { label: 'Kích thước', value: '10cm x 15cm (dáng nằm phẳng)' },
       { label: 'Thông điệp', value: '"A Little Hug, A Meaningful Feeling ♡"' }
     ]
   },
@@ -1152,7 +1152,7 @@ class GiftBoxScene {
     this.insideGroup.add(cardGroup);
   }
 
-  // 9. Greeting Card "THE GIFT"
+  // 9. Greeting Card "THE GIFT" (Tấm thiệp nằm phẳng sang trọng)
   buildGreetingCard() {
     const greetGroup = new THREE.Group();
     greetGroup.name = 'greeting';
@@ -1160,12 +1160,28 @@ class GiftBoxScene {
 
     const gw = 6.2, gh = 9.2, gd = 0.12;
     const greetTex = TextureManager.createGreetingCardTexture();
-    const card = new THREE.Mesh(new THREE.BoxGeometry(gw, gh, gd), new THREE.MeshStandardMaterial({ map: greetTex, roughness: 0.65 }));
-    card.castShadow = true;
-    greetGroup.add(card);
+    
+    // Card base backing
+    const cardBase = new THREE.Mesh(
+      new THREE.BoxGeometry(gw, gd, gh),
+      new THREE.MeshStandardMaterial({ color: 0xfeeef3, roughness: 0.8 })
+    );
+    cardBase.castShadow = true;
+    cardBase.receiveShadow = true;
+    greetGroup.add(cardBase);
 
-    greetGroup.position.set(18.5, 3.8, 2.0);
-    greetGroup.rotation.set(-0.15, -0.4, 0.08);
+    // Card top face with high-res texture facing upwards
+    const cardTop = new THREE.Mesh(
+      new THREE.PlaneGeometry(gw, gh),
+      new THREE.MeshStandardMaterial({ map: greetTex, roughness: 0.65 })
+    );
+    cardTop.rotation.x = -Math.PI / 2;
+    cardTop.position.y = gd / 2 + 0.01;
+    greetGroup.add(cardTop);
+
+    // Lying flat horizontally on the studio floor next to the box on the right
+    greetGroup.position.set(18.2, 0.06, 2.0);
+    greetGroup.rotation.set(0, -0.15, 0);
 
     greetGroup.userData = {
       isProduct: true,
