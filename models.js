@@ -213,13 +213,13 @@ class GiftBoxScene {
     const bw = 28, bd = 22, bh = 6.6, wall = 0.45;
 
     this.boxOuterMat = new THREE.MeshStandardMaterial({
-      color: (this.currentEdition === 'pink') ? 0xfcdce6 : 0xf7f3ea,
+      color: (this.currentEdition === 'pink') ? 0xf0809f : 0xf7f3ea,
       roughness: 0.65,
       metalness: 0.05
     });
 
     this.boxInnerMat = new THREE.MeshStandardMaterial({
-      color: (this.currentEdition === 'pink') ? 0xfdeef3 : 0xfefcf8,
+      color: (this.currentEdition === 'pink') ? 0xfcdde7 : 0xfefcf8,
       roughness: 0.7,
       metalness: 0.0
     });
@@ -747,8 +747,9 @@ class GiftBoxScene {
     bunnyGroup.add(bowGroup);
     this.bunnyBowGroup = bowGroup;
 
-    bunnyGroup.position.set(0, 0.85, -0.2);
-    bunnyGroup.rotation.x = 0.05;
+    // Laying down peacefully on its back in the molded velvet tray cushion
+    bunnyGroup.position.set(0, 1.85, -0.2);
+    bunnyGroup.rotation.set(-Math.PI / 2 + 0.12, 0, 0);
 
     bunnyGroup.userData = {
       isProduct: true,
@@ -1226,9 +1227,9 @@ class GiftBoxScene {
     this.currentEdition = edition;
     const isPink = (edition === 'pink');
 
-    const boxCol = isPink ? 0xfcdce6 : 0xf7f3ea;
+    const boxCol = isPink ? 0xf0809f : 0xf7f3ea;
     this.boxOuterMat.color.set(boxCol);
-    this.boxInnerMat.color.set(isPink ? 0xfdeef3 : 0xfefcf8);
+    this.boxInnerMat.color.set(isPink ? 0xfcdde7 : 0xfefcf8);
 
     if (this.lidMesh) {
       this.lidMesh.material[2].map = TextureManager.createBoxCoverTexture(edition);
@@ -1397,9 +1398,12 @@ class GiftBoxScene {
           prod.position.z = THREE.MathUtils.lerp(prod.position.z, 0, 0.08);
 
           // Optimal inspection angle:
-          // Flat items: rotation lerps to (0, 0, 0) - card lies flat horizontally facing upwards!
-          // Upright items: rotation lerps to (0, 0, 0) - upright facing front!
-          prod.rotation.x = THREE.MathUtils.lerp(prod.rotation.x, 0, 0.08);
+          // Flat items: tilt gracefully towards the camera (rotation.x = -0.42) like on an art easel display
+          // Upright items: stand upright facing front (rotation = 0, 0, 0)
+          // Bunny: tilted gracefully towards the viewer (rotation.x = -0.45)
+          const isFlat = ['letter', 'photo', 'card', 'greeting'].includes(key);
+          const targetRotX = isFlat ? -0.42 : (key === 'bunny' ? -0.45 : 0);
+          prod.rotation.x = THREE.MathUtils.lerp(prod.rotation.x, targetRotX, 0.08);
           prod.rotation.y = THREE.MathUtils.lerp(prod.rotation.y, 0, 0.08);
           prod.rotation.z = THREE.MathUtils.lerp(prod.rotation.z, 0, 0.08);
 

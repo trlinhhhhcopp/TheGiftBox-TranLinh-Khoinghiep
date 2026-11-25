@@ -75,8 +75,8 @@ class App3D {
   // 1. Three.js Core Setup
   initThree() {
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(0xf7f0f3);
-    this.scene.fog = new THREE.FogExp2(0xf7f0f3, 0.0035);
+    this.scene.background = new THREE.Color(0xfcf9fa);
+    this.scene.fog = new THREE.FogExp2(0xfcf9fa, 0.0025);
 
     const aspect = window.innerWidth / window.innerHeight;
     const baseFov = aspect < 1.0 ? 62 : 40;
@@ -95,7 +95,7 @@ class App3D {
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 1.15;
+    this.renderer.toneMappingExposure = 1.08;
     if (THREE.sRGBEncoding) this.renderer.outputEncoding = THREE.sRGBEncoding;
 
     this.renderer.domElement.style.touchAction = 'none';
@@ -146,11 +146,11 @@ class App3D {
   initLighting() {
     this.lights = {};
 
-    this.lights.hemi = new THREE.HemisphereLight(0xffecd6, 0x422d36, 0.6);
+    this.lights.hemi = new THREE.HemisphereLight(0xffffff, 0xf5e9ef, 0.85);
     this.scene.add(this.lights.hemi);
 
     // Warm Key Directional Light
-    this.lights.key = new THREE.DirectionalLight(0xffa652, 1.4);
+    this.lights.key = new THREE.DirectionalLight(0xfff8f5, 1.2);
     this.lights.key.position.set(16, 28, 18);
     this.lights.key.castShadow = true;
     this.lights.key.shadow.mapSize.width = 2048;
@@ -166,12 +166,12 @@ class App3D {
     this.scene.add(this.lights.key);
 
     // Soft Blush Fill Light
-    this.lights.fill = new THREE.DirectionalLight(0xf7bacc, 0.65);
+    this.lights.fill = new THREE.DirectionalLight(0xfde8ef, 0.7);
     this.lights.fill.position.set(-18, 16, 14);
     this.scene.add(this.lights.fill);
 
     // Subtle Rim Light
-    this.lights.rim = new THREE.DirectionalLight(0xfedebc, 0.4);
+    this.lights.rim = new THREE.DirectionalLight(0xffffff, 0.4);
     this.lights.rim.position.set(0, 18, -24);
     this.scene.add(this.lights.rim);
   }
@@ -179,26 +179,26 @@ class App3D {
   // 3. Set Lighting Mood
   setLightingMood(mood) {
     if (mood === 'candlelight') {
-      // Warm Cozy Candlelight Studio (Default)
-      this.scene.background.set(0xfaf3ee);
-      this.scene.fog.color.set(0xfaf3ee);
+      // Warm Cozy Candlelight Studio (Default: Clean Luminous Studio)
+      this.scene.background.set(0xfcf9fa);
+      this.scene.fog.color.set(0xfcf9fa);
       if (this.giftBoxScene && this.giftBoxScene.studioFloorMat) {
-        this.giftBoxScene.studioFloorMat.color.set(0xfaf3ee);
+        this.giftBoxScene.studioFloorMat.color.set(0xfcf9fa);
       }
-      this.lights.hemi.color.set(0xfff5ea);
-      this.lights.hemi.groundColor.set(0xebe0d8);
-      this.lights.hemi.intensity = 0.75;
+      this.lights.hemi.color.set(0xffffff);
+      this.lights.hemi.groundColor.set(0xf5e9ef);
+      this.lights.hemi.intensity = 0.85;
 
-      this.lights.key.color.set(0xffb066);
-      this.lights.key.intensity = 1.3;
+      this.lights.key.color.set(0xfff6f0);
+      this.lights.key.intensity = 1.2;
 
-      this.lights.fill.color.set(0xf4cbd6);
-      this.lights.fill.intensity = 0.65;
+      this.lights.fill.color.set(0xfde8ef);
+      this.lights.fill.intensity = 0.7;
 
-      this.lights.rim.color.set(0xffdfba);
+      this.lights.rim.color.set(0xffffff);
       this.lights.rim.intensity = 0.4;
 
-      this.renderer.toneMappingExposure = 1.15;
+      this.renderer.toneMappingExposure = 1.08;
       if (this.particles) this.particles.visible = true;
     } else if (mood === 'sunset') {
       // Golden Sunset
@@ -209,15 +209,15 @@ class App3D {
       }
       this.lights.hemi.color.set(0xffe8dc);
       this.lights.hemi.groundColor.set(0xebd6dd);
-      this.lights.hemi.intensity = 0.7;
+      this.lights.hemi.intensity = 0.75;
 
-      this.lights.key.color.set(0xff9455);
-      this.lights.key.intensity = 1.4;
+      this.lights.key.color.set(0xffa066);
+      this.lights.key.intensity = 1.35;
 
       this.lights.fill.color.set(0xefa5b9);
-      this.lights.fill.intensity = 0.6;
+      this.lights.fill.intensity = 0.65;
 
-      this.renderer.toneMappingExposure = 1.2;
+      this.renderer.toneMappingExposure = 1.15;
       if (this.particles) this.particles.visible = true;
     } else if (mood === 'studio') {
       // Clean Luxury Warm White Studio
@@ -228,15 +228,15 @@ class App3D {
       }
       this.lights.hemi.color.set(0xffffff);
       this.lights.hemi.groundColor.set(0xe8dee3);
-      this.lights.hemi.intensity = 0.8;
+      this.lights.hemi.intensity = 0.85;
 
-      this.lights.key.color.set(0xfff6ec);
-      this.lights.key.intensity = 1.35;
+      this.lights.key.color.set(0xfff8f4);
+      this.lights.key.intensity = 1.25;
 
       this.lights.fill.color.set(0xfcdde5);
       this.lights.fill.intensity = 0.65;
 
-      this.renderer.toneMappingExposure = 1.12;
+      this.renderer.toneMappingExposure = 1.08;
       if (this.particles) this.particles.visible = false;
     }
   }
@@ -532,7 +532,7 @@ class App3D {
       : new THREE.Vector3(isoTargetX, 6.0, 0);
 
     const inspectCamPos = isFlat 
-      ? (isMobile ? new THREE.Vector3(0, 36.0, 1.8) : new THREE.Vector3(isoTargetX, 34.0, 0.3))
+      ? (isMobile ? new THREE.Vector3(0, 14.5, 16.0) : new THREE.Vector3(isoTargetX, 13.5, 15.0))
       : (isMobile ? new THREE.Vector3(0, 10.5, 17.5) : new THREE.Vector3(isoTargetX, 9.5, 16.5));
 
     const fitInspect = this.getFitPosition(inspectCamPos, inspectTarget, isMobile ? 22.0 : 24.0);
@@ -617,6 +617,8 @@ class App3D {
     this.glideCameraTo(fitOverview.pos, fitOverview.target, 0.9);
     this.closeDrawer();
     document.querySelectorAll('.shelf-item-pill').forEach(pill => pill.classList.remove('active'));
+    const shelf = document.querySelector('.bottom-shelf');
+    if (shelf) shelf.scrollTo({ left: 0, behavior: 'smooth' });
     this.playClickSound();
   }
 
@@ -786,7 +788,7 @@ class App3D {
         const isMobile = window.innerWidth <= 768 || (this.camera && this.camera.aspect < 1.0);
         const isoTargetX = isMobile ? 0 : -2.5;
         const inspectTarget = isMobile ? new THREE.Vector3(0, 6.0, 1.8) : new THREE.Vector3(isoTargetX, 6.0, 0);
-        const inspectCamPos = isMobile ? new THREE.Vector3(0, 36.0, 1.8) : new THREE.Vector3(isoTargetX, 34.0, 0.3);
+        const inspectCamPos = isMobile ? new THREE.Vector3(0, 20.0, 10.0) : new THREE.Vector3(isoTargetX, 18.0, 9.0);
         const fit = this.getFitPosition(inspectCamPos, inspectTarget, isMobile ? 22.0 : 24.0);
         this.glideCameraTo(fit.pos, fit.target, 0.7);
         this.playClickSound();
@@ -800,8 +802,8 @@ class App3D {
         const inspectTarget = isMobile ? new THREE.Vector3(0, 6.0, 1.8) : new THREE.Vector3(isoTargetX, 6.0, 0);
         const isFlat = ['letter', 'photo', 'card', 'greeting'].includes(this.selectedProductId);
         const inspectCamPos = isMobile
-          ? (isFlat ? new THREE.Vector3(0, 18.0, 16.0) : new THREE.Vector3(0, 10.5, 17.5))
-          : (isFlat ? new THREE.Vector3(isoTargetX, 16.0, 16.0) : new THREE.Vector3(isoTargetX, 9.5, 16.5));
+          ? (isFlat ? new THREE.Vector3(0, 14.5, 16.0) : new THREE.Vector3(0, 10.5, 17.5))
+          : (isFlat ? new THREE.Vector3(isoTargetX, 13.5, 15.0) : new THREE.Vector3(isoTargetX, 9.5, 16.5));
         const fit = this.getFitPosition(inspectCamPos, inspectTarget, isMobile ? 22.0 : 24.0);
         this.glideCameraTo(fit.pos, fit.target, 0.7);
         this.playClickSound();
@@ -928,7 +930,7 @@ class App3D {
       const isoTargetX = isMobile ? 0 : -2.5;
       const inspectTarget = isMobile ? new THREE.Vector3(0, 6.0, 1.8) : new THREE.Vector3(isoTargetX, 6.0, 0);
       const inspectCamPos = isFlat 
-        ? (isMobile ? new THREE.Vector3(0, 36.0, 1.8) : new THREE.Vector3(isoTargetX, 34.0, 0.3)) 
+        ? (isMobile ? new THREE.Vector3(0, 14.5, 16.0) : new THREE.Vector3(isoTargetX, 13.5, 15.0)) 
         : (isMobile ? new THREE.Vector3(0, 10.5, 17.5) : new THREE.Vector3(isoTargetX, 9.5, 16.5));
       const fitInspect = this.getFitPosition(inspectCamPos, inspectTarget, isMobile ? 22.0 : 24.0);
       this.camera.position.copy(fitInspect.pos);
