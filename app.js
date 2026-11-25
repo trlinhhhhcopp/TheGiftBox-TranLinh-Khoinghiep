@@ -433,6 +433,8 @@ class App3D {
 
   // Menu & Drawer Mutually Exclusive State Controller
   openMenu() {
+    document.body.classList.add('menu-open');
+    document.body.classList.remove('drawer-open');
     this.closeDrawer();
     const isMobile = window.innerWidth <= 768;
     if (isMobile) {
@@ -451,6 +453,7 @@ class App3D {
   }
 
   closeMenu() {
+    document.body.classList.remove('menu-open');
     this.menuPanel.classList.remove('mobile-open');
     this.menuPanel.classList.add('collapsed');
     const backdrop = document.getElementById('ui-backdrop');
@@ -481,6 +484,7 @@ class App3D {
   }
 
   closeDrawer() {
+    document.body.classList.remove('drawer-open');
     this.drawer.classList.remove('visible');
     const backdrop = document.getElementById('ui-backdrop');
     if (backdrop && !this.menuPanel.classList.contains('mobile-open')) {
@@ -501,8 +505,8 @@ class App3D {
       return;
     }
 
-    // If box is closed and an inside item is selected, open box first!
-    if (!this.giftBoxScene.isBoxOpen) {
+    // If box is closed and an inside item is selected, open box first! (Greeting card is outside the box so can inspect directly)
+    if (!this.giftBoxScene.isBoxOpen && productId !== 'greeting') {
       this.openLidAndSelect(productId);
       return;
     }
@@ -518,17 +522,20 @@ class App3D {
 
     const isFlat = ['letter', 'photo', 'card', 'greeting'].includes(productId);
     const isMobile = window.innerWidth <= 768 || (this.camera && this.camera.aspect < 1.0);
+    // On desktop, offset target to X = -2.5 so the product is centered in the open viewing space to the left of the 330px drawer
+    const isoTargetX = isMobile ? 0 : -2.5;
 
-    // On mobile portrait mode, target slightly lower so product floats in the top 56% open area above the bottom drawer
+    // Generous camera distance and target height:
+    // Completely prevents clipping, screen overflowing ("tràn viền"), and drawer overlap ("che che")
     const inspectTarget = isMobile
-      ? new THREE.Vector3(0, 7.2, 0)
-      : new THREE.Vector3(0, 8.5, 0);
+      ? new THREE.Vector3(0, 6.0, 1.8)
+      : new THREE.Vector3(isoTargetX, 6.0, 0);
 
     const inspectCamPos = isFlat 
-      ? (isMobile ? new THREE.Vector3(0, 26.0, -1.8) : new THREE.Vector3(0, 24.0, 0.4))
-      : (isMobile ? new THREE.Vector3(0, 10.2, 14.5) : new THREE.Vector3(0, 11.2, 13.5));
+      ? (isMobile ? new THREE.Vector3(0, 36.0, 1.8) : new THREE.Vector3(isoTargetX, 34.0, 0.3))
+      : (isMobile ? new THREE.Vector3(0, 10.5, 17.5) : new THREE.Vector3(isoTargetX, 9.5, 16.5));
 
-    const fitInspect = this.getFitPosition(inspectCamPos, inspectTarget, isFlat ? (isMobile ? 16.0 : 14.5) : (isMobile ? 16.5 : 15.0));
+    const fitInspect = this.getFitPosition(inspectCamPos, inspectTarget, isMobile ? 22.0 : 24.0);
     this.glideCameraTo(fitInspect.pos, fitInspect.target, 0.85);
 
     this.showDrawer(info, true);
@@ -536,6 +543,8 @@ class App3D {
   }
 
   showDrawer(info, isIsolated = false) {
+    document.body.classList.add('drawer-open');
+    document.body.classList.remove('menu-open');
     // ALWAYS close menu so menu and drawer NEVER collide!
     this.closeMenu();
     const btnExpand = document.getElementById('btn-expand-menu');
@@ -591,8 +600,11 @@ class App3D {
 
   resetToOverview() {
     this.selectedProductId = null;
+    document.body.classList.remove('drawer-open');
+    document.body.classList.remove('menu-open');
     this.giftBoxScene.isolateProduct(null, false);
-    const fitOverview = this.getFitPosition(this.cameraPresets.overview.pos, this.cameraPresets.overview.target, 33.0);
+    const isMobile = window.innerWidth <= 768 || (this.camera && this.camera.aspect < 1.0);
+    const fitOverview = this.getFitPosition(this.cameraPresets.overview.pos, this.cameraPresets.overview.target, isMobile ? 33.5 : 31.0);
     this.glideCameraTo(fitOverview.pos, fitOverview.target, 0.9);
     this.closeDrawer();
     document.querySelectorAll('.shelf-item-pill').forEach(pill => pill.classList.remove('active'));
@@ -762,9 +774,11 @@ class App3D {
       btnInspectTopDown.addEventListener('click', () => {
         btnInspectTopDown.classList.add('active');
         btnInspectFront.classList.remove('active');
-        const inspectTarget = new THREE.Vector3(0, 8.5, 0);
-        const inspectCamPos = new THREE.Vector3(0, 24.0, 0.4);
-        const fit = this.getFitPosition(inspectCamPos, inspectTarget, 14.5);
+        const isMobile = window.innerWidth <= 768 || (this.camera && this.camera.aspect < 1.0);
+        const isoTargetX = isMobile ? 0 : -2.5;
+        const inspectTarget = isMobile ? new THREE.Vector3(0, 6.0, 1.8) : new THREE.Vector3(isoTargetX, 6.0, 0);
+        const inspectCamPos = isMobile ? new THREE.Vector3(0, 36.0, 1.8) : new THREE.Vector3(isoTargetX, 34.0, 0.3);
+        const fit = this.getFitPosition(inspectCamPos, inspectTarget, isMobile ? 22.0 : 24.0);
         this.glideCameraTo(fit.pos, fit.target, 0.7);
         this.playClickSound();
       });
@@ -772,9 +786,14 @@ class App3D {
       btnInspectFront.addEventListener('click', () => {
         btnInspectFront.classList.add('active');
         btnInspectTopDown.classList.remove('active');
-        const inspectTarget = new THREE.Vector3(0, 8.5, 0);
-        const inspectCamPos = new THREE.Vector3(0, 11.2, 13.5);
-        const fit = this.getFitPosition(inspectCamPos, inspectTarget, 15.0);
+        const isMobile = window.innerWidth <= 768 || (this.camera && this.camera.aspect < 1.0);
+        const isoTargetX = isMobile ? 0 : -2.5;
+        const inspectTarget = isMobile ? new THREE.Vector3(0, 6.0, 1.8) : new THREE.Vector3(isoTargetX, 6.0, 0);
+        const isFlat = ['letter', 'photo', 'card', 'greeting'].includes(this.selectedProductId);
+        const inspectCamPos = isMobile
+          ? (isFlat ? new THREE.Vector3(0, 18.0, 16.0) : new THREE.Vector3(0, 10.5, 17.5))
+          : (isFlat ? new THREE.Vector3(isoTargetX, 16.0, 16.0) : new THREE.Vector3(isoTargetX, 9.5, 16.5));
+        const fit = this.getFitPosition(inspectCamPos, inspectTarget, isMobile ? 22.0 : 24.0);
         this.glideCameraTo(fit.pos, fit.target, 0.7);
         this.playClickSound();
       });
@@ -897,11 +916,12 @@ class App3D {
       this.controls.target.copy(fit.target);
     } else if (this.selectedProductId && !this.isCameraAnimating) {
       const isFlat = ['letter', 'photo', 'card', 'greeting'].includes(this.selectedProductId);
-      const inspectTarget = isMobile ? new THREE.Vector3(0, 7.2, 0) : new THREE.Vector3(0, 8.5, 0);
+      const isoTargetX = isMobile ? 0 : -2.5;
+      const inspectTarget = isMobile ? new THREE.Vector3(0, 6.0, 1.8) : new THREE.Vector3(isoTargetX, 6.0, 0);
       const inspectCamPos = isFlat 
-        ? (isMobile ? new THREE.Vector3(0, 26.0, -1.8) : new THREE.Vector3(0, 24.0, 0.4)) 
-        : (isMobile ? new THREE.Vector3(0, 10.2, 14.5) : new THREE.Vector3(0, 11.2, 13.5));
-      const fitInspect = this.getFitPosition(inspectCamPos, inspectTarget, isFlat ? (isMobile ? 16.0 : 14.5) : (isMobile ? 16.5 : 15.0));
+        ? (isMobile ? new THREE.Vector3(0, 36.0, 1.8) : new THREE.Vector3(isoTargetX, 34.0, 0.3)) 
+        : (isMobile ? new THREE.Vector3(0, 10.5, 17.5) : new THREE.Vector3(isoTargetX, 9.5, 16.5));
+      const fitInspect = this.getFitPosition(inspectCamPos, inspectTarget, isMobile ? 22.0 : 24.0);
       this.camera.position.copy(fitInspect.pos);
       this.controls.target.copy(fitInspect.target);
     }

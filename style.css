@@ -209,6 +209,23 @@ html, body {
   transform: translateX(calc(100% + 40px));
   opacity: 0;
   pointer-events: none;
+  visibility: hidden;
+}
+
+/* Strict Mutual Exclusivity: Never allow floating-controls and detail-drawer to overlap */
+body.drawer-open #floating-controls,
+body.drawer-open #btn-expand-menu {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+}
+
+body.menu-open #detail-drawer {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
 }
 
 /* Floating Expand Button when menu is collapsed */

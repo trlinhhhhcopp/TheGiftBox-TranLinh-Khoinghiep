@@ -1300,7 +1300,7 @@ class GiftBoxScene {
     }
 
     if (this.greetingCardGroup) {
-      this.greetingCardGroup.visible = isPink;
+      this.greetingCardGroup.visible = true;
     }
   }
 
@@ -1330,17 +1330,38 @@ class GiftBoxScene {
     }
   }
 
-  // Isolate product for 360 degree individual inspection
+  // Isolate product for 360 degree individual inspection ("Tách riêng sản phẩm ra ngoài")
   isolateProduct(productId, isolate = true) {
     if (!isolate || !productId || productId === 'box' || !this.products[productId]) {
       this.isolatedProductId = null;
+      // Restore visibility of box, molded tray, and all items
+      if (this.products['box']) this.products['box'].visible = true;
+      if (this.trayGroup) this.trayGroup.visible = true;
+      const keys = ['bunny', 'candle', 'teajar', 'diffuser', 'photo', 'letter', 'card', 'greeting'];
+      for (const key of keys) {
+        if (this.products[key]) {
+          this.products[key].visible = true;
+        }
+      }
       return;
     }
+
     this.isolatedProductId = productId;
     if (this.isExploded) {
       this.setExplodeState(false);
     }
-    if (this.insideGroup) this.insideGroup.visible = true;
+
+    // Hide the box and tray so the isolated product floats cleanly in pure studio space without any clutter underneath
+    if (this.products['box']) this.products['box'].visible = false;
+    if (this.trayGroup) this.trayGroup.visible = false;
+
+    // Hide all OTHER products, showing ONLY the isolated product
+    const keys = ['bunny', 'candle', 'teajar', 'diffuser', 'photo', 'letter', 'card', 'greeting'];
+    for (const key of keys) {
+      if (this.products[key]) {
+        this.products[key].visible = (key === productId);
+      }
+    }
   }
 
   update(delta, elapsed) {
@@ -1353,45 +1374,46 @@ class GiftBoxScene {
       const nextFlap = THREE.MathUtils.lerp(currentFlap, this.targetFlapAngle, 0.08);
       this.boxFlapGroup.rotation.x = nextFlap;
 
-      if (this.insideGroup) {
+      if (this.insideGroup && !this.isolatedProductId) {
         this.insideGroup.visible = (next > 0.05);
       }
     }
 
     // 1. Product 3D Isolation / Inspection Mode ("Tách riêng sản phẩm ra ngoài")
     if (this.isolatedProductId && this.products[this.isolatedProductId]) {
+      const isMobile = window.innerWidth <= 768;
+      // On desktop, offset slightly to X = -2.5 so that the 330px drawer on the right NEVER covers it!
+      const isoTargetX = isMobile ? 0 : -2.5;
+      const floatY = 6.0 + Math.sin(elapsed * 2.0) * 0.08;
+
       const keys = ['bunny', 'candle', 'teajar', 'diffuser', 'photo', 'letter', 'card', 'greeting'];
       for (const key of keys) {
         const prod = this.products[key];
         if (!prod || !prod.userData || !prod.userData.basePos) continue;
 
         if (key === this.isolatedProductId) {
-          // Floating gracefully above the box center for 360 inspection (Y = 8.5)
-          const floatY = 8.5 + Math.sin(elapsed * 2.0) * 0.12;
-          prod.position.x = THREE.MathUtils.lerp(prod.position.x, 0, 0.08);
+          prod.position.x = THREE.MathUtils.lerp(prod.position.x, isoTargetX, 0.08);
           prod.position.y = THREE.MathUtils.lerp(prod.position.y, floatY, 0.08);
           prod.position.z = THREE.MathUtils.lerp(prod.position.z, 0, 0.08);
 
           // Optimal inspection angle:
-          // Flat items (letter, photo, card): lay flat horizontally (rotation = 0, 0, 0)
-          // Upright items (bunny, candle, teajar, diffuser): stand upright facing front (rotation = 0, 0, 0)
+          // Flat items: rotation lerps to (0, 0, 0) - card lies flat horizontally facing upwards!
+          // Upright items: rotation lerps to (0, 0, 0) - upright facing front!
           prod.rotation.x = THREE.MathUtils.lerp(prod.rotation.x, 0, 0.08);
           prod.rotation.y = THREE.MathUtils.lerp(prod.rotation.y, 0, 0.08);
           prod.rotation.z = THREE.MathUtils.lerp(prod.rotation.z, 0, 0.08);
 
-          prod.scale.lerp(new THREE.Vector3(1.18, 1.18, 1.18), 0.08);
-        } else {
-          // Keep other items resting peacefully in their slots
-          const bp = prod.userData.basePos;
-          prod.position.x = THREE.MathUtils.lerp(prod.position.x, bp.x, 0.08);
-          prod.position.y = THREE.MathUtils.lerp(prod.position.y, bp.y, 0.08);
-          prod.position.z = THREE.MathUtils.lerp(prod.position.z, bp.z, 0.08);
-          if (prod.userData.baseRot) {
-            prod.rotation.x = THREE.MathUtils.lerp(prod.rotation.x, prod.userData.baseRot.x, 0.08);
-            prod.rotation.y = THREE.MathUtils.lerp(prod.rotation.y, prod.userData.baseRot.y, 0.08);
-            prod.rotation.z = THREE.MathUtils.lerp(prod.rotation.z, prod.userData.baseRot.z, 0.08);
-          }
           prod.scale.lerp(new THREE.Vector3(1.0, 1.0, 1.0), 0.08);
+        } else {
+          // Keep other items resting in their base slots
+          const bp = prod.userData.basePos;
+          prod.position.x = bp.x;
+          prod.position.y = bp.y;
+          prod.position.z = bp.z;
+          if (prod.userData.baseRot) {
+            prod.rotation.copy(prod.userData.baseRot);
+          }
+          prod.scale.set(1.0, 1.0, 1.0);
         }
       }
     } else if (this.targetExplodeFactor !== undefined && (this.targetExplodeFactor > 0.01 || this.explodeFactor > 0.01)) {
