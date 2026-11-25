@@ -75,8 +75,8 @@ class App3D {
   // 1. Three.js Core Setup
   initThree() {
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(0xfcf9fa);
-    this.scene.fog = new THREE.FogExp2(0xfcf9fa, 0.0025);
+    this.scene.background = new THREE.Color(0xfdf5f2);
+    this.scene.fog = new THREE.FogExp2(0xfdf5f2, 0.0028);
 
     const aspect = window.innerWidth / window.innerHeight;
     const baseFov = aspect < 1.0 ? 62 : 40;
@@ -146,11 +146,11 @@ class App3D {
   initLighting() {
     this.lights = {};
 
-    this.lights.hemi = new THREE.HemisphereLight(0xffffff, 0xf5e9ef, 0.85);
+    this.lights.hemi = new THREE.HemisphereLight(0xffeedd, 0xdfcad2, 0.82);
     this.scene.add(this.lights.hemi);
 
-    // Warm Key Directional Light
-    this.lights.key = new THREE.DirectionalLight(0xfff8f5, 1.2);
+    // Warm Golden-Peach Key Directional Light
+    this.lights.key = new THREE.DirectionalLight(0xffe4d0, 1.28);
     this.lights.key.position.set(16, 28, 18);
     this.lights.key.castShadow = true;
     this.lights.key.shadow.mapSize.width = 2048;
@@ -166,12 +166,12 @@ class App3D {
     this.scene.add(this.lights.key);
 
     // Soft Blush Fill Light
-    this.lights.fill = new THREE.DirectionalLight(0xfde8ef, 0.7);
+    this.lights.fill = new THREE.DirectionalLight(0xffd1dc, 0.70);
     this.lights.fill.position.set(-18, 16, 14);
     this.scene.add(this.lights.fill);
 
-    // Subtle Rim Light
-    this.lights.rim = new THREE.DirectionalLight(0xffffff, 0.4);
+    // Warm Rim Light
+    this.lights.rim = new THREE.DirectionalLight(0xfff2e6, 0.45);
     this.lights.rim.position.set(0, 18, -24);
     this.scene.add(this.lights.rim);
   }
@@ -179,26 +179,26 @@ class App3D {
   // 3. Set Lighting Mood
   setLightingMood(mood) {
     if (mood === 'candlelight') {
-      // Warm Cozy Candlelight Studio (Default: Clean Luminous Studio)
-      this.scene.background.set(0xfcf9fa);
-      this.scene.fog.color.set(0xfcf9fa);
+      // Warm Cozy Candlelight Studio (Default: Romantic warm golden-peach glow)
+      this.scene.background.set(0xfdf5f2);
+      this.scene.fog.color.set(0xfdf5f2);
       if (this.giftBoxScene && this.giftBoxScene.studioFloorMat) {
-        this.giftBoxScene.studioFloorMat.color.set(0xfcf9fa);
+        this.giftBoxScene.studioFloorMat.color.set(0xfdf5f2);
       }
-      this.lights.hemi.color.set(0xffffff);
-      this.lights.hemi.groundColor.set(0xf5e9ef);
-      this.lights.hemi.intensity = 0.85;
+      this.lights.hemi.color.set(0xffeedd);
+      this.lights.hemi.groundColor.set(0xdfcad2);
+      this.lights.hemi.intensity = 0.82;
 
-      this.lights.key.color.set(0xfff6f0);
-      this.lights.key.intensity = 1.2;
+      this.lights.key.color.set(0xffe4d0);
+      this.lights.key.intensity = 1.28;
 
-      this.lights.fill.color.set(0xfde8ef);
-      this.lights.fill.intensity = 0.7;
+      this.lights.fill.color.set(0xffd1dc);
+      this.lights.fill.intensity = 0.70;
 
-      this.lights.rim.color.set(0xffffff);
-      this.lights.rim.intensity = 0.4;
+      this.lights.rim.color.set(0xfff2e6);
+      this.lights.rim.intensity = 0.45;
 
-      this.renderer.toneMappingExposure = 1.08;
+      this.renderer.toneMappingExposure = 1.12;
       if (this.particles) this.particles.visible = true;
     } else if (mood === 'sunset') {
       // Golden Sunset
@@ -221,19 +221,19 @@ class App3D {
       if (this.particles) this.particles.visible = true;
     } else if (mood === 'studio') {
       // Clean Luxury Warm White Studio
-      this.scene.background.set(0xfcf8fa);
-      this.scene.fog.color.set(0xfcf8fa);
+      this.scene.background.set(0xfef8f5);
+      this.scene.fog.color.set(0xfef8f5);
       if (this.giftBoxScene && this.giftBoxScene.studioFloorMat) {
-        this.giftBoxScene.studioFloorMat.color.set(0xfcf8fa);
+        this.giftBoxScene.studioFloorMat.color.set(0xfef8f5);
       }
-      this.lights.hemi.color.set(0xffffff);
-      this.lights.hemi.groundColor.set(0xe8dee3);
+      this.lights.hemi.color.set(0xfffaf0);
+      this.lights.hemi.groundColor.set(0xe8dcd8);
       this.lights.hemi.intensity = 0.85;
 
-      this.lights.key.color.set(0xfff8f4);
+      this.lights.key.color.set(0xffeedb);
       this.lights.key.intensity = 1.25;
 
-      this.lights.fill.color.set(0xfcdde5);
+      this.lights.fill.color.set(0xfce0e8);
       this.lights.fill.intensity = 0.65;
 
       this.renderer.toneMappingExposure = 1.08;
@@ -241,26 +241,56 @@ class App3D {
     }
   }
 
-  // 4. Subtle Floating Golden Dust Particles
+  // 4. Falling Snowflake Particles
+  createSnowflakeTexture() {
+    const canvas = document.createElement('canvas');
+    canvas.width = 64;
+    canvas.height = 64;
+    const ctx = canvas.getContext('2d');
+    const grad = ctx.createRadialGradient(32, 32, 0, 32, 32, 30);
+    grad.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
+    grad.addColorStop(0.35, 'rgba(255, 248, 252, 0.75)');
+    grad.addColorStop(0.7, 'rgba(255, 230, 240, 0.3)');
+    grad.addColorStop(1, 'rgba(255, 230, 240, 0)');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(32, 32, 30, 0, Math.PI * 2);
+    ctx.fill();
+
+    const tex = new THREE.CanvasTexture(canvas);
+    return tex;
+  }
+
   initParticles() {
-    const particleCount = 110;
+    const particleCount = 160;
     const geometry = new THREE.BufferGeometry();
     const positions = new Float32Array(particleCount * 3);
+    this.snowData = [];
 
-    for (let i = 0; i < particleCount * 3; i += 3) {
-      positions[i] = (Math.random() - 0.5) * 36;
-      positions[i + 1] = Math.random() * 22;
-      positions[i + 2] = (Math.random() - 0.5) * 36;
+    for (let i = 0; i < particleCount; i++) {
+      const idx = i * 3;
+      positions[idx] = (Math.random() - 0.5) * 44;
+      positions[idx + 1] = Math.random() * 32;
+      positions[idx + 2] = (Math.random() - 0.5) * 44;
+
+      this.snowData.push({
+        speedY: 1.6 + Math.random() * 2.2,
+        swaySpeed: 1.0 + Math.random() * 1.8,
+        swayAmp: 0.6 + Math.random() * 0.8,
+        phase: Math.random() * Math.PI * 2
+      });
     }
 
     geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 
     const material = new THREE.PointsMaterial({
-      color: 0xe6a86c,
-      size: 0.32,
+      color: 0xffffff,
+      size: 0.42,
+      map: this.createSnowflakeTexture(),
       transparent: true,
-      opacity: 0.55,
-      blending: THREE.AdditiveBlending
+      opacity: 0.85,
+      blending: THREE.NormalBlending,
+      depthWrite: false
     });
 
     this.particles = new THREE.Points(geometry, material);
@@ -531,9 +561,10 @@ class App3D {
       ? new THREE.Vector3(0, 6.0, 1.8)
       : new THREE.Vector3(isoTargetX, 6.0, 0);
 
-    const inspectCamPos = isFlat 
-      ? (isMobile ? new THREE.Vector3(0, 14.5, 16.0) : new THREE.Vector3(isoTargetX, 13.5, 15.0))
-      : (isMobile ? new THREE.Vector3(0, 10.5, 17.5) : new THREE.Vector3(isoTargetX, 9.5, 16.5));
+    // Top-down camera view for ALL items as requested ("cứ khi nào người dùng bấm vào thì sẽ xem được đồ vật đó từ góc nhìn từ trên xuống")
+    const inspectCamPos = isMobile
+      ? new THREE.Vector3(0, 31.0, 5.0)
+      : new THREE.Vector3(isoTargetX, 30.0, 3.5);
 
     const fitInspect = this.getFitPosition(inspectCamPos, inspectTarget, isMobile ? 22.0 : 24.0);
     this.glideCameraTo(fitInspect.pos, fitInspect.target, 0.85);
@@ -570,12 +601,11 @@ class App3D {
     const viewControls = document.getElementById('drawer-view-controls');
     if (viewControls) {
       viewControls.style.display = isIsolated ? 'flex' : 'none';
-      const isFlat = ['letter', 'photo', 'card', 'greeting'].includes(this.selectedProductId);
       const btnTopDown = document.getElementById('btn-inspect-topdown');
       const btnFront = document.getElementById('btn-inspect-front');
       if (btnTopDown && btnFront) {
-        btnTopDown.classList.toggle('active', isFlat);
-        btnFront.classList.toggle('active', !isFlat);
+        btnTopDown.classList.add('active');
+        btnFront.classList.remove('active');
       }
     }
 
@@ -788,7 +818,7 @@ class App3D {
         const isMobile = window.innerWidth <= 768 || (this.camera && this.camera.aspect < 1.0);
         const isoTargetX = isMobile ? 0 : -2.5;
         const inspectTarget = isMobile ? new THREE.Vector3(0, 6.0, 1.8) : new THREE.Vector3(isoTargetX, 6.0, 0);
-        const inspectCamPos = isMobile ? new THREE.Vector3(0, 20.0, 10.0) : new THREE.Vector3(isoTargetX, 18.0, 9.0);
+        const inspectCamPos = isMobile ? new THREE.Vector3(0, 31.0, 5.0) : new THREE.Vector3(isoTargetX, 30.0, 3.5);
         const fit = this.getFitPosition(inspectCamPos, inspectTarget, isMobile ? 22.0 : 24.0);
         this.glideCameraTo(fit.pos, fit.target, 0.7);
         this.playClickSound();
@@ -926,12 +956,19 @@ class App3D {
       this.camera.position.copy(fit.pos);
       this.controls.target.copy(fit.target);
     } else if (this.selectedProductId && !this.isCameraAnimating) {
-      const isFlat = ['letter', 'photo', 'card', 'greeting'].includes(this.selectedProductId);
       const isoTargetX = isMobile ? 0 : -2.5;
       const inspectTarget = isMobile ? new THREE.Vector3(0, 6.0, 1.8) : new THREE.Vector3(isoTargetX, 6.0, 0);
-      const inspectCamPos = isFlat 
-        ? (isMobile ? new THREE.Vector3(0, 14.5, 16.0) : new THREE.Vector3(isoTargetX, 13.5, 15.0)) 
-        : (isMobile ? new THREE.Vector3(0, 10.5, 17.5) : new THREE.Vector3(isoTargetX, 9.5, 16.5));
+      const btnInspectFront = document.getElementById('btn-inspect-front');
+      const isFrontActive = btnInspectFront && btnInspectFront.classList.contains('active');
+      let inspectCamPos;
+      if (isFrontActive) {
+        const isFlat = ['letter', 'photo', 'card', 'greeting'].includes(this.selectedProductId);
+        inspectCamPos = isMobile
+          ? (isFlat ? new THREE.Vector3(0, 14.5, 16.0) : new THREE.Vector3(0, 10.5, 17.5))
+          : (isFlat ? new THREE.Vector3(isoTargetX, 13.5, 15.0) : new THREE.Vector3(isoTargetX, 9.5, 16.5));
+      } else {
+        inspectCamPos = isMobile ? new THREE.Vector3(0, 31.0, 5.0) : new THREE.Vector3(isoTargetX, 30.0, 3.5);
+      }
       const fitInspect = this.getFitPosition(inspectCamPos, inspectTarget, isMobile ? 22.0 : 24.0);
       this.camera.position.copy(fitInspect.pos);
       this.controls.target.copy(fitInspect.target);
@@ -961,8 +998,24 @@ class App3D {
       }
     }
 
-    if (this.particles && this.particles.visible) {
-      this.particles.rotation.y = elapsed * 0.035;
+    // Snowflakes falling and gently swaying animation
+    if (this.particles && this.particles.visible && this.snowData) {
+      const posAttr = this.particles.geometry.attributes.position;
+      const posArr = posAttr.array;
+      for (let i = 0; i < this.snowData.length; i++) {
+        const d = this.snowData[i];
+        const idx = i * 3;
+        posArr[idx + 1] -= d.speedY * delta;
+        posArr[idx] += Math.sin(elapsed * d.swaySpeed + d.phase) * (0.015 * d.swayAmp);
+        posArr[idx + 2] += Math.cos(elapsed * d.swaySpeed + d.phase) * (0.012 * d.swayAmp);
+
+        if (posArr[idx + 1] < -0.2) {
+          posArr[idx + 1] = 30 + Math.random() * 5;
+          posArr[idx] = (Math.random() - 0.5) * 44;
+          posArr[idx + 2] = (Math.random() - 0.5) * 44;
+        }
+      }
+      posAttr.needsUpdate = true;
     }
 
     this.controls.update();

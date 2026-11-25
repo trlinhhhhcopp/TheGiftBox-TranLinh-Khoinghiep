@@ -157,9 +157,9 @@ const TextureManager = {
     // Luxurious Soft Pastel Background (Rich sweet strawberry pastel pink)
     if (isPink) {
       const grad = ctx.createLinearGradient(0, 0, 1024, 1024);
-      grad.addColorStop(0, '#f8a5bd');
-      grad.addColorStop(0.5, '#f48fb0');
-      grad.addColorStop(1, '#ee799d');
+      grad.addColorStop(0, '#f99bb7');
+      grad.addColorStop(0.4, '#ee638d');
+      grad.addColorStop(1, '#e24d7b');
       ctx.fillStyle = grad;
     } else {
       const grad = ctx.createLinearGradient(0, 0, 1024, 1024);
@@ -476,9 +476,9 @@ const TextureManager = {
     const isPink = (edition === 'pink');
     const grad = ctx.createLinearGradient(0, 0, 1024, 0);
     if (isPink) {
-      grad.addColorStop(0, '#f285a7');
-      grad.addColorStop(0.5, '#f79fbc');
-      grad.addColorStop(1, '#f285a7');
+      grad.addColorStop(0, '#e55480');
+      grad.addColorStop(0.5, '#f580a5');
+      grad.addColorStop(1, '#e55480');
     } else {
       grad.addColorStop(0, '#f2ece4');
       grad.addColorStop(0.5, '#faf7f2');

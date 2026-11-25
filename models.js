@@ -213,14 +213,14 @@ class GiftBoxScene {
     const bw = 28, bd = 22, bh = 6.6, wall = 0.45;
 
     this.boxOuterMat = new THREE.MeshStandardMaterial({
-      color: (this.currentEdition === 'pink') ? 0xf0809f : 0xf7f3ea,
-      roughness: 0.65,
-      metalness: 0.05
+      color: (this.currentEdition === 'pink') ? 0xeb5e88 : 0xf7f3ea,
+      roughness: 0.48,
+      metalness: 0.08
     });
 
     this.boxInnerMat = new THREE.MeshStandardMaterial({
-      color: (this.currentEdition === 'pink') ? 0xfcdde7 : 0xfefcf8,
-      roughness: 0.7,
+      color: (this.currentEdition === 'pink') ? 0xf7b6cc : 0xfefcf8,
+      roughness: 0.55,
       metalness: 0.0
     });
 
@@ -1227,9 +1227,9 @@ class GiftBoxScene {
     this.currentEdition = edition;
     const isPink = (edition === 'pink');
 
-    const boxCol = isPink ? 0xf0809f : 0xf7f3ea;
+    const boxCol = isPink ? 0xeb5e88 : 0xf7f3ea;
     this.boxOuterMat.color.set(boxCol);
-    this.boxInnerMat.color.set(isPink ? 0xfcdde7 : 0xfefcf8);
+    this.boxInnerMat.color.set(isPink ? 0xf7b6cc : 0xfefcf8);
 
     if (this.lidMesh) {
       this.lidMesh.material[2].map = TextureManager.createBoxCoverTexture(edition);
@@ -1401,8 +1401,9 @@ class GiftBoxScene {
           // Flat items: tilt gracefully towards the camera (rotation.x = -0.42) like on an art easel display
           // Upright items: stand upright facing front (rotation = 0, 0, 0)
           // Bunny: tilted gracefully towards the viewer (rotation.x = -0.45)
-          const isFlat = ['letter', 'photo', 'card', 'greeting'].includes(key);
-          const targetRotX = isFlat ? -0.42 : (key === 'bunny' ? -0.45 : 0);
+          // Lying flat / top-down display as requested ("cho nằm ra", "góc nhìn từ trên xuống")
+          // Bunny lies flat on its back (-Math.PI / 2), flat items lie flat horizontally (0), upright items stand (0)
+          const targetRotX = (key === 'bunny') ? -Math.PI / 2 : 0;
           prod.rotation.x = THREE.MathUtils.lerp(prod.rotation.x, targetRotX, 0.08);
           prod.rotation.y = THREE.MathUtils.lerp(prod.rotation.y, 0, 0.08);
           prod.rotation.z = THREE.MathUtils.lerp(prod.rotation.z, 0, 0.08);
