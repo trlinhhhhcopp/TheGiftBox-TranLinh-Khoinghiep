@@ -588,10 +588,19 @@ class App3D {
   }
 
   updateShelfActive(productId) {
+    const shelf = document.querySelector('.bottom-shelf');
     document.querySelectorAll('.shelf-item-pill').forEach(pill => {
       if (pill.dataset.product === productId) {
         pill.classList.add('active');
-        pill.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        if (shelf && shelf.scrollWidth > shelf.clientWidth) {
+          const pillLeft = pill.offsetLeft;
+          const pillWidth = pill.offsetWidth;
+          const shelfWidth = shelf.clientWidth;
+          shelf.scrollTo({
+            left: pillLeft - (shelfWidth / 2) + (pillWidth / 2),
+            behavior: 'smooth'
+          });
+        }
       } else {
         pill.classList.remove('active');
       }
