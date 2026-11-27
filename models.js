@@ -351,6 +351,7 @@ class GiftBoxScene {
     lidMesh.position.set(0, wall / 2, bd / 2);
     lidMesh.castShadow = true;
     lidMesh.receiveShadow = true;
+    lidMesh.userData.isLid = true;
     lidGroup.add(lidMesh);
     this.lidMesh = lidMesh;
 
@@ -363,6 +364,7 @@ class GiftBoxScene {
     const flapMesh = new THREE.Mesh(new THREE.BoxGeometry(bw + 0.4, 3.2, wall), flapMat);
     flapMesh.position.set(0, -1.6, wall / 2);
     flapMesh.castShadow = true;
+    flapMesh.userData.isLid = true;
     flapGroup.add(flapMesh);
     this.flapMesh = flapMesh;
 
@@ -370,6 +372,7 @@ class GiftBoxScene {
 
     lidGroup.rotation.x = -this.lidAngle;
     flapGroup.rotation.x = this.flapAngle;
+    lidGroup.userData.isLid = true;
 
     boxGroup.add(lidGroup);
     this.boxLidGroup = lidGroup;
@@ -1489,8 +1492,8 @@ class GiftBoxScene {
 
   setLidState(open, animated = true) {
     this.isBoxOpen = open;
-    const targetLidAngle = open ? 2.0 : 0;
-    const targetFlapAngle = open ? 0.05 : Math.PI / 2;
+    const targetLidAngle = open ? 1.95 : 0;
+    const targetFlapAngle = open ? 0.22 : 0;
 
     if (!animated) {
       if (this.boxLidGroup) this.boxLidGroup.rotation.x = -targetLidAngle;
@@ -1548,17 +1551,20 @@ class GiftBoxScene {
   }
 
   update(delta, elapsed) {
+    const dt = Math.min(delta || 0.016, 0.05);
     if (this.targetLidAngle !== undefined && this.boxLidGroup) {
+      const lidDamp = 1 - Math.exp(-5.8 * dt);
       const current = -this.boxLidGroup.rotation.x;
-      const next = THREE.MathUtils.lerp(current, this.targetLidAngle, 0.08);
+      const next = THREE.MathUtils.lerp(current, this.targetLidAngle, lidDamp);
       this.boxLidGroup.rotation.x = -next;
 
+      const flapDamp = 1 - Math.exp(-6.5 * dt);
       const currentFlap = this.boxFlapGroup.rotation.x;
-      const nextFlap = THREE.MathUtils.lerp(currentFlap, this.targetFlapAngle, 0.08);
+      const nextFlap = THREE.MathUtils.lerp(currentFlap, this.targetFlapAngle, flapDamp);
       this.boxFlapGroup.rotation.x = nextFlap;
 
       if (this.insideGroup && !this.isolatedProductId) {
-        this.insideGroup.visible = (next > 0.05);
+        this.insideGroup.visible = (next > 0.08);
       }
     }
 

@@ -403,6 +403,15 @@ class App3D {
     }, { passive: true });
   }
 
+  isLidObject(hitObj) {
+    let cur = hitObj;
+    while (cur) {
+      if (cur.userData && cur.userData.isLid) return true;
+      cur = cur.parent;
+    }
+    return false;
+  }
+
   checkRaycastHover(e) {
     if (this.isCameraAnimating) return;
 
@@ -410,18 +419,20 @@ class App3D {
     const intersects = this.raycaster.intersectObjects(this.giftBoxScene.interactiveObjects, true);
 
     if (intersects.length > 0) {
-      let obj = intersects[0].object;
+      const hitMesh = intersects[0].object;
+      const isLidHit = this.isLidObject(hitMesh);
+      let obj = hitMesh;
       while (obj.parent && !obj.userData.isProduct) {
         obj = obj.parent;
       }
 
       if (obj && obj.userData.isProduct && obj.userData.productInfo) {
-        // If box is closed, only the closed box can be hovered or opened
+        // If box is closed, only the closed box/lid can be hovered or opened
         if (!this.giftBoxScene.isBoxOpen) {
           if (obj.userData.productId === 'box') {
             this.hoveredObject = obj;
             this.container.style.cursor = 'pointer';
-            this.tooltip.innerHTML = `🎁 Nhấp để mở nắp hộp quà "The Gift"`;
+            this.tooltip.innerHTML = `🎁 Nhấp vào nắp để mở hộp quà "The Gift"`;
             this.tooltip.style.left = `${e.clientX}px`;
             this.tooltip.style.top = `${e.clientY}px`;
             this.tooltip.classList.add('visible');
@@ -437,7 +448,9 @@ class App3D {
         this.container.style.cursor = 'pointer';
 
         const info = obj.userData.productInfo;
-        if (this.selectedProductId === obj.userData.productId) {
+        if (isLidHit) {
+          this.tooltip.innerHTML = `🎁 Nhấp vào nắp để đóng hộp quà ↩`;
+        } else if (this.selectedProductId === obj.userData.productId) {
           this.tooltip.innerHTML = `${info.icon} ${info.name} <span style="font-size:11px;opacity:0.85;margin-left:4px;">· Nhấp lần nữa để cất vào hộp ↩</span>`;
         } else {
           this.tooltip.innerHTML = `${info.icon} ${info.name}`;
@@ -459,7 +472,9 @@ class App3D {
     const intersects = this.raycaster.intersectObjects(this.giftBoxScene.interactiveObjects, true);
 
     if (intersects.length > 0) {
-      let obj = intersects[0].object;
+      const hitMesh = intersects[0].object;
+      const isLidHit = this.isLidObject(hitMesh);
+      let obj = hitMesh;
       while (obj.parent && !obj.userData.isProduct) {
         obj = obj.parent;
       }
@@ -467,9 +482,15 @@ class App3D {
       if (obj && obj.userData.isProduct) {
         const prodId = obj.userData.productId;
 
-        // If box is closed: clicking the box opens it!
+        // Clicking the closed box / lid opens it smoothly!
         if (!this.giftBoxScene.isBoxOpen) {
           this.openLidAndSelect();
+          return;
+        }
+
+        // Clicking directly on the box lid while open closes it smoothly!
+        if (isLidHit) {
+          this.closeLidView();
           return;
         }
 
@@ -492,11 +513,42 @@ class App3D {
         this.selectProduct(productId);
       }, 400);
     } else {
+      this.selectedProductId = null;
       this.giftBoxScene.isolateProduct(null, false);
-      const fitOverview = this.getFitPosition(this.cameraPresets.overview.pos, this.cameraPresets.overview.target, 34.0);
+      const isMobile = window.innerWidth <= 768 || (this.camera && this.camera.aspect < 1.0);
+      const fitOverview = this.getFitPosition(this.cameraPresets.overview.pos, this.cameraPresets.overview.target, isMobile ? 33.5 : 31.0);
       this.glideCameraTo(fitOverview.pos, fitOverview.target, 0.9);
+      this.closeDrawer();
       document.querySelectorAll('.shelf-item-pill').forEach(pill => pill.classList.remove('active'));
     }
+  }
+
+  // Helper: Close lid smoothly and frame the closed gift box
+  closeLidView() {
+    if (this.giftBoxScene.isExploded) {
+      this.giftBoxScene.setExplodeState(false);
+      const btnExplode = document.getElementById('btn-explode');
+      if (btnExplode) {
+        btnExplode.classList.remove('active');
+        const span = btnExplode.querySelector('span');
+        if (span) span.innerText = 'Xem Tách Lớp 3D';
+      }
+    }
+    this.giftBoxScene.isolateProduct(null, false);
+    this.giftBoxScene.setLidState(false, true);
+    const btnLidOpen = document.getElementById('btn-lid-open');
+    const btnLidClose = document.getElementById('btn-lid-close');
+    if (btnLidClose) btnLidClose.classList.add('active');
+    if (btnLidOpen) btnLidOpen.classList.remove('active');
+    this.selectedProductId = 'box';
+    const isMobile = window.innerWidth <= 768 || (this.camera && this.camera.aspect < 1.0);
+    const fitBox = this.getFitPosition(this.cameraPresets.box.pos, this.cameraPresets.box.target, isMobile ? 33.0 : 31.0);
+    this.glideCameraTo(fitBox.pos, fitBox.target, 0.9);
+    this.closeDrawer();
+    document.querySelectorAll('.shelf-item-pill').forEach(pill => {
+      pill.classList.toggle('active', pill.dataset.product === 'box');
+    });
+    this.playWhooshSound();
   }
 
   // Menu & Drawer Mutually Exclusive State Controller
@@ -748,16 +800,7 @@ class App3D {
     });
 
     btnLidClose.addEventListener('click', () => {
-      this.giftBoxScene.setLidState(false, true);
-      btnLidClose.classList.add('active');
-      btnLidOpen.classList.remove('active');
-      this.selectedProductId = 'box';
-      this.glideCameraTo(this.cameraPresets.box.pos, this.cameraPresets.box.target, 0.9);
-      this.closeDrawer();
-      document.querySelectorAll('.shelf-item-pill').forEach(pill => {
-        pill.classList.toggle('active', pill.dataset.product === 'box');
-      });
-      this.playWhooshSound();
+      this.closeLidView();
     });
 
     // Exploded View
