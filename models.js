@@ -835,8 +835,8 @@ class GiftBoxScene {
     flame.position.y = potHeight + 0.45;
     candleGroup.add(flame);
 
-    const candleLight = new THREE.PointLight(0xff9933, 0.85, 10);
-    candleLight.position.set(0, potHeight + 0.5, 0);
+    const candleLight = new THREE.PointLight(0xffa447, 1.15, 14);
+    candleLight.position.set(0, potHeight + 0.55, 0);
     candleGroup.add(candleLight);
     this.candleLight = candleLight;
 
@@ -979,7 +979,7 @@ class GiftBoxScene {
     stamp.rotation.set(-0.2, 0.6, 0);
     diffuserGroup.add(stamp);
 
-    const diffLight = new THREE.PointLight(0xffa84d, 0.6, 6);
+    const diffLight = new THREE.PointLight(0xffad55, 0.85, 10);
     diffLight.position.set(0, 1.1, 0.7);
     diffuserGroup.add(diffLight);
     this.diffuserLight = diffLight;
@@ -1053,55 +1053,233 @@ class GiftBoxScene {
     this.insideGroup.add(photoGroup);
   }
 
-  // 7. Seed Paper Letter with Wax Seal & Dried Flowers
+  // 7. Seed Paper Letter with Folded 3D V-Flap, Sculpted Bunny Wax Seal & Baby's Breath Sprig
   buildSeedPaperLetter() {
     const letterGroup = new THREE.Group();
     letterGroup.name = 'letter';
     this.products['letter'] = letterGroup;
 
-    const ew = 8.6, eh = 0.2, ed = 4.8;
+    const ew = 8.6, ed = 4.8, eh = 0.14;
+    const hw = ew / 2, hd = ed / 2, cr = 0.12;
 
-    const seedTex = TextureManager.createSeedPaperTexture(this.currentEdition);
-    const envelope = new THREE.Mesh(
-      new THREE.BoxGeometry(ew, eh, ed),
-      new THREE.MeshStandardMaterial({ color: 0xfaf7f0, roughness: 0.85 })
-    );
+    // 1. Rounded-corner Beveled Envelope Pocket Body
+    const envShape = new THREE.Shape();
+    envShape.moveTo(-hw + cr, -hd);
+    envShape.lineTo(hw - cr, -hd);
+    envShape.quadraticCurveTo(hw, -hd, hw, -hd + cr);
+    envShape.lineTo(hw, hd - cr);
+    envShape.quadraticCurveTo(hw, hd, hw - cr, hd);
+    envShape.lineTo(-hw + cr, hd);
+    envShape.quadraticCurveTo(-hw, hd, -hw, hd - cr);
+    envShape.lineTo(-hw, -hd + cr);
+    envShape.quadraticCurveTo(-hw, -hd, -hw + cr, -hd);
+
+    const envGeo = new THREE.ExtrudeGeometry(envShape, {
+      depth: eh,
+      bevelEnabled: true,
+      bevelThickness: 0.025,
+      bevelSize: 0.025,
+      bevelSegments: 3
+    });
+    const envBodyMat = new THREE.MeshStandardMaterial({
+      color: 0xf7e4d7,
+      roughness: 0.84,
+      metalness: 0.02
+    });
+    const envelope = new THREE.Mesh(envGeo, envBodyMat);
+    envelope.rotation.x = -Math.PI / 2;
+    envelope.position.y = -eh / 2;
     envelope.castShadow = true;
+    envelope.receiveShadow = true;
     letterGroup.add(envelope);
 
+    // Envelope pocket top textured surface
+    const seedTex = TextureManager.createSeedPaperTexture(this.currentEdition);
     const letterTop = new THREE.Mesh(
-      new THREE.PlaneGeometry(ew, ed),
-      new THREE.MeshStandardMaterial({ map: seedTex, roughness: 0.85 })
+      new THREE.PlaneGeometry(ew - 0.08, ed - 0.08),
+      new THREE.MeshStandardMaterial({ map: seedTex, roughness: 0.86, metalness: 0.0 })
     );
     letterTop.rotation.x = -Math.PI / 2;
-    letterTop.position.y = eh / 2 + 0.01;
+    letterTop.position.y = eh / 2 + 0.028;
+    letterTop.receiveShadow = true;
     letterGroup.add(letterTop);
     this.letterMesh = letterTop;
 
-    const flowerSprigGroup = new THREE.Group();
-    const stemMat = new THREE.MeshStandardMaterial({ color: 0x8a7d65, roughness: 0.9 });
-    const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 2.4, 8), stemMat);
-    stem.rotation.z = 0.6;
-    stem.position.set(-1.4, eh / 2 + 0.06, 0.2);
-    flowerSprigGroup.add(stem);
+    // 2. Layered 3D Triangular V-Flap with Soft Tip & Real Shadow Depth
+    const flapShape = new THREE.Shape();
+    flapShape.moveTo(-hw + 0.08, hd - 0.06);
+    flapShape.lineTo(hw - 0.08, hd - 0.06);
+    flapShape.lineTo(0.24, -0.25);
+    flapShape.quadraticCurveTo(0, -0.45, -0.24, -0.25);
+    flapShape.closePath();
 
-    const flowerHeadMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.6 });
-    for (let i = 0; i < 9; i++) {
-      const fl = new THREE.Mesh(new THREE.SphereGeometry(0.12, 8, 8), flowerHeadMat);
-      fl.position.set(-2.0 + Math.random() * 1.0, eh / 2 + 0.1 + Math.random() * 0.15, -0.6 + Math.random() * 1.0);
-      flowerSprigGroup.add(fl);
+    const flapGeo = new THREE.ExtrudeGeometry(flapShape, {
+      depth: 0.028,
+      bevelEnabled: true,
+      bevelThickness: 0.012,
+      bevelSize: 0.012,
+      bevelSegments: 2
+    });
+    // Normalize UVs across the flap so cotton-seed paper texture maps crisply
+    const flapPos = flapGeo.attributes.position;
+    const flapUv = flapGeo.attributes.uv;
+    if (flapPos && flapUv) {
+      for (let i = 0; i < flapPos.count; i++) {
+        const px = flapPos.getX(i);
+        const py = flapPos.getY(i);
+        flapUv.setXY(i, (px + hw) / ew, (py + 0.45) / (hd + 0.45));
+      }
+      flapUv.needsUpdate = true;
     }
+
+    const flapTex = TextureManager.createSeedPaperFlapTexture(this.currentEdition);
+    const flapMat = new THREE.MeshStandardMaterial({
+      map: flapTex,
+      roughness: 0.84,
+      metalness: 0.0
+    });
+    const flapMesh = new THREE.Mesh(flapGeo, flapMat);
+    flapMesh.rotation.x = -Math.PI / 2;
+    flapMesh.position.y = eh / 2 + 0.036;
+    flapMesh.castShadow = true;
+    flapMesh.receiveShadow = true;
+    letterGroup.add(flapMesh);
+    this.letterFlapMesh = flapMesh;
+
+    // 3. Delicate Baby's Breath Dried Flower Sprig (Tucked neatly under top-left of wax seal)
+    const flowerSprigGroup = new THREE.Group();
+    const stemMat = new THREE.MeshStandardMaterial({ color: 0xb59e7a, roughness: 0.82 });
+    const twigMat = new THREE.MeshStandardMaterial({ color: 0xc2ad8b, roughness: 0.8 });
+    const petalMat = new THREE.MeshStandardMaterial({ color: 0xfffcf5, roughness: 0.58 });
+    const centerMat = new THREE.MeshStandardMaterial({ color: 0xf2deb5, roughness: 0.65 });
+    const calyxMat = new THREE.MeshStandardMaterial({ color: 0x939e7c, roughness: 0.8 });
+
+    const sprigY = eh / 2 + 0.085;
+    const addTwigWithFloret = (pts, floretPositions, radius = 0.017) => {
+      const curve = new THREE.CatmullRomCurve3(pts.map(p => new THREE.Vector3(p[0], sprigY + p[1], p[2])));
+      const stemMesh = new THREE.Mesh(new THREE.TubeGeometry(curve, 16, radius, 7, false), radius > 0.014 ? stemMat : twigMat);
+      stemMesh.castShadow = true;
+      flowerSprigGroup.add(stemMesh);
+
+      floretPositions.forEach(([fx, fy, fz, scale]) => {
+        const blossom = new THREE.Group();
+        // Tiny sage calyx base
+        const calyx = new THREE.Mesh(new THREE.SphereGeometry(0.026 * scale, 6, 6), calyxMat);
+        calyx.position.y = -0.015 * scale;
+        blossom.add(calyx);
+
+        // 4 dainty creamy-white baby's-breath petals around warm cream center
+        const center = new THREE.Mesh(new THREE.SphereGeometry(0.025 * scale, 7, 7), centerMat);
+        center.position.y = 0.01 * scale;
+        blossom.add(center);
+
+        for (let k = 0; k < 4; k++) {
+          const ang = (k / 4) * Math.PI * 2 + 0.35;
+          const petal = new THREE.Mesh(new THREE.SphereGeometry(0.036 * scale, 7, 7), petalMat);
+          petal.position.set(Math.cos(ang) * 0.028 * scale, 0.012 * scale, Math.sin(ang) * 0.028 * scale);
+          blossom.add(petal);
+        }
+        blossom.position.set(fx, sprigY + fy, fz);
+        blossom.castShadow = true;
+        flowerSprigGroup.add(blossom);
+      });
+    };
+
+    // Three delicate fanning stems tucked under the wax seal at (0, ..., 0.35)
+    addTwigWithFloret(
+      [[-0.12, 0.0, 0.25], [-0.75, 0.015, -0.35], [-1.35, 0.02, -1.05], [-1.85, 0.015, -1.55]],
+      [[-1.85, 0.02, -1.55, 1.05], [-1.42, 0.025, -1.12, 0.92], [-1.05, 0.02, -0.68, 0.85]],
+      0.019
+    );
+    addTwigWithFloret(
+      [[-0.22, 0.0, 0.28], [-0.95, 0.015, -0.05], [-1.68, 0.02, -0.45], [-2.25, 0.012, -0.78]],
+      [[-2.25, 0.015, -0.78, 1.0], [-1.72, 0.025, -0.48, 0.9], [-1.25, 0.02, -0.18, 0.8]],
+      0.017
+    );
+    addTwigWithFloret(
+      [[-0.08, 0.0, 0.18], [-0.48, 0.015, -0.52], [-0.88, 0.02, -1.25], [-1.18, 0.012, -1.78]],
+      [[-1.18, 0.015, -1.78, 0.95], [-0.92, 0.025, -1.32, 0.88], [-0.55, 0.02, -0.75, 0.78]],
+      0.016
+    );
+    // Fine secondary twigs for lush natural fullness
+    addTwigWithFloret(
+      [[-0.95, 0.015, -0.05], [-1.32, 0.02, 0.12], [-1.62, 0.015, -0.02]],
+      [[-1.62, 0.02, -0.02, 0.85], [-1.32, 0.025, 0.12, 0.78]],
+      0.012
+    );
+    addTwigWithFloret(
+      [[-0.75, 0.015, -0.35], [-1.25, 0.025, -0.58], [-1.52, 0.02, -0.82]],
+      [[-1.52, 0.025, -0.82, 0.9]],
+      0.012
+    );
+
     letterGroup.add(flowerSprigGroup);
     this.flowerSprigGroup = flowerSprigGroup;
 
+    // 4. Sculpted 3D Organic Wavy Rose-Pink Bunny Wax Seal (Centered at V-flap tip)
+    const waxSealGroup = new THREE.Group();
+    const waxShape = new THREE.Shape();
+    const numPts = 40;
+    for (let i = 0; i < numPts; i++) {
+      const ang = (i / numPts) * Math.PI * 2;
+      const rad = 0.68 + Math.sin(ang * 5.0 + 0.4) * 0.038 + Math.cos(ang * 9.0) * 0.022;
+      const wx = Math.cos(ang) * rad;
+      const wy = Math.sin(ang) * rad;
+      if (i === 0) waxShape.moveTo(wx, wy);
+      else waxShape.lineTo(wx, wy);
+    }
+    waxShape.closePath();
+
+    const waxGeo = new THREE.ExtrudeGeometry(waxShape, {
+      depth: 0.065,
+      bevelEnabled: true,
+      bevelThickness: 0.038,
+      bevelSize: 0.042,
+      bevelSegments: 4
+    });
+    const waxBaseMat = new THREE.MeshStandardMaterial({
+      color: 0xea98ae,
+      roughness: 0.34,
+      metalness: 0.04
+    });
+    const waxBase = new THREE.Mesh(waxGeo, waxBaseMat);
+    waxBase.rotation.x = -Math.PI / 2;
+    waxBase.castShadow = true;
+    waxBase.receiveShadow = true;
+    waxSealGroup.add(waxBase);
+
+    // Raised Stamped Wax Ring Lip
+    const ringGeo = new THREE.TorusGeometry(0.47, 0.045, 14, 40);
+    const ringMat = new THREE.MeshStandardMaterial({
+      color: 0xec9fb4,
+      roughness: 0.32,
+      metalness: 0.05
+    });
+    const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+    ringMesh.rotation.x = -Math.PI / 2;
+    ringMesh.position.y = 0.112;
+    ringMesh.castShadow = true;
+    waxSealGroup.add(ringMesh);
+
+    // Inner Embossed Bunny Stamp Face with Bump Map
     const sealTex = TextureManager.createWaxSealTexture(this.currentEdition);
-    const sealMat = new THREE.MeshStandardMaterial({ map: sealTex, roughness: 0.35, metalness: 0.2 });
-    const sealMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.72, 0.72, 0.16, 32), sealMat);
-    sealMesh.position.set(-0.8, eh / 2 + 0.08, 0.9);
-    sealMesh.rotation.y = 0.2;
-    sealMesh.castShadow = true;
-    letterGroup.add(sealMesh);
-    this.sealMesh = sealMesh;
+    const sealBumpTex = TextureManager.createWaxSealBumpTexture();
+    const sealFaceMat = new THREE.MeshStandardMaterial({
+      map: sealTex,
+      bumpMap: sealBumpTex,
+      bumpScale: 0.055,
+      roughness: 0.36,
+      metalness: 0.04
+    });
+    const sealFace = new THREE.Mesh(new THREE.CircleGeometry(0.46, 40), sealFaceMat);
+    sealFace.rotation.x = -Math.PI / 2;
+    sealFace.position.y = 0.108;
+    sealFace.receiveShadow = true;
+    waxSealGroup.add(sealFace);
+    this.sealMesh = sealFace;
+
+    waxSealGroup.position.set(0, eh / 2 + 0.065, 0.36);
+    letterGroup.add(waxSealGroup);
 
     letterGroup.position.set(-5.2, 1.95, 6.2);
     letterGroup.userData = {
@@ -1202,8 +1380,8 @@ class GiftBoxScene {
     // Seamless infinite studio floor plane
     const floorGeo = new THREE.PlaneGeometry(800, 800);
     this.studioFloorMat = new THREE.MeshStandardMaterial({
-      color: 0xfaf4f6,
-      roughness: 0.95,
+      color: 0xf3ded2,
+      roughness: 0.92,
       metalness: 0.0
     });
     const floorMesh = new THREE.Mesh(floorGeo, this.studioFloorMat);
@@ -1287,12 +1465,16 @@ class GiftBoxScene {
       this.letterMesh.material.map = TextureManager.createSeedPaperTexture(edition);
       this.letterMesh.material.needsUpdate = true;
     }
+    if (this.letterFlapMesh) {
+      this.letterFlapMesh.material.map = TextureManager.createSeedPaperFlapTexture(edition);
+      this.letterFlapMesh.material.needsUpdate = true;
+    }
     if (this.sealMesh) {
       this.sealMesh.material.map = TextureManager.createWaxSealTexture(edition);
       this.sealMesh.material.needsUpdate = true;
     }
     if (this.flowerSprigGroup) {
-      this.flowerSprigGroup.visible = isPink;
+      this.flowerSprigGroup.visible = true;
     }
 
     if (this.cardMesh) {
@@ -1469,10 +1651,10 @@ class GiftBoxScene {
     }
 
     if (this.candleLight) {
-      this.candleLight.intensity = 0.75 + Math.sin(elapsed * 15) * 0.12 + Math.cos(elapsed * 23) * 0.08;
+      this.candleLight.intensity = 1.05 + Math.sin(elapsed * 14) * 0.14 + Math.cos(elapsed * 21) * 0.09;
     }
     if (this.diffuserLight) {
-      this.diffuserLight.intensity = 0.55 + Math.sin(elapsed * 12) * 0.08;
+      this.diffuserLight.intensity = 0.8 + Math.sin(elapsed * 11) * 0.1;
     }
 
     // Subtle gentle breathing animation for bunny

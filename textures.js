@@ -788,41 +788,148 @@ const TextureManager = {
     return new THREE.CanvasTexture(canvas);
   },
 
-  // 11. Seed Paper Texture (Natural Botanical Flecks)
+  // Helper: Draw subtle artisanal handmade cotton-seed paper surface
+  _drawCottonSeedPaper(ctx, w, h, seed = 42) {
+    // Warm blush-ivory linen gradient (matches reference Photo 2 envelope)
+    const grad = ctx.createLinearGradient(0, 0, w, h);
+    grad.addColorStop(0, '#fcf1e8');
+    grad.addColorStop(0.5, '#f8e9de');
+    grad.addColorStop(1, '#f2ddd0');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+
+    // Subtle linen cross-weave micro-texture
+    ctx.save();
+    ctx.strokeStyle = 'rgba(218, 188, 170, 0.14)';
+    ctx.lineWidth = 1;
+    for (let y = 0; y < h; y += 6) {
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(w, y);
+      ctx.stroke();
+    }
+    ctx.strokeStyle = 'rgba(225, 198, 182, 0.1)';
+    for (let x = 0; x < w; x += 8) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, h);
+      ctx.stroke();
+    }
+
+    // Deterministic seeded PRNG so texture stays clean & crisp
+    let s = seed;
+    const rand = () => {
+      s = (s * 1664525 + 1013904223) % 4294967296;
+      return s / 4294967296;
+    };
+
+    // Ultra-delicate artisanal cotton fibers & tiny botanical seed flecks
+    for (let i = 0; i < 240; i++) {
+      const fx = rand() * w;
+      const fy = rand() * h;
+      const len = 4 + rand() * 8;
+      const ang = rand() * Math.PI * 2;
+      ctx.strokeStyle = rand() > 0.5 ? 'rgba(255, 250, 245, 0.45)' : 'rgba(205, 175, 155, 0.16)';
+      ctx.lineWidth = 0.9;
+      ctx.beginPath();
+      ctx.moveTo(fx, fy);
+      ctx.quadraticCurveTo(fx + Math.cos(ang + 0.4) * len * 0.5, fy + Math.sin(ang + 0.4) * len * 0.5, fx + Math.cos(ang) * len, fy + Math.sin(ang) * len);
+      ctx.stroke();
+    }
+
+    const speckPalette = [
+      'rgba(195, 165, 140, 0.22)',
+      'rgba(168, 178, 150, 0.22)',
+      'rgba(220, 175, 175, 0.20)'
+    ];
+    for (let i = 0; i < 320; i++) {
+      const x = rand() * w;
+      const y = rand() * h;
+      ctx.fillStyle = speckPalette[Math.floor(rand() * speckPalette.length)];
+      const sz = 0.8 + rand() * 1.4;
+      ctx.beginPath();
+      ctx.ellipse(x, y, sz, sz * 0.65, rand() * Math.PI, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+  },
+
+  // 11. Seed Paper Envelope Texture (Clean folded cotton-blush envelope with realistic creases & shadows)
   createSeedPaperTexture(edition = 'pink') {
     const canvas = document.createElement('canvas');
     canvas.width = 1024;
     canvas.height = 600;
     const ctx = canvas.getContext('2d');
 
-    // Creamy ivory base
-    ctx.fillStyle = '#faf7f0';
-    ctx.fillRect(0, 0, 1024, 600);
+    this._drawCottonSeedPaper(ctx, 1024, 600, 101);
 
-    // Botanical seed specks & fiber flecks
-    for (let i = 0; i < 1800; i++) {
-      const x = Math.random() * 1024;
-      const y = Math.random() * 600;
-      ctx.fillStyle = Math.random() > 0.5 ? 'rgba(130, 105, 80, 0.35)' : 'rgba(180, 150, 120, 0.25)';
-      const sz = Math.random() * 3 + 1;
-      ctx.beginPath();
-      ctx.ellipse(x, y, sz, sz * 0.6, Math.random() * Math.PI, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    // Triangle flap border lines
-    ctx.strokeStyle = 'rgba(195, 175, 155, 0.45)';
-    ctx.lineWidth = 3;
+    ctx.save();
+    // Diagonal lower envelope side & bottom fold seams
+    ctx.strokeStyle = 'rgba(196, 164, 148, 0.35)';
+    ctx.lineWidth = 2.5;
     ctx.beginPath();
-    ctx.moveTo(30, 30);
-    ctx.lineTo(512, 330);
-    ctx.lineTo(994, 30);
+    ctx.moveTo(0, 600);
+    ctx.lineTo(395, 315);
+    ctx.moveTo(1024, 600);
+    ctx.lineTo(629, 315);
     ctx.stroke();
 
-    return new THREE.CanvasTexture(canvas);
+    // Soft shaded triangular V-flap drop shadow onto pocket
+    const shadowGrad = ctx.createLinearGradient(512, 210, 512, 405);
+    shadowGrad.addColorStop(0, 'rgba(170, 130, 114, 0.0)');
+    shadowGrad.addColorStop(0.65, 'rgba(170, 130, 114, 0.16)');
+    shadowGrad.addColorStop(1, 'rgba(170, 130, 114, 0.0)');
+    ctx.fillStyle = shadowGrad;
+    ctx.beginPath();
+    ctx.moveTo(0, 18);
+    ctx.lineTo(482, 342);
+    ctx.quadraticCurveTo(512, 362, 542, 342);
+    ctx.lineTo(1024, 18);
+    ctx.lineTo(1024, 48);
+    ctx.lineTo(548, 368);
+    ctx.quadraticCurveTo(512, 392, 476, 368);
+    ctx.lineTo(0, 48);
+    ctx.closePath();
+    ctx.fill();
+
+    // Soft vignette border around envelope perimeter
+    const edgeGrad = ctx.createRadialGradient(512, 300, 260, 512, 300, 650);
+    edgeGrad.addColorStop(0, 'rgba(255,255,255,0)');
+    edgeGrad.addColorStop(1, 'rgba(190, 152, 136, 0.12)');
+    ctx.fillStyle = edgeGrad;
+    ctx.fillRect(0, 0, 1024, 600);
+    ctx.restore();
+
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.generateMipmaps = true;
+    tex.minFilter = THREE.LinearMipmapLinearFilter;
+    return tex;
   },
 
-  // 12. Wax Seal Texture (Photo 2: Blush pink wax seal with embossed bunny head)
+  // 11b. Seed Paper Envelope Triangular V-Flap Texture
+  createSeedPaperFlapTexture(edition = 'pink') {
+    const canvas = document.createElement('canvas');
+    canvas.width = 1024;
+    canvas.height = 420;
+    const ctx = canvas.getContext('2d');
+
+    this._drawCottonSeedPaper(ctx, 1024, 420, 202);
+
+    // Subtle light sheen along top fold edge
+    const sheen = ctx.createLinearGradient(0, 0, 0, 420);
+    sheen.addColorStop(0, 'rgba(255, 252, 248, 0.35)');
+    sheen.addColorStop(0.5, 'rgba(255, 250, 245, 0.05)');
+    sheen.addColorStop(1, 'rgba(210, 175, 160, 0.12)');
+    ctx.fillStyle = sheen;
+    ctx.fillRect(0, 0, 1024, 420);
+
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.generateMipmaps = true;
+    tex.minFilter = THREE.LinearMipmapLinearFilter;
+    return tex;
+  },
+
+  // 12. Wax Seal Texture (Soft-embossed translucent blush pink wax with sculpted bunny medallion)
   createWaxSealTexture(edition = 'pink') {
     const canvas = document.createElement('canvas');
     canvas.width = 512;
@@ -830,62 +937,128 @@ const TextureManager = {
     const ctx = canvas.getContext('2d');
     const cx = 256, cy = 256;
 
-    // Organic wavy melted wax edge
-    ctx.fillStyle = '#e89db1';
+    // Soft rose wax outer base
+    const baseGrad = ctx.createRadialGradient(cx - 35, cy - 35, 30, cx, cy, 256);
+    baseGrad.addColorStop(0, '#f5afc2');
+    baseGrad.addColorStop(0.7, '#e896ac');
+    baseGrad.addColorStop(1, '#d87d96');
+    ctx.fillStyle = baseGrad;
+    ctx.fillRect(0, 0, 512, 512);
+
+    // Inner recessed stamp dish (richer warm rose shadow)
+    const dishGrad = ctx.createRadialGradient(cx + 15, cy + 15, 20, cx, cy, 178);
+    dishGrad.addColorStop(0, '#e38ca3');
+    dishGrad.addColorStop(0.75, '#d67c95');
+    dishGrad.addColorStop(1, '#c76c86');
+    ctx.fillStyle = dishGrad;
     ctx.beginPath();
-    const numPoints = 28;
-    for (let i = 0; i < numPoints; i++) {
-      const angle = (i / numPoints) * Math.PI * 2;
-      const r = 210 + Math.sin(i * 3.5) * 12 + Math.cos(i * 5) * 8;
-      const px = cx + Math.cos(angle) * r;
-      const py = cy + Math.sin(angle) * r;
-      if (i === 0) ctx.moveTo(px, py);
-      else ctx.lineTo(px, py);
-    }
-    ctx.closePath();
+    ctx.arc(cx, cy, 176, 0, Math.PI * 2);
     ctx.fill();
 
-    // Inner rim
-    ctx.fillStyle = '#db8ba0';
+    // Soft inner specular ring where stamp pressed down
+    ctx.strokeStyle = 'rgba(255, 224, 234, 0.55)';
+    ctx.lineWidth = 6;
     ctx.beginPath();
-    ctx.arc(cx, cy, 145, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.strokeStyle = '#c67389';
-    ctx.lineWidth = 4;
+    ctx.arc(cx, cy, 174, Math.PI * 0.9, Math.PI * 1.85);
     ctx.stroke();
 
-    // Embossed Bunny Head (Photo 2)
-    ctx.fillStyle = '#fceef2';
-    ctx.strokeStyle = '#b85f76';
-    ctx.lineWidth = 4;
+    // Softly Embossed Bunny Medallion (Monochromatic wax relief shading, no harsh strokes)
+    const drawBunnyShape = (ox, oy, fill) => {
+      ctx.fillStyle = fill;
+      // Left ear
+      ctx.beginPath();
+      ctx.ellipse(cx - 28 + ox, cy - 52 + oy, 18, 46, -0.14, 0, Math.PI * 2);
+      ctx.fill();
+      // Right ear
+      ctx.beginPath();
+      ctx.ellipse(cx + 28 + ox, cy - 52 + oy, 18, 46, 0.14, 0, Math.PI * 2);
+      ctx.fill();
+      // Fluffy round bunny cheeks/head
+      ctx.beginPath();
+      ctx.ellipse(cx + ox, cy + 20 + oy, 62, 50, 0, 0, Math.PI * 2);
+      ctx.fill();
+    };
 
-    // Bunny Face
+    // Subtle cast shadow under raised bunny relief
+    drawBunnyShape(5, 6, 'rgba(170, 80, 105, 0.45)');
+    // Soft highlight edge on top-left of wax relief
+    drawBunnyShape(-2, -2, '#fbd2de');
+    // Main smooth wax bunny relief color
+    drawBunnyShape(0, 0, '#f3b2c4');
+
+    // Subtle recessed inner ear hollows
+    ctx.fillStyle = '#e08ca3';
     ctx.beginPath();
-    ctx.ellipse(cx, cy + 20, 52, 44, 0, 0, Math.PI * 2);
+    ctx.ellipse(cx - 27, cy - 50, 8, 26, -0.14, 0, Math.PI * 2);
+    ctx.ellipse(cx + 27, cy - 50, 8, 26, 0.14, 0, Math.PI * 2);
     ctx.fill();
+
+    // Delicate recessed eyes & sweet nose
+    ctx.fillStyle = '#c46782';
+    ctx.beginPath();
+    ctx.arc(cx - 21, cy + 12, 5.5, 0, Math.PI * 2);
+    ctx.arc(cx + 21, cy + 12, 5.5, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.ellipse(cx, cy + 25, 7, 4.5, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Gentle mouth curve
+    ctx.strokeStyle = '#c46782';
+    ctx.lineWidth = 3;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(cx, cy + 29);
+    ctx.quadraticCurveTo(cx - 8, cy + 38, cx - 14, cy + 33);
+    ctx.moveTo(cx, cy + 29);
+    ctx.quadraticCurveTo(cx + 8, cy + 38, cx + 14, cy + 33);
     ctx.stroke();
 
-    // Upright Ears
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.generateMipmaps = true;
+    tex.minFilter = THREE.LinearMipmapLinearFilter;
+    return tex;
+  },
+
+  // 12b. Wax Seal Bump Map for real 3D physical relief under lights
+  createWaxSealBumpTexture() {
+    const canvas = document.createElement('canvas');
+    canvas.width = 512;
+    canvas.height = 512;
+    const ctx = canvas.getContext('2d');
+    const cx = 256, cy = 256;
+
+    ctx.fillStyle = '#a0a0a0';
+    ctx.fillRect(0, 0, 512, 512);
+
+    // Recessed stamp dish
+    ctx.fillStyle = '#484848';
     ctx.beginPath();
-    ctx.ellipse(cx - 26, cy - 45, 16, 42, -0.15, 0, Math.PI * 2);
+    ctx.arc(cx, cy, 176, 0, Math.PI * 2);
     ctx.fill();
+
+    // Raised outer ring lip
+    ctx.strokeStyle = '#e0e0e0';
+    ctx.lineWidth = 22;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 190, 0, Math.PI * 2);
     ctx.stroke();
 
+    // Raised bunny relief
+    ctx.fillStyle = '#dcdcdc';
     ctx.beginPath();
-    ctx.ellipse(cx + 26, cy - 45, 16, 42, 0.15, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.stroke();
-
-    // Little dots for eyes & nose
-    ctx.fillStyle = '#b85f76';
-    ctx.beginPath();
-    ctx.arc(cx - 18, cy + 14, 5, 0, Math.PI * 2);
-    ctx.arc(cx + 18, cy + 14, 5, 0, Math.PI * 2);
+    ctx.ellipse(cx - 28, cy - 52, 18, 46, -0.14, 0, Math.PI * 2);
+    ctx.ellipse(cx + 28, cy - 52, 18, 46, 0.14, 0, Math.PI * 2);
+    ctx.ellipse(cx, cy + 20, 62, 50, 0, 0, Math.PI * 2);
     ctx.fill();
 
+    // Recessed bunny eyes/nose
+    ctx.fillStyle = '#555555';
     ctx.beginPath();
-    ctx.ellipse(cx, cy + 28, 6, 4, 0, 0, Math.PI * 2);
+    ctx.arc(cx - 21, cy + 12, 5.5, 0, Math.PI * 2);
+    ctx.arc(cx + 21, cy + 12, 5.5, 0, Math.PI * 2);
+    ctx.ellipse(cx, cy + 25, 7, 4.5, 0, 0, Math.PI * 2);
     ctx.fill();
 
     return new THREE.CanvasTexture(canvas);

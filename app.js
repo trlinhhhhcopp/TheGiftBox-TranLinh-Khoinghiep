@@ -77,8 +77,8 @@ class App3D {
   // 1. Three.js Core Setup
   initThree() {
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(0xfdf5f2);
-    this.scene.fog = new THREE.FogExp2(0xfdf5f2, 0.0028);
+    this.scene.background = new THREE.Color(0xf3ded2);
+    this.scene.fog = new THREE.FogExp2(0xf3ded2, 0.0022);
 
     const aspect = window.innerWidth / window.innerHeight;
     const baseFov = aspect < 1.0 ? 62 : 40;
@@ -144,16 +144,16 @@ class App3D {
     return { pos, target: adjustedTarget };
   }
 
-  // 2. Realistic Warm & Cozy Lighting
+  // 2. Realistic Warm & Cozy Candlelight Studio Lighting
   initLighting() {
     this.lights = {};
 
-    this.lights.hemi = new THREE.HemisphereLight(0xffeedd, 0xdfcad2, 0.82);
+    this.lights.hemi = new THREE.HemisphereLight(0xffead2, 0xcda496, 0.56);
     this.scene.add(this.lights.hemi);
 
-    // Warm Golden-Peach Key Directional Light
-    this.lights.key = new THREE.DirectionalLight(0xffe4d0, 1.28);
-    this.lights.key.position.set(16, 28, 18);
+    // Warm Golden-Honey Key Directional Light
+    this.lights.key = new THREE.DirectionalLight(0xffcf9e, 1.32);
+    this.lights.key.position.set(14, 26, 16);
     this.lights.key.castShadow = true;
     this.lights.key.shadow.mapSize.width = 2048;
     this.lights.key.shadow.mapSize.height = 2048;
@@ -167,78 +167,106 @@ class App3D {
     this.lights.key.shadow.bias = -0.0003;
     this.scene.add(this.lights.key);
 
-    // Soft Blush Fill Light
-    this.lights.fill = new THREE.DirectionalLight(0xffd1dc, 0.70);
-    this.lights.fill.position.set(-18, 16, 14);
+    // Soft Warm Peach Fill Light
+    this.lights.fill = new THREE.DirectionalLight(0xffbfa8, 0.42);
+    this.lights.fill.position.set(-18, 14, 14);
     this.scene.add(this.lights.fill);
 
-    // Warm Rim Light
-    this.lights.rim = new THREE.DirectionalLight(0xfff2e6, 0.45);
-    this.lights.rim.position.set(0, 18, -24);
+    // Dreamy Warm Golden Rim Light
+    this.lights.rim = new THREE.DirectionalLight(0xffe4bc, 0.62);
+    this.lights.rim.position.set(0, 16, -22);
     this.scene.add(this.lights.rim);
+
+    // Cozy Center Candlelight Warm Glow Pool
+    this.lights.warmPool = new THREE.SpotLight(0xffbb78, 0.55, 75, Math.PI / 4, 0.85, 1.2);
+    this.lights.warmPool.position.set(0, 34, 6);
+    this.lights.warmPool.target.position.set(0, 1.5, 0);
+    this.scene.add(this.lights.warmPool);
+    this.scene.add(this.lights.warmPool.target);
   }
 
   // 3. Set Lighting Mood
   setLightingMood(mood) {
     if (mood === 'candlelight') {
-      // Warm Cozy Candlelight Studio (Default: Romantic warm golden-peach glow)
-      this.scene.background.set(0xfdf5f2);
-      this.scene.fog.color.set(0xfdf5f2);
+      // Warm Cozy Candlelight Studio (Default: Honey-amber cozy glow)
+      this.scene.background.set(0xf3ded2);
+      this.scene.fog.color.set(0xf3ded2);
       if (this.giftBoxScene && this.giftBoxScene.studioFloorMat) {
-        this.giftBoxScene.studioFloorMat.color.set(0xfdf5f2);
+        this.giftBoxScene.studioFloorMat.color.set(0xf3ded2);
       }
-      this.lights.hemi.color.set(0xffeedd);
-      this.lights.hemi.groundColor.set(0xdfcad2);
-      this.lights.hemi.intensity = 0.82;
+      this.lights.hemi.color.set(0xffead2);
+      this.lights.hemi.groundColor.set(0xcda496);
+      this.lights.hemi.intensity = 0.56;
 
-      this.lights.key.color.set(0xffe4d0);
-      this.lights.key.intensity = 1.28;
+      this.lights.key.color.set(0xffcf9e);
+      this.lights.key.intensity = 1.32;
 
-      this.lights.fill.color.set(0xffd1dc);
-      this.lights.fill.intensity = 0.70;
+      this.lights.fill.color.set(0xffbfa8);
+      this.lights.fill.intensity = 0.42;
 
-      this.lights.rim.color.set(0xfff2e6);
-      this.lights.rim.intensity = 0.45;
+      this.lights.rim.color.set(0xffe4bc);
+      this.lights.rim.intensity = 0.62;
 
-      this.renderer.toneMappingExposure = 1.12;
+      if (this.lights.warmPool) {
+        this.lights.warmPool.color.set(0xffbb78);
+        this.lights.warmPool.intensity = 0.55;
+      }
+
+      this.renderer.toneMappingExposure = 1.04;
       if (this.particles) this.particles.visible = true;
     } else if (mood === 'sunset') {
-      // Golden Sunset
-      this.scene.background.set(0xfbf0f2);
-      this.scene.fog.color.set(0xfbf0f2);
+      // Romantic Golden-Rose Sunset
+      this.scene.background.set(0xeed1c6);
+      this.scene.fog.color.set(0xeed1c6);
       if (this.giftBoxScene && this.giftBoxScene.studioFloorMat) {
-        this.giftBoxScene.studioFloorMat.color.set(0xfbf0f2);
+        this.giftBoxScene.studioFloorMat.color.set(0xeed1c6);
       }
-      this.lights.hemi.color.set(0xffe8dc);
-      this.lights.hemi.groundColor.set(0xebd6dd);
-      this.lights.hemi.intensity = 0.75;
+      this.lights.hemi.color.set(0xffdec4);
+      this.lights.hemi.groundColor.set(0xc4958c);
+      this.lights.hemi.intensity = 0.52;
 
-      this.lights.key.color.set(0xffa066);
-      this.lights.key.intensity = 1.35;
+      this.lights.key.color.set(0xff9d66);
+      this.lights.key.intensity = 1.42;
 
-      this.lights.fill.color.set(0xefa5b9);
-      this.lights.fill.intensity = 0.65;
+      this.lights.fill.color.set(0xf0a0a8);
+      this.lights.fill.intensity = 0.45;
 
-      this.renderer.toneMappingExposure = 1.15;
-      if (this.particles) this.particles.visible = true;
-    } else if (mood === 'studio') {
-      // Clean Luxury Warm White Studio
-      this.scene.background.set(0xfef8f5);
-      this.scene.fog.color.set(0xfef8f5);
-      if (this.giftBoxScene && this.giftBoxScene.studioFloorMat) {
-        this.giftBoxScene.studioFloorMat.color.set(0xfef8f5);
+      this.lights.rim.color.set(0xffcf96);
+      this.lights.rim.intensity = 0.68;
+
+      if (this.lights.warmPool) {
+        this.lights.warmPool.color.set(0xff985c);
+        this.lights.warmPool.intensity = 0.65;
       }
-      this.lights.hemi.color.set(0xfffaf0);
-      this.lights.hemi.groundColor.set(0xe8dcd8);
-      this.lights.hemi.intensity = 0.85;
-
-      this.lights.key.color.set(0xffeedb);
-      this.lights.key.intensity = 1.25;
-
-      this.lights.fill.color.set(0xfce0e8);
-      this.lights.fill.intensity = 0.65;
 
       this.renderer.toneMappingExposure = 1.08;
+      if (this.particles) this.particles.visible = true;
+    } else if (mood === 'studio') {
+      // Soft Luminous Warm Ivory Studio
+      this.scene.background.set(0xf7ebe2);
+      this.scene.fog.color.set(0xf7ebe2);
+      if (this.giftBoxScene && this.giftBoxScene.studioFloorMat) {
+        this.giftBoxScene.studioFloorMat.color.set(0xf7ebe2);
+      }
+      this.lights.hemi.color.set(0xfff5ea);
+      this.lights.hemi.groundColor.set(0xd8c2b8);
+      this.lights.hemi.intensity = 0.68;
+
+      this.lights.key.color.set(0xffe8d2);
+      this.lights.key.intensity = 1.24;
+
+      this.lights.fill.color.set(0xfad8cf);
+      this.lights.fill.intensity = 0.50;
+
+      this.lights.rim.color.set(0xfff2e2);
+      this.lights.rim.intensity = 0.50;
+
+      if (this.lights.warmPool) {
+        this.lights.warmPool.color.set(0xffe2c4);
+        this.lights.warmPool.intensity = 0.32;
+      }
+
+      this.renderer.toneMappingExposure = 1.04;
       if (this.particles) this.particles.visible = false;
     }
   }
@@ -250,10 +278,10 @@ class App3D {
     canvas.height = 64;
     const ctx = canvas.getContext('2d');
     const grad = ctx.createRadialGradient(32, 32, 0, 32, 32, 30);
-    grad.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
-    grad.addColorStop(0.35, 'rgba(255, 248, 252, 0.75)');
-    grad.addColorStop(0.7, 'rgba(255, 230, 240, 0.3)');
-    grad.addColorStop(1, 'rgba(255, 230, 240, 0)');
+    grad.addColorStop(0, 'rgba(255, 251, 244, 0.92)');
+    grad.addColorStop(0.35, 'rgba(255, 242, 232, 0.72)');
+    grad.addColorStop(0.7, 'rgba(255, 224, 214, 0.28)');
+    grad.addColorStop(1, 'rgba(255, 224, 214, 0)');
     ctx.fillStyle = grad;
     ctx.beginPath();
     ctx.arc(32, 32, 30, 0, Math.PI * 2);
@@ -264,7 +292,7 @@ class App3D {
   }
 
   initParticles() {
-    const particleCount = 160;
+    const particleCount = 140;
     const geometry = new THREE.BufferGeometry();
     const positions = new Float32Array(particleCount * 3);
     this.snowData = [];
@@ -276,9 +304,9 @@ class App3D {
       positions[idx + 2] = (Math.random() - 0.5) * 44;
 
       this.snowData.push({
-        speedY: 1.6 + Math.random() * 2.2,
-        swaySpeed: 1.0 + Math.random() * 1.8,
-        swayAmp: 0.6 + Math.random() * 0.8,
+        speedY: 1.4 + Math.random() * 1.9,
+        swaySpeed: 0.9 + Math.random() * 1.5,
+        swayAmp: 0.5 + Math.random() * 0.7,
         phase: Math.random() * Math.PI * 2
       });
     }
@@ -286,11 +314,11 @@ class App3D {
     geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 
     const material = new THREE.PointsMaterial({
-      color: 0xffffff,
-      size: 0.42,
+      color: 0xfff8ef,
+      size: 0.38,
       map: this.createSnowflakeTexture(),
       transparent: true,
-      opacity: 0.85,
+      opacity: 0.82,
       blending: THREE.NormalBlending,
       depthWrite: false
     });

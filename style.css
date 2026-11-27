@@ -4,17 +4,17 @@
    ========================================================================== */
 
 :root {
-  --primary-pink: #fce8ee;
-  --accent-pink: #d3446c;
-  --accent-pink-hover: #b82d54;
-  --blush-tint: #fff5f8;
-  --warm-ivory: #faf7f2;
-  --card-bg: rgba(255, 255, 255, 0.85);
-  --card-border: rgba(255, 255, 255, 0.95);
-  --text-main: #3d3432;
-  --text-muted: #7d726d;
-  --shadow-soft: 0 12px 36px -6px rgba(180, 110, 130, 0.16);
-  --shadow-glass: 0 8px 32px 0 rgba(190, 120, 140, 0.12);
+  --primary-pink: #fbe6dc;
+  --accent-pink: #cc5270;
+  --accent-pink-hover: #b23d5a;
+  --blush-tint: #fff6f0;
+  --warm-ivory: #fbf2ea;
+  --card-bg: rgba(255, 247, 240, 0.88);
+  --card-border: rgba(242, 214, 200, 0.92);
+  --text-main: #4a3531;
+  --text-muted: #876b64;
+  --shadow-soft: 0 12px 36px -6px rgba(155, 92, 78, 0.18);
+  --shadow-glass: 0 8px 32px 0 rgba(160, 98, 84, 0.14);
   --radius-lg: 20px;
   --radius-md: 14px;
   --radius-sm: 8px;
@@ -42,7 +42,7 @@ html, body {
   touch-action: none;
   overscroll-behavior: none;
   font-family: var(--font-sans);
-  background: radial-gradient(circle at 50% 40%, #faf3f5 0%, #f4e8eb 60%, #eee0e4 100%);
+  background: radial-gradient(circle at 50% 40%, #f6e5da 0%, #edd3c5 65%, #e3c1b0 100%);
   color: var(--text-main);
   user-select: none;
   -webkit-user-select: none;
@@ -97,30 +97,36 @@ html, body {
   box-shadow: var(--shadow-glass);
 }
 
+.brand-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
 .author-badge {
-  background: rgba(255, 255, 255, 0.45);
-  color: #a46274;
-  font-size: 7.5px;
-  font-weight: 500;
-  letter-spacing: 0.1px;
-  padding: 1.5px 6px;
-  border-radius: 6px;
-  border: 1px solid rgba(230, 180, 195, 0.35);
-  margin-right: 4px;
+  background: rgba(252, 232, 222, 0.85);
+  color: #8f5662;
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  padding: 2px 7px;
+  border-radius: 10px;
+  border: 1px solid rgba(224, 178, 168, 0.55);
   white-space: nowrap;
-  opacity: 0.65;
+  opacity: 0.92;
 }
 
 .brand-logo-badge {
-  background: linear-gradient(135deg, #fcdbe5, #f5a8bd);
-  color: #c9355f;
+  background: linear-gradient(135deg, #fbd7cf, #f19eb0);
+  color: #b53657;
   font-family: var(--font-serif);
   font-weight: 700;
   font-size: 15px;
   letter-spacing: 1px;
   padding: 6px 14px;
   border-radius: 20px;
-  box-shadow: 0 4px 12px rgba(220, 80, 120, 0.2);
+  box-shadow: 0 4px 12px rgba(205, 86, 108, 0.22);
 }
 
 .brand-text h1 {
@@ -330,8 +336,8 @@ body.menu-open #detail-drawer {
   font-size: 12px;
   font-weight: 600;
   border-radius: var(--radius-sm);
-  border: 1px solid rgba(220, 200, 210, 0.5);
-  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(224, 192, 178, 0.55);
+  background: rgba(255, 250, 245, 0.72);
   cursor: pointer;
   color: var(--text-main);
   text-align: center;
@@ -339,15 +345,15 @@ body.menu-open #detail-drawer {
 }
 
 .pill-toggle:hover {
-  background: rgba(255, 255, 255, 0.95);
+  background: #fffaf6;
   color: var(--accent-pink);
 }
 
 .pill-toggle.active {
-  background: var(--accent-pink);
+  background: linear-gradient(135deg, #cc5270, #e07688);
   color: #ffffff;
-  border-color: var(--accent-pink);
-  box-shadow: 0 4px 12px rgba(211, 68, 108, 0.3);
+  border-color: #cc5270;
+  box-shadow: 0 4px 12px rgba(204, 82, 112, 0.28);
 }
 
 /* 360 Rotation Speed / Status badge */
@@ -410,8 +416,8 @@ body.menu-open #detail-drawer {
   gap: 6px;
   padding: 7px 12px;
   border-radius: 20px;
-  background: rgba(255, 255, 255, 0.65);
-  border: 1px solid rgba(220, 195, 205, 0.5);
+  background: rgba(255, 250, 245, 0.76);
+  border: 1px solid rgba(224, 192, 178, 0.55);
   font-size: 12px;
   font-weight: 600;
   color: var(--text-main);
@@ -422,17 +428,17 @@ body.menu-open #detail-drawer {
 }
 
 .shelf-item-pill:hover {
-  background: #ffffff;
+  background: #fffaf6;
   color: var(--accent-pink);
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(210, 70, 110, 0.15);
+  box-shadow: 0 6px 16px rgba(180, 95, 92, 0.16);
 }
 
 .shelf-item-pill.active {
-  background: linear-gradient(135deg, #d3446c, #e05e83);
+  background: linear-gradient(135deg, #cc5270, #e07688);
   color: #ffffff;
-  border-color: #d3446c;
-  box-shadow: 0 6px 18px rgba(211, 68, 108, 0.35);
+  border-color: #cc5270;
+  box-shadow: 0 6px 18px rgba(204, 82, 112, 0.32);
 }
 
 .pill-icon {
@@ -666,7 +672,7 @@ body.menu-open #detail-drawer {
 
 .drawer-action-btn {
   width: 100%;
-  background: linear-gradient(135deg, #d3446c, #e05e83);
+  background: linear-gradient(135deg, #cc5270, #e07688);
   color: #ffffff;
   border: none;
   padding: 12px;
@@ -674,13 +680,13 @@ body.menu-open #detail-drawer {
   font-weight: 600;
   font-size: 14px;
   cursor: pointer;
-  box-shadow: 0 8px 20px rgba(211, 68, 108, 0.3);
+  box-shadow: 0 8px 20px rgba(204, 82, 112, 0.28);
   transition: var(--transition-smooth);
 }
 
 .drawer-action-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 26px rgba(211, 68, 108, 0.4);
+  box-shadow: 0 12px 26px rgba(204, 82, 112, 0.36);
 }
 
 /* 3D Hover Tooltip */
@@ -688,15 +694,16 @@ body.menu-open #detail-drawer {
   position: absolute;
   z-index: 20;
   pointer-events: none;
-  background: rgba(30, 25, 24, 0.82);
-  color: #ffffff;
+  background: rgba(74, 48, 42, 0.88);
+  color: #fff7f0;
+  border: 1px solid rgba(246, 212, 198, 0.3);
   backdrop-filter: blur(10px);
   padding: 6px 14px;
   border-radius: 16px;
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.3px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 24px rgba(80, 42, 34, 0.22);
   opacity: 0;
   transform: translate(-50%, -130%);
   transition: opacity 0.2s ease, transform 0.2s ease;
@@ -714,7 +721,7 @@ body.menu-open #detail-drawer {
   width: 100%;
   height: 100%;
   z-index: 100;
-  background: radial-gradient(circle at 50% 45%, #fff6f8 0%, #faedf2 70%, #f4e0e6 100%);
+  background: radial-gradient(circle at 50% 45%, #fbf0e8 0%, #f4dfd2 68%, #ebd0c1 100%);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -763,14 +770,15 @@ body.menu-open #detail-drawer {
   left: 50%;
   transform: translateX(-50%);
   z-index: 8;
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 248, 242, 0.84);
+  border: 1px solid rgba(240, 214, 200, 0.8);
   backdrop-filter: blur(10px);
   padding: 6px 16px;
   border-radius: 20px;
   font-size: 12px;
   font-weight: 500;
   color: var(--text-muted);
-  box-shadow: 0 4px 12px rgba(180, 110, 130, 0.08);
+  box-shadow: 0 4px 12px rgba(155, 92, 78, 0.12);
   pointer-events: none;
   animation: fadeInOut 5s ease forwards;
 }
@@ -785,6 +793,17 @@ body.menu-open #detail-drawer {
 /* ==========================================================================
    Responsive Styles for Mobile, Tablet & Touch Devices
    ========================================================================== */
+@media (max-width: 1180px) {
+  .top-nav {
+    justify-content: space-between;
+  }
+
+  .top-actions {
+    position: static;
+    transform: none;
+  }
+}
+
 @media (max-width: 768px) {
   /* Hide hover tooltip on touch devices */
   .hover-tooltip {
@@ -806,14 +825,23 @@ body.menu-open #detail-drawer {
 
   .brand-wrapper {
     padding: 5px 10px;
-    gap: 6px;
-    border-radius: 20px;
-    max-width: calc(100% - 170px);
+    gap: 8px;
+    border-radius: 18px;
+    max-width: calc(100% - 166px);
     overflow: hidden;
   }
 
+  .brand-title-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+
   .author-badge {
-    display: none;
+    display: inline-block;
+    font-size: 8px;
+    padding: 1px 5px;
+    line-height: 1.25;
   }
 
   .brand-logo-badge {
@@ -879,11 +907,11 @@ body.menu-open #detail-drawer {
     max-height: 72dvh;
     padding: 6px 16px max(24px, env(safe-area-inset-bottom));
     border-radius: 26px 26px 0 0;
-    box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.35);
-    background: rgba(255, 255, 255, 0.98);
+    box-shadow: 0 -12px 40px rgba(85, 42, 34, 0.25);
+    background: rgba(255, 248, 242, 0.97);
     backdrop-filter: blur(28px);
     -webkit-backdrop-filter: blur(28px);
-    border: 1px solid rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(242, 214, 200, 0.92);
     border-bottom: none;
     z-index: 50;
     transform: translateY(100%);
