@@ -1351,24 +1351,142 @@ const TextureManager = {
     return texture;
   },
 
-  createBunnyBumpTexture() {
+  // Soft Golden Flame Aura Texture for Candle & Diffuser
+  createFlameGlowTexture() {
+    const canvas = document.createElement('canvas');
+    canvas.width = 128;
+    canvas.height = 128;
+    const ctx = canvas.getContext('2d');
+    const grad = ctx.createRadialGradient(64, 64, 2, 64, 64, 62);
+    grad.addColorStop(0, 'rgba(255, 245, 210, 0.95)');
+    grad.addColorStop(0.25, 'rgba(255, 195, 100, 0.65)');
+    grad.addColorStop(0.6, 'rgba(255, 140, 60, 0.22)');
+    grad.addColorStop(1, 'rgba(255, 120, 40, 0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 128, 128);
+    return new THREE.CanvasTexture(canvas);
+  },
+
+  // Plush Bunny Fleece Color Texture (Visible soft fuzzy fur micro-strands)
+  createBunnyFurTexture(edition = 'pink') {
+    const canvas = document.createElement('canvas');
+    canvas.width = 512;
+    canvas.height = 512;
+    const ctx = canvas.getContext('2d');
+    const isPink = (edition === 'pink');
+
+    ctx.fillStyle = isPink ? '#fbf2e6' : '#efe3d1';
+    ctx.fillRect(0, 0, 512, 512);
+
+    let s = 77;
+    const rand = () => {
+      s = (s * 1664525 + 1013904223) % 4294967296;
+      return s / 4294967296;
+    };
+
+    // Draw soft fleece cloud mottling
+    for (let i = 0; i < 420; i++) {
+      const x = rand() * 512;
+      const y = rand() * 512;
+      const r = 8 + rand() * 14;
+      ctx.fillStyle = rand() > 0.45 ? 'rgba(255, 252, 247, 0.22)' : 'rgba(218, 194, 168, 0.16)';
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Draw thousands of fine curved plush fur wisps (seamless wrap via tiling edges)
+    ctx.lineCap = 'round';
+    for (let i = 0; i < 4200; i++) {
+      const x = rand() * 512;
+      const y = rand() * 512;
+      const len = 4 + rand() * 7;
+      const ang = (rand() - 0.5) * 1.4 + Math.PI * 0.5;
+      const col = rand() > 0.45 ? 'rgba(255, 253, 249, 0.55)' : 'rgba(205, 178, 152, 0.25)';
+      ctx.strokeStyle = col;
+      ctx.lineWidth = 1.0 + rand() * 0.8;
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.quadraticCurveTo(x + Math.cos(ang + 0.3) * len * 0.5, y + Math.sin(ang + 0.3) * len * 0.5, x + Math.cos(ang) * len, y + Math.sin(ang) * len);
+      ctx.stroke();
+    }
+
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.wrapS = THREE.RepeatWrapping;
+    texture.wrapT = THREE.RepeatWrapping;
+    texture.repeat.set(4, 4);
+    texture.generateMipmaps = true;
+    texture.minFilter = THREE.LinearMipmapLinearFilter;
+    return texture;
+  },
+
+  // Alpha-Cutout Shell Fur Texture (Gives 3D Bunny real fuzzy silhouette hairs!)
+  createFurShellTexture(edition = 'pink') {
     const canvas = document.createElement('canvas');
     canvas.width = 256;
     canvas.height = 256;
     const ctx = canvas.getContext('2d');
-    ctx.fillStyle = '#808080';
-    ctx.fillRect(0, 0, 256, 256);
-    for (let y = 0; y < 256; y += 2) {
-      for (let x = 0; x < 256; x += 2) {
-        const v = Math.min(255, Math.max(0, Math.round(128 + (Math.random() - 0.5) * 45)));
-        ctx.fillStyle = `rgb(${v},${v},${v})`;
-        ctx.fillRect(x, y, 2, 2);
-      }
+    ctx.clearRect(0, 0, 256, 256);
+
+    const isPink = (edition === 'pink');
+    let s = 313;
+    const rand = () => {
+      s = (s * 1664525 + 1013904223) % 4294967296;
+      return s / 4294967296;
+    };
+
+    for (let i = 0; i < 2400; i++) {
+      const x = rand() * 256;
+      const y = rand() * 256;
+      const r = 1.1 + rand() * 1.7;
+      const tone = rand();
+      ctx.fillStyle = isPink
+        ? (tone > 0.35 ? '#fffbf5' : '#f4e6d6')
+        : (tone > 0.35 ? '#f7efe2' : '#e4d5bf');
+      ctx.beginPath();
+      ctx.ellipse(x, y, r * 0.75, r * 1.25, (rand() - 0.5) * 1.2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.wrapS = THREE.RepeatWrapping;
+    texture.wrapT = THREE.RepeatWrapping;
+    texture.repeat.set(7, 7);
+    return texture;
+  },
+
+  createBunnyBumpTexture() {
+    const canvas = document.createElement('canvas');
+    canvas.width = 512;
+    canvas.height = 512;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#787878';
+    ctx.fillRect(0, 0, 512, 512);
+
+    let s = 91;
+    const rand = () => {
+      s = (s * 1664525 + 1013904223) % 4294967296;
+      return s / 4294967296;
+    };
+
+    for (let i = 0; i < 5500; i++) {
+      const x = rand() * 512;
+      const y = rand() * 512;
+      const len = 4 + rand() * 6;
+      const ang = (rand() - 0.5) * 1.6 + Math.PI * 0.5;
+      const v = rand() > 0.4 ? Math.round(170 + rand() * 75) : Math.round(55 + rand() * 45);
+      ctx.strokeStyle = `rgb(${v},${v},${v})`;
+      ctx.lineWidth = 1.4 + rand() * 1.2;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x + Math.cos(ang) * len, y + Math.sin(ang) * len);
+      ctx.stroke();
     }
     const texture = new THREE.CanvasTexture(canvas);
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
-    texture.repeat.set(6, 6);
+    texture.repeat.set(4, 4);
     return texture;
   }
 };

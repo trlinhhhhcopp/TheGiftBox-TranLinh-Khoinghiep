@@ -42,7 +42,7 @@ html, body {
   touch-action: none;
   overscroll-behavior: none;
   font-family: var(--font-sans);
-  background: radial-gradient(circle at 50% 40%, #f6e5da 0%, #edd3c5 65%, #e3c1b0 100%);
+  background: radial-gradient(circle at 50% 40%, #f4d8c3 0%, #e9c3aa 65%, #ddaf92 100%);
   color: var(--text-main);
   user-select: none;
   -webkit-user-select: none;

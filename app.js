@@ -77,8 +77,8 @@ class App3D {
   // 1. Three.js Core Setup
   initThree() {
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(0xf3ded2);
-    this.scene.fog = new THREE.FogExp2(0xf3ded2, 0.0022);
+    this.scene.background = new THREE.Color(0xf1d2ba);
+    this.scene.fog = new THREE.FogExp2(0xf1d2ba, 0.0022);
 
     const aspect = window.innerWidth / window.innerHeight;
     const baseFov = aspect < 1.0 ? 62 : 40;
@@ -144,16 +144,16 @@ class App3D {
     return { pos, target: adjustedTarget };
   }
 
-  // 2. Realistic Warm & Cozy Candlelight Studio Lighting
+  // 2. Realistic Warm Golden Sunset Lighting ("Ánh đèn màu ấm ngả vàng hoàng hôn")
   initLighting() {
     this.lights = {};
 
-    this.lights.hemi = new THREE.HemisphereLight(0xffead2, 0xcda496, 0.56);
+    this.lights.hemi = new THREE.HemisphereLight(0xffdfb5, 0xc68670, 0.55);
     this.scene.add(this.lights.hemi);
 
-    // Warm Golden-Honey Key Directional Light
-    this.lights.key = new THREE.DirectionalLight(0xffcf9e, 1.32);
-    this.lights.key.position.set(14, 26, 16);
+    // Warm Golden Sunset Key Directional Light
+    this.lights.key = new THREE.DirectionalLight(0xffb768, 1.42);
+    this.lights.key.position.set(16, 22, 16);
     this.lights.key.castShadow = true;
     this.lights.key.shadow.mapSize.width = 2048;
     this.lights.key.shadow.mapSize.height = 2048;
@@ -167,18 +167,18 @@ class App3D {
     this.lights.key.shadow.bias = -0.0003;
     this.scene.add(this.lights.key);
 
-    // Soft Warm Peach Fill Light
-    this.lights.fill = new THREE.DirectionalLight(0xffbfa8, 0.42);
+    // Soft Warm Sunset Peach-Rose Fill Light
+    this.lights.fill = new THREE.DirectionalLight(0xffa899, 0.45);
     this.lights.fill.position.set(-18, 14, 14);
     this.scene.add(this.lights.fill);
 
-    // Dreamy Warm Golden Rim Light
-    this.lights.rim = new THREE.DirectionalLight(0xffe4bc, 0.62);
-    this.lights.rim.position.set(0, 16, -22);
+    // Dreamy Golden-Hour Backlight Rim (highlights bunny's fuzzy fur silhouette!)
+    this.lights.rim = new THREE.DirectionalLight(0xffd27f, 0.85);
+    this.lights.rim.position.set(0, 15, -22);
     this.scene.add(this.lights.rim);
 
-    // Cozy Center Candlelight Warm Glow Pool
-    this.lights.warmPool = new THREE.SpotLight(0xffbb78, 0.55, 75, Math.PI / 4, 0.85, 1.2);
+    // Cozy Golden-Amber Sunset Pool on Center Gift Set
+    this.lights.warmPool = new THREE.SpotLight(0xffa64c, 0.72, 75, Math.PI / 4, 0.85, 1.2);
     this.lights.warmPool.position.set(0, 34, 6);
     this.lights.warmPool.target.position.set(0, 1.5, 0);
     this.scene.add(this.lights.warmPool);
@@ -188,61 +188,61 @@ class App3D {
   // 3. Set Lighting Mood
   setLightingMood(mood) {
     if (mood === 'candlelight') {
-      // Warm Cozy Candlelight Studio (Default: Honey-amber cozy glow)
-      this.scene.background.set(0xf3ded2);
-      this.scene.fog.color.set(0xf3ded2);
+      // Warm Golden Sunset Glow (Default: Rich warm amber-gold sunset rays)
+      this.scene.background.set(0xf1d2ba);
+      this.scene.fog.color.set(0xf1d2ba);
       if (this.giftBoxScene && this.giftBoxScene.studioFloorMat) {
-        this.giftBoxScene.studioFloorMat.color.set(0xf3ded2);
+        this.giftBoxScene.studioFloorMat.color.set(0xf1d2ba);
       }
-      this.lights.hemi.color.set(0xffead2);
-      this.lights.hemi.groundColor.set(0xcda496);
-      this.lights.hemi.intensity = 0.56;
+      this.lights.hemi.color.set(0xffdfb5);
+      this.lights.hemi.groundColor.set(0xc68670);
+      this.lights.hemi.intensity = 0.55;
 
-      this.lights.key.color.set(0xffcf9e);
-      this.lights.key.intensity = 1.32;
-
-      this.lights.fill.color.set(0xffbfa8);
-      this.lights.fill.intensity = 0.42;
-
-      this.lights.rim.color.set(0xffe4bc);
-      this.lights.rim.intensity = 0.62;
-
-      if (this.lights.warmPool) {
-        this.lights.warmPool.color.set(0xffbb78);
-        this.lights.warmPool.intensity = 0.55;
-      }
-
-      this.renderer.toneMappingExposure = 1.04;
-      if (this.particles) this.particles.visible = true;
-    } else if (mood === 'sunset') {
-      // Romantic Golden-Rose Sunset
-      this.scene.background.set(0xeed1c6);
-      this.scene.fog.color.set(0xeed1c6);
-      if (this.giftBoxScene && this.giftBoxScene.studioFloorMat) {
-        this.giftBoxScene.studioFloorMat.color.set(0xeed1c6);
-      }
-      this.lights.hemi.color.set(0xffdec4);
-      this.lights.hemi.groundColor.set(0xc4958c);
-      this.lights.hemi.intensity = 0.52;
-
-      this.lights.key.color.set(0xff9d66);
+      this.lights.key.color.set(0xffb768);
       this.lights.key.intensity = 1.42;
 
-      this.lights.fill.color.set(0xf0a0a8);
+      this.lights.fill.color.set(0xffa899);
       this.lights.fill.intensity = 0.45;
 
-      this.lights.rim.color.set(0xffcf96);
-      this.lights.rim.intensity = 0.68;
+      this.lights.rim.color.set(0xffd27f);
+      this.lights.rim.intensity = 0.85;
 
       if (this.lights.warmPool) {
-        this.lights.warmPool.color.set(0xff985c);
-        this.lights.warmPool.intensity = 0.65;
+        this.lights.warmPool.color.set(0xffa64c);
+        this.lights.warmPool.intensity = 0.72;
       }
 
-      this.renderer.toneMappingExposure = 1.08;
+      this.renderer.toneMappingExposure = 1.06;
+      if (this.particles) this.particles.visible = true;
+    } else if (mood === 'sunset') {
+      // Deeper Golden-Amber Romantic Sunset
+      this.scene.background.set(0xe9c2ab);
+      this.scene.fog.color.set(0xe9c2ab);
+      if (this.giftBoxScene && this.giftBoxScene.studioFloorMat) {
+        this.giftBoxScene.studioFloorMat.color.set(0xe9c2ab);
+      }
+      this.lights.hemi.color.set(0xffcf99);
+      this.lights.hemi.groundColor.set(0xba7c68);
+      this.lights.hemi.intensity = 0.50;
+
+      this.lights.key.color.set(0xff9652);
+      this.lights.key.intensity = 1.50;
+
+      this.lights.fill.color.set(0xf0928d);
+      this.lights.fill.intensity = 0.46;
+
+      this.lights.rim.color.set(0xffc366);
+      this.lights.rim.intensity = 0.92;
+
+      if (this.lights.warmPool) {
+        this.lights.warmPool.color.set(0xff8e42);
+        this.lights.warmPool.intensity = 0.80;
+      }
+
+      this.renderer.toneMappingExposure = 1.10;
       if (this.particles) this.particles.visible = true;
     } else if (mood === 'studio') {
-      // Soft Luminous Warm Ivory Studio
+      // Soft Luminous Warm Cream Studio
       this.scene.background.set(0xf7ebe2);
       this.scene.fog.color.set(0xf7ebe2);
       if (this.giftBoxScene && this.giftBoxScene.studioFloorMat) {
@@ -252,18 +252,18 @@ class App3D {
       this.lights.hemi.groundColor.set(0xd8c2b8);
       this.lights.hemi.intensity = 0.68;
 
-      this.lights.key.color.set(0xffe8d2);
+      this.lights.key.color.set(0xffe4c4);
       this.lights.key.intensity = 1.24;
 
       this.lights.fill.color.set(0xfad8cf);
       this.lights.fill.intensity = 0.50;
 
-      this.lights.rim.color.set(0xfff2e2);
-      this.lights.rim.intensity = 0.50;
+      this.lights.rim.color.set(0xfff0da);
+      this.lights.rim.intensity = 0.52;
 
       if (this.lights.warmPool) {
-        this.lights.warmPool.color.set(0xffe2c4);
-        this.lights.warmPool.intensity = 0.32;
+        this.lights.warmPool.color.set(0xffdfb8);
+        this.lights.warmPool.intensity = 0.35;
       }
 
       this.renderer.toneMappingExposure = 1.04;
