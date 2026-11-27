@@ -24,11 +24,13 @@ class App3D {
     this.camTargetLookAt = this.cameraPresets.overview.target.clone();
     this.isCameraAnimating = false;
 
-    // Raycasting
+    // Raycasting & click interaction tracking
     this.raycaster = new THREE.Raycaster();
     this.mouse = new THREE.Vector2();
     this.hoveredObject = null;
     this.selectedProductId = null;
+    this.lastClickTime = 0;
+    this.lastClickProductId = null;
 
     // Audio SFX synthesis
     this.audioCtx = null;
@@ -340,6 +342,10 @@ class App3D {
       this.checkRaycastClick(e);
     });
 
+    this.container.addEventListener('dblclick', (e) => {
+      e.preventDefault();
+    });
+
     // Touch tap detection for mobile devices (avoids accidental clicks during 360° swipe rotation)
     let touchStartX = 0, touchStartY = 0;
     let touchStartTime = 0;
@@ -403,7 +409,11 @@ class App3D {
         this.container.style.cursor = 'pointer';
 
         const info = obj.userData.productInfo;
-        this.tooltip.innerHTML = `${info.icon} ${info.name}`;
+        if (this.selectedProductId === obj.userData.productId) {
+          this.tooltip.innerHTML = `${info.icon} ${info.name} <span style="font-size:11px;opacity:0.85;margin-left:4px;">· Nhấp lần nữa để cất vào hộp ↩</span>`;
+        } else {
+          this.tooltip.innerHTML = `${info.icon} ${info.name}`;
+        }
         this.tooltip.style.left = `${e.clientX}px`;
         this.tooltip.style.top = `${e.clientY}px`;
         this.tooltip.classList.add('visible');
@@ -524,6 +534,18 @@ class App3D {
 
   // 8. Select & Isolate Product for 3D Inspection Mode ("Tách riêng sản phẩm ra ngoài")
   selectProduct(productId) {
+    const now = Date.now();
+    const isDoubleClick = (this.lastClickProductId === productId && (now - this.lastClickTime) < 550);
+    this.lastClickTime = now;
+    this.lastClickProductId = productId;
+
+    // Nếu người dùng bấm 2 lần vào 1 đồ vật thì đồ vật đó sẽ tự động cất lại về hộp
+    if (this.selectedProductId === productId || isDoubleClick) {
+      this.resetToOverview();
+      this.lastClickProductId = null;
+      return;
+    }
+
     if (productId === 'box') {
       this.selectedProductId = 'box';
       const info = ProductData.box;
@@ -582,7 +604,7 @@ class App3D {
     if (btnExpand) btnExpand.classList.remove('visible');
 
     const badgeHtml = isIsolated 
-      ? `<div class="drawer-mode-badge"><span class="mode-pulse"></span> Chế độ Tách Riêng 3D · Xoay 360° Tự Do</div>` 
+      ? `<div class="drawer-mode-badge"><span class="mode-pulse"></span> Chế độ Tách Riêng 3D · Nhấp 2 lần để cất lại hộp</div>` 
       : '';
     document.getElementById('drawer-tag').innerHTML = `${badgeHtml}<span>${info.tag}</span>`;
     document.getElementById('drawer-title').innerHTML = `${info.icon} ${info.name}`;
@@ -639,6 +661,7 @@ class App3D {
 
   resetToOverview() {
     this.selectedProductId = null;
+    this.lastClickProductId = null;
     document.body.classList.remove('drawer-open');
     document.body.classList.remove('menu-open');
     this.giftBoxScene.isolateProduct(null, false);
@@ -649,7 +672,7 @@ class App3D {
     document.querySelectorAll('.shelf-item-pill').forEach(pill => pill.classList.remove('active'));
     const shelf = document.querySelector('.bottom-shelf');
     if (shelf) shelf.scrollTo({ left: 0, behavior: 'smooth' });
-    this.playClickSound();
+    this.playWhooshSound();
   }
 
   // 9. UI Controls & Listeners
