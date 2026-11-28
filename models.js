@@ -179,6 +179,7 @@ class GiftBoxScene {
     // Exploded view
     this.isExploded = false;
     this.explodeFactor = 0;
+    this.isInspectFront = false;
 
     // Lights
     this.candleLight = null;
@@ -1807,19 +1808,19 @@ class GiftBoxScene {
         if (!prod || !prod.userData || !prod.userData.basePos) continue;
 
         if (key === this.isolatedProductId) {
+          const isJar = (key === 'candle' || key === 'teajar');
+          const lieFlat = (key === 'bunny') || (isJar && !this.isInspectFront);
+          const targetIsoZ = (isJar && !this.isInspectFront) ? 1.9 : 0;
+
           prod.position.x = THREE.MathUtils.lerp(prod.position.x, isoTargetX, 0.08);
           prod.position.y = THREE.MathUtils.lerp(prod.position.y, floatY, 0.08);
-          prod.position.z = THREE.MathUtils.lerp(prod.position.z, 0, 0.08);
+          prod.position.z = THREE.MathUtils.lerp(prod.position.z, targetIsoZ, 0.08);
 
-          // Optimal inspection angle:
-          // Flat items: tilt gracefully towards the camera (rotation.x = -0.42) like on an art easel display
-          // Upright items: stand upright facing front (rotation = 0, 0, 0)
-          // Bunny: tilted gracefully towards the viewer (rotation.x = -0.45)
-          // Lying flat / top-down display as requested ("cho nằm ra", "góc nhìn từ trên xuống")
-          // Bunny lies flat on its back (-Math.PI / 2), flat items lie flat horizontally (0), upright items stand (0)
-          const targetRotX = (key === 'bunny') ? -Math.PI / 2 : 0;
+          // In default top-down inspection, flip candle & tea jar onto their backs so the front label faces UP first
+          const targetRotX = lieFlat ? -Math.PI / 2 : 0;
+          const targetRotY = isJar ? -0.16 : 0;
           prod.rotation.x = THREE.MathUtils.lerp(prod.rotation.x, targetRotX, 0.08);
-          prod.rotation.y = THREE.MathUtils.lerp(prod.rotation.y, 0, 0.08);
+          prod.rotation.y = THREE.MathUtils.lerp(prod.rotation.y, targetRotY, 0.08);
           prod.rotation.z = THREE.MathUtils.lerp(prod.rotation.z, 0, 0.08);
 
           prod.scale.lerp(new THREE.Vector3(1.0, 1.0, 1.0), 0.08);

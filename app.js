@@ -649,7 +649,8 @@ class App3D {
 
     this.playChimeSound();
 
-    // Elevate and separate product out of the box into individual inspection view
+    // Elevate and separate product out of the box into individual inspection view (default: label/front flipped up)
+    this.giftBoxScene.isInspectFront = false;
     this.giftBoxScene.isolateProduct(productId, true);
 
     const isFlat = ['letter', 'photo', 'card', 'greeting'].includes(productId);
@@ -909,6 +910,7 @@ class App3D {
       btnInspectTopDown.addEventListener('click', () => {
         btnInspectTopDown.classList.add('active');
         btnInspectFront.classList.remove('active');
+        this.giftBoxScene.isInspectFront = false;
         const isMobile = window.innerWidth <= 768 || (this.camera && this.camera.aspect < 1.0);
         const isoTargetX = isMobile ? 0 : -2.5;
         const inspectTarget = isMobile ? new THREE.Vector3(0, 6.0, 1.8) : new THREE.Vector3(isoTargetX, 6.0, 0);
@@ -921,6 +923,7 @@ class App3D {
       btnInspectFront.addEventListener('click', () => {
         btnInspectFront.classList.add('active');
         btnInspectTopDown.classList.remove('active');
+        this.giftBoxScene.isInspectFront = true;
         const isMobile = window.innerWidth <= 768 || (this.camera && this.camera.aspect < 1.0);
         const isoTargetX = isMobile ? 0 : -2.5;
         const inspectTarget = isMobile ? new THREE.Vector3(0, 6.0, 1.8) : new THREE.Vector3(isoTargetX, 6.0, 0);
