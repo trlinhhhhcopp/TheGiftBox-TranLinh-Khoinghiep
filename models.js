@@ -311,6 +311,18 @@ class GiftBoxScene {
     addCavity(-5.2, 6.2, 9.8, 5.4);
     addCavity(5.2, 6.2, 9.8, 5.4);
 
+    // Subtle semicircular tray finger notches on left & right inner edges (matching reference photos)
+    const notchMat = new THREE.MeshStandardMaterial({ color: 0xebd9c5, roughness: 0.72 });
+    const notchGeo = new THREE.CylinderGeometry(0.65, 0.65, 0.16, 20, 1, false, 0, Math.PI);
+    const leftNotch = new THREE.Mesh(notchGeo, notchMat);
+    leftNotch.position.set(-tw / 2 + 0.05, th - 0.02, 5.2);
+    leftNotch.rotation.y = Math.PI / 2;
+    trayGroup.add(leftNotch);
+    const rightNotch = new THREE.Mesh(notchGeo, notchMat);
+    rightNotch.position.set(tw / 2 - 0.05, th - 0.02, 5.2);
+    rightNotch.rotation.y = -Math.PI / 2;
+    trayGroup.add(rightNotch);
+
     // Draped tissue paper wings on left & right
     const paperMat = new THREE.MeshStandardMaterial({
       color: 0xffffff,
@@ -452,141 +464,117 @@ class GiftBoxScene {
       return partGroup;
     };
 
-    // Body (Chubby soft plush torso)
-    const bodyGeo = new THREE.SphereGeometry(2.35, 36, 28);
-    bodyGeo.scale(1.0, 1.32, 0.88);
-    addFurryPart(bodyGeo, plushMat, 0, 0.6, 0.45);
+    // Pear-shaped Seated Plush Torso (narrow upper neck/shoulders flowing into plump rounded belly)
+    const lowerBellyGeo = new THREE.SphereGeometry(2.04, 36, 28);
+    lowerBellyGeo.scale(1.06, 1.00, 0.78);
+    addFurryPart(lowerBellyGeo, plushMat, 0, 0.16, 0.34);
+
+    const upperChestGeo = new THREE.SphereGeometry(1.48, 32, 24);
+    upperChestGeo.scale(0.98, 1.06, 0.80);
+    addFurryPart(upperChestGeo, plushMat, 0, 1.32, 0.36);
 
     // Cute Fluffy Cotton Tail Puff at back
-    const bunnyTailGeo = new THREE.SphereGeometry(0.62, 20, 16);
-    addFurryPart(bunnyTailGeo, plushMat, 0, -0.35, -1.55);
+    const bunnyTailGeo = new THREE.SphereGeometry(0.58, 20, 16);
+    addFurryPart(bunnyTailGeo, plushMat, 0, -0.35, -1.52);
 
-    // Head (Plump cheeks & soft rounded plush forehead)
-    const headGeo = new THREE.SphereGeometry(1.96, 36, 28);
-    headGeo.scale(1.08, 0.98, 0.96);
-    addFurryPart(headGeo, plushMat, 0, 2.75, 0.35);
+    // Smooth Chubby Rounded Plush Head (Tilted nicely toward camera like Photo 2)
+    const headGeo = new THREE.SphereGeometry(1.80, 36, 28);
+    headGeo.scale(1.10, 0.96, 0.95);
+    addFurryPart(headGeo, plushMat, 0, 3.04, 0.38);
 
-    // Cute little fluffy fur tuft puffs on top of the bunny's head
-    const tuftGeo = new THREE.SphereGeometry(0.32, 14, 12);
-    tuftGeo.scale(0.85, 1.25, 0.85);
-    addFurryPart(tuftGeo, plushMat, 0, 4.62, 0.55, -0.15, 0, 0);
-    addFurryPart(tuftGeo, plushMat, -0.26, 4.55, 0.48, -0.1, 0, 0.35);
-    addFurryPart(tuftGeo, plushMat, 0.24, 4.56, 0.50, -0.1, 0, -0.32);
+    // Soft Rounded Plush Muzzle / Cheek Fullness
+    const muzzleGeo = new THREE.SphereGeometry(0.68, 28, 20);
+    muzzleGeo.scale(1.22, 0.72, 0.56);
+    addFurryPart(muzzleGeo, plushMat, 0, 2.64, 1.68);
 
-    // Muzzle / Snout (Plush chubby fuzzy cheeks & muzzle)
-    const muzzleGeo = new THREE.SphereGeometry(0.78, 32, 20);
-    muzzleGeo.scale(1.18, 0.76, 0.62);
-    addFurryPart(muzzleGeo, plushMat, 0, 2.44, 1.70);
-
-    // 3D Sparkling Black Obsidian Button Bead Eyes (Clearly visible & adorable)
+    // Small Innocent Glossy Dark Button Eyes (Crisp round-oval beads placed naturally on lower-mid face)
     const eyeGlassMat = new THREE.MeshStandardMaterial({
-      color: 0x0a0a0d,
-      roughness: 0.05,
-      metalness: 0.15
+      color: 0x160e10,
+      roughness: 0.08,
+      metalness: 0.12
     });
     const glintMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-    const lidMat = new THREE.MeshStandardMaterial({ color: 0x482830, roughness: 0.6 });
 
     const createBeadEye = (x, y, z, isRight = false) => {
       const eyeGroup = new THREE.Group();
 
-      // Main bead eye sphere
-      const eyeMesh = new THREE.Mesh(new THREE.SphereGeometry(0.28, 24, 24), eyeGlassMat);
+      const eyeMesh = new THREE.Mesh(new THREE.SphereGeometry(0.175, 20, 20), eyeGlassMat);
+      eyeMesh.scale.set(0.92, 1.08, 0.85);
       eyeMesh.castShadow = true;
       eyeGroup.add(eyeMesh);
 
-      // Specular glint 1 (Primary large catchlight)
-      const glint1 = new THREE.Mesh(new THREE.SphereGeometry(0.08, 12, 12), glintMat);
-      glint1.position.set(0.08, 0.085, 0.23);
+      const glint1 = new THREE.Mesh(new THREE.SphereGeometry(0.048, 10, 10), glintMat);
+      glint1.position.set(isRight ? -0.045 : 0.045, 0.055, 0.145);
       eyeGroup.add(glint1);
 
-      // Specular glint 2 (Secondary smaller catchlight)
-      const glint2 = new THREE.Mesh(new THREE.SphereGeometry(0.042, 10, 10), glintMat);
-      glint2.position.set(-0.075, -0.065, 0.23);
-      eyeGroup.add(glint2);
-
-      // Delicate curved eyelid / lash arch
-      const s = isRight ? 1 : -1;
-      const lidCurve = new THREE.QuadraticBezierCurve3(
-        new THREE.Vector3(-0.22, 0.18, 0.16),
-        new THREE.Vector3(0, 0.28, 0.18),
-        new THREE.Vector3(0.22, 0.18, 0.16)
-      );
-      const lidMesh = new THREE.Mesh(new THREE.TubeGeometry(lidCurve, 12, 0.032, 6, false), lidMat);
-      eyeGroup.add(lidMesh);
-
       eyeGroup.position.set(x, y, z);
-      eyeGroup.rotation.y = isRight ? 0.2 : -0.2;
+      eyeGroup.rotation.y = isRight ? 0.22 : -0.22;
       return eyeGroup;
     };
 
-    bunnyGroup.add(createBeadEye(-0.72, 2.78, 2.15, false));
-    bunnyGroup.add(createBeadEye(0.72, 2.78, 2.15, true));
+    bunnyGroup.add(createBeadEye(-0.76, 2.96, 2.02, false));
+    bunnyGroup.add(createBeadEye(0.76, 2.96, 2.02, true));
 
-    // 3D Soft Pink Embroidered Plush Nose (Heart / inverted rounded triangle)
+    // Delicate Pastel Rose-Pink Plush Nose (Small rounded heart/triangle tucked softly into muzzle)
     const noseShape = new THREE.Shape();
-    noseShape.moveTo(0, -0.15);
-    noseShape.bezierCurveTo(-0.16, -0.15, -0.24, 0.05, -0.18, 0.16);
-    noseShape.bezierCurveTo(-0.09, 0.22, 0, 0.12, 0, 0.08);
-    noseShape.bezierCurveTo(0, 0.12, 0.09, 0.22, 0.18, 0.16);
-    noseShape.bezierCurveTo(0.24, 0.05, 0.16, -0.15, 0, -0.15);
+    noseShape.moveTo(0, -0.11);
+    noseShape.bezierCurveTo(-0.12, -0.11, -0.18, 0.04, -0.13, 0.12);
+    noseShape.bezierCurveTo(-0.07, 0.17, 0, 0.09, 0, 0.06);
+    noseShape.bezierCurveTo(0, 0.09, 0.07, 0.17, 0.13, 0.12);
+    noseShape.bezierCurveTo(0.18, 0.04, 0.12, -0.11, 0, -0.11);
 
     const noseGeo = new THREE.ExtrudeGeometry(noseShape, {
-      depth: 0.14,
+      depth: 0.10,
       bevelEnabled: true,
       bevelSegments: 3,
       steps: 1,
-      bevelSize: 0.035,
-      bevelThickness: 0.035
+      bevelSize: 0.025,
+      bevelThickness: 0.025
     });
     const noseMat = new THREE.MeshStandardMaterial({
-      color: isPink ? 0xeb7b95 : 0x8a6e5f,
-      roughness: 0.45,
-      metalness: 0.02
+      color: isPink ? 0xf2a4b8 : 0xb59a8c,
+      roughness: 0.58
     });
     const noseMesh = new THREE.Mesh(noseGeo, noseMat);
-    noseMesh.position.set(0, 2.58, 2.18);
+    noseMesh.position.set(0, 2.72, 2.08);
     noseMesh.rotation.x = -0.05;
     bunnyGroup.add(noseMesh);
     this.bunnyNoseMesh = noseMesh;
 
-    // 3D Embroidered Philtrum & Smiling Lips (:3 Smile)
-    const mouthMat = new THREE.MeshStandardMaterial({ color: 0x783244, roughness: 0.5 });
+    // Subtle Fine Embroidered Thread Seam & Gentle Smile
+    const mouthMat = new THREE.MeshStandardMaterial({ color: 0xa47a84, roughness: 0.65 });
     this.bunnyMouthMat = mouthMat;
 
-    // Vertical Philtrum Seam
     const philtrum = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.034, 0.034, 0.16, 8),
+      new THREE.CylinderGeometry(0.015, 0.015, 0.12, 8),
       mouthMat
     );
-    philtrum.position.set(0, 2.37, 2.20);
+    philtrum.position.set(0, 2.56, 2.08);
     bunnyGroup.add(philtrum);
 
-    // Left Smiling Lip Curve
     const smileCurveL = new THREE.QuadraticBezierCurve3(
-      new THREE.Vector3(0, 2.29, 2.19),
-      new THREE.Vector3(-0.22, 2.18, 2.16),
-      new THREE.Vector3(-0.42, 2.32, 2.08)
+      new THREE.Vector3(0, 2.50, 2.08),
+      new THREE.Vector3(-0.13, 2.44, 2.06),
+      new THREE.Vector3(-0.24, 2.50, 2.02)
     );
-    bunnyGroup.add(new THREE.Mesh(new THREE.TubeGeometry(smileCurveL, 16, 0.034, 6, false), mouthMat));
+    bunnyGroup.add(new THREE.Mesh(new THREE.TubeGeometry(smileCurveL, 12, 0.015, 6, false), mouthMat));
 
-    // Right Smiling Lip Curve
     const smileCurveR = new THREE.QuadraticBezierCurve3(
-      new THREE.Vector3(0, 2.29, 2.19),
-      new THREE.Vector3(0.22, 2.18, 2.16),
-      new THREE.Vector3(0.42, 2.32, 2.08)
+      new THREE.Vector3(0, 2.50, 2.08),
+      new THREE.Vector3(0.13, 2.44, 2.06),
+      new THREE.Vector3(0.24, 2.50, 2.02)
     );
-    bunnyGroup.add(new THREE.Mesh(new THREE.TubeGeometry(smileCurveR, 16, 0.034, 6, false), mouthMat));
+    bunnyGroup.add(new THREE.Mesh(new THREE.TubeGeometry(smileCurveR, 12, 0.015, 6, false), mouthMat));
 
-    // Rosy Blush Cheeks
+    // Very Soft Natural Cheek Flush
     const cheekCanvas = document.createElement('canvas');
     cheekCanvas.width = 128;
     cheekCanvas.height = 128;
     const cctx = cheekCanvas.getContext('2d');
     const grad = cctx.createRadialGradient(64, 64, 5, 64, 64, 60);
-    grad.addColorStop(0, isPink ? 'rgba(242, 132, 158, 0.75)' : 'rgba(205, 150, 135, 0.55)');
-    grad.addColorStop(0.5, isPink ? 'rgba(242, 132, 158, 0.4)' : 'rgba(205, 150, 135, 0.25)');
-    grad.addColorStop(1, 'rgba(242, 132, 158, 0)');
+    grad.addColorStop(0, isPink ? 'rgba(244, 166, 184, 0.42)' : 'rgba(205, 165, 148, 0.30)');
+    grad.addColorStop(0.55, isPink ? 'rgba(244, 166, 184, 0.18)' : 'rgba(205, 165, 148, 0.12)');
+    grad.addColorStop(1, 'rgba(244, 166, 184, 0)');
     cctx.fillStyle = grad;
     cctx.fillRect(0, 0, 128, 128);
     const cheekTex = new THREE.CanvasTexture(cheekCanvas);
@@ -595,51 +583,40 @@ class GiftBoxScene {
       transparent: true,
       depthWrite: false
     });
-    const cheekGeo = new THREE.PlaneGeometry(0.85, 0.85);
+    const cheekGeo = new THREE.PlaneGeometry(0.75, 0.75);
 
     const cheekL = new THREE.Mesh(cheekGeo, cheekMat);
-    cheekL.position.set(-1.18, 2.42, 1.95);
-    cheekL.rotation.y = -0.55;
+    cheekL.position.set(-1.10, 2.66, 1.86);
+    cheekL.rotation.y = -0.52;
     bunnyGroup.add(cheekL);
 
     const cheekR = new THREE.Mesh(cheekGeo, cheekMat);
-    cheekR.position.set(1.18, 2.42, 1.95);
-    cheekR.rotation.y = 0.55;
+    cheekR.position.set(1.10, 2.66, 1.86);
+    cheekR.rotation.y = 0.52;
     bunnyGroup.add(cheekR);
 
-    // Plump Rounded Plush Lop Ears ("tai tròn mũm mĩm")
+    // Long Plush Rounded Lop Ears Draping Gently Along Sides Past Elbows (Matching Photo 1 & 2)
     const innerEarMat = new THREE.MeshStandardMaterial({
-      color: isPink ? 0xf9dce6 : 0xe5dbc9,
-      roughness: 0.88
+      color: isPink ? 0xf6e6e8 : 0xe5dbc9,
+      roughness: 0.90
     });
     this.innerEarMat = innerEarMat;
 
-    // Sculpt smooth rounded teardrop-paddle ear via LatheGeometry (soft rounded bulb tips, zero sharp ends!)
     const earPts = [];
-    const earSteps = 26;
+    const earSteps = 28;
     for (let i = 0; i <= earSteps; i++) {
       const t = i / earSteps;
       let r;
-      if (t < 0.70) {
-        r = 0.28 + 0.62 * Math.sin((t / 0.70) * (Math.PI / 2));
+      if (t < 0.72) {
+        r = 0.24 + 0.70 * Math.sin((t / 0.72) * (Math.PI / 2));
       } else {
-        const u = (t - 0.70) / 0.30;
-        r = 0.90 * Math.sqrt(Math.max(0, 1 - u * u));
+        const u = (t - 0.72) / 0.28;
+        r = 0.94 * Math.sqrt(Math.max(0, 1 - u * u));
       }
-      earPts.push(new THREE.Vector2(r, -t * 3.35));
+      earPts.push(new THREE.Vector2(r, -t * 4.10));
     }
     const earGeo = new THREE.LatheGeometry(earPts, 28);
-    earGeo.scale(1.0, 1.0, 0.44);
-
-    // Inner pink soft rounded cushion matching the ear paddle
-    const innerEarPts = [];
-    for (let i = 0; i <= 20; i++) {
-      const t = i / 20;
-      const r = 0.50 * Math.sin(t * Math.PI);
-      innerEarPts.push(new THREE.Vector2(Math.max(0.01, r), -0.45 - t * 2.45));
-    }
-    const innerEarGeo = new THREE.LatheGeometry(innerEarPts, 22);
-    innerEarGeo.scale(1.0, 1.0, 0.28);
+    earGeo.scale(1.0, 1.0, 0.42);
 
     const createEar = (isRight = false) => {
       const earPivot = new THREE.Group();
@@ -647,155 +624,142 @@ class GiftBoxScene {
 
       addFurryPart(earGeo, plushMat, 0, 0, 0, 0, 0, 0, earPivot);
 
-      const innerMesh = new THREE.Mesh(innerEarGeo, innerEarMat);
-      innerMesh.position.set(0, -0.05, 0.27);
-      earPivot.add(innerMesh);
-
-      earPivot.position.set(s * 1.48, 3.62, 0.22);
-      earPivot.rotation.set(-0.14, s * -0.18, s * 0.42);
+      earPivot.position.set(s * 1.48, 3.68, 0.55);
+      earPivot.rotation.set(0.14, s * -0.10, s * 0.22);
       return earPivot;
     };
 
     bunnyGroup.add(createEar(false));
     bunnyGroup.add(createEar(true));
 
-    // Rounded Chubby Plush Arms
-    const armGeo = new THREE.SphereGeometry(0.58, 22, 18);
-    armGeo.scale(0.86, 1.55, 0.78);
+    // Chubby Seated Plush Arms Angled Outward from Shoulders (Correct Z sign: -0.46 left, +0.46 right!)
+    const armGeo = new THREE.SphereGeometry(0.56, 22, 18);
+    armGeo.scale(0.92, 1.62, 0.86);
 
-    addFurryPart(armGeo, plushMat, -1.62, 0.98, 0.92, 0.35, 0.2, 0.62);
-    addFurryPart(armGeo, plushMat, 1.62, 0.98, 0.92, 0.35, -0.2, -0.62);
+    addFurryPart(armGeo, plushMat, -1.78, 0.98, 0.86, 0.16, 0.12, -0.46);
+    addFurryPart(armGeo, plushMat, 1.78, 0.98, 0.86, 0.16, -0.12, 0.46);
 
-    // Seated Plump Fuzzy Feet & Paws
-    const pawGeo = new THREE.SphereGeometry(0.90, 24, 18);
-    pawGeo.scale(0.84, 0.70, 1.25);
+    // 2 Big Forward-Protruding Round Seated Cream Plush Feet Positioned at Lower Hips (Leaving belly & tag clean!)
+    const pawGeo = new THREE.SphereGeometry(0.94, 26, 20);
+    pawGeo.scale(0.92, 0.98, 1.18);
 
-    addFurryPart(pawGeo, plushMat, -1.1, -0.55, 1.5, -0.15, 0, 0);
-    addFurryPart(pawGeo, plushMat, 1.1, -0.55, 1.5, -0.15, 0, 0);
+    addFurryPart(pawGeo, plushMat, -1.08, -1.25, 1.24, -0.22, 0.14, 0);
+    addFurryPart(pawGeo, plushMat, 1.08, -1.25, 1.24, -0.22, -0.14, 0);
+    this.bunnyPadMat = null;
 
-    // Paw pad soles
-    const padMat = new THREE.MeshStandardMaterial({
-      color: isPink ? 0xf8dbe3 : 0xdfd3bf,
-      roughness: 0.8
-    });
-    this.bunnyPadMat = padMat;
-
-    const padGeo = new THREE.SphereGeometry(0.44, 16, 12);
-    padGeo.scale(0.85, 1.15, 0.20);
-
-    const padL = new THREE.Mesh(padGeo, padMat);
-    padL.position.set(-1.1, -0.58, 2.54);
-    padL.rotation.x = -0.15;
-    bunnyGroup.add(padL);
-
-    const padR = new THREE.Mesh(padGeo, padMat);
-    padR.position.set(1.1, -0.58, 2.54);
-    padR.rotation.x = -0.15;
-    bunnyGroup.add(padR);
-
-    // Pink Satin Ribbon Bow & Medal Tag
+    // Silky Pastel-Pink Satin Collar, Sculpted Silk Bow & "THE GIFT ♥" Tag (Floating cleanly ON TOP of chest fur!)
     const bowGroup = new THREE.Group();
     const ribbonPinkMat = new THREE.MeshStandardMaterial({
-      color: 0xec8fa6,
-      roughness: 0.28,
-      metalness: 0.16
+      color: 0xf19cb2,
+      roughness: 0.26,
+      metalness: 0.12
     });
 
-    const knotGeo = new THREE.SphereGeometry(0.28, 16, 12);
-    knotGeo.scale(1.1, 0.9, 0.8);
+    // Flattened satin neck collar band hugging narrow neck cleanly
+    const collarGeo = new THREE.TorusGeometry(1.18, 0.12, 14, 36);
+    collarGeo.scale(1.05, 0.72, 1.16);
+    const collarMesh = new THREE.Mesh(collarGeo, ribbonPinkMat);
+    collarMesh.position.set(0, 2.02, 0.42);
+    collarMesh.rotation.x = Math.PI / 2 + 0.08;
+    collarMesh.castShadow = true;
+    bowGroup.add(collarMesh);
+
+    // Center gathered satin knot resting clearly on chest front
+    const knotGeo = new THREE.SphereGeometry(0.22, 16, 12);
+    knotGeo.scale(1.05, 0.86, 0.75);
     const knot = new THREE.Mesh(knotGeo, ribbonPinkMat);
-    knot.position.set(0, 1.68, 1.86);
+    knot.position.set(0, 1.94, 1.88);
     bowGroup.add(knot);
 
-    const loopGeoL = new THREE.TorusGeometry(0.44, 0.14, 14, 24, Math.PI * 1.55);
-    const loopL = new THREE.Mesh(loopGeoL, ribbonPinkMat);
-    loopL.position.set(-0.48, 1.76, 1.82);
-    loopL.rotation.set(0.2, 0.4, 0.78);
-    bowGroup.add(loopL);
+    // Sculpted Crisp Flat Silk Bow Loops (ExtrudeGeometry winged butterfly lobes)
+    const bowWingShape = new THREE.Shape();
+    bowWingShape.moveTo(0, 0);
+    bowWingShape.bezierCurveTo(0.22, 0.24, 0.72, 0.44, 0.92, 0.26);
+    bowWingShape.bezierCurveTo(1.06, 0.12, 1.04, -0.18, 0.86, -0.32);
+    bowWingShape.bezierCurveTo(0.64, -0.44, 0.22, -0.18, 0, -0.04);
+    bowWingShape.closePath();
 
-    const loopR = new THREE.Mesh(loopGeoL, ribbonPinkMat);
-    loopR.position.set(0.48, 1.76, 1.82);
-    loopR.rotation.set(0.2, -0.4, -0.78);
-    bowGroup.add(loopR);
+    const bowWingGeo = new THREE.ExtrudeGeometry(bowWingShape, {
+      depth: 0.14,
+      bevelEnabled: true,
+      bevelSegments: 3,
+      steps: 1,
+      bevelSize: 0.04,
+      bevelThickness: 0.04
+    });
 
-    const tailGeo = new THREE.CylinderGeometry(0.12, 0.18, 1.15, 12);
-    tailGeo.scale(1.0, 1.0, 0.3);
+    const wingR = new THREE.Mesh(bowWingGeo, ribbonPinkMat);
+    wingR.position.set(0.08, 1.94, 1.82);
+    wingR.rotation.set(0.08, -0.26, 0.12);
+    wingR.castShadow = true;
+    bowGroup.add(wingR);
 
-    const tailL = new THREE.Mesh(tailGeo, ribbonPinkMat);
-    tailL.position.set(-0.28, 1.15, 1.82);
-    tailL.rotation.set(0.2, 0, 0.32);
+    const wingL = new THREE.Mesh(bowWingGeo, ribbonPinkMat);
+    wingL.position.set(-0.08, 1.94, 1.94);
+    wingL.rotation.set(-0.08, Math.PI + 0.26, -0.12);
+    wingL.castShadow = true;
+    bowGroup.add(wingL);
+
+    // Flat Splayed Satin Tails Angled Forward Above Belly Fur (Wide V-angle)
+    const bowTailShape = new THREE.Shape();
+    bowTailShape.moveTo(-0.11, 0);
+    bowTailShape.lineTo(0.11, 0);
+    bowTailShape.lineTo(0.19, -1.28);
+    bowTailShape.lineTo(0, -1.12);
+    bowTailShape.lineTo(-0.19, -1.28);
+    bowTailShape.closePath();
+
+    const bowTailGeo = new THREE.ExtrudeGeometry(bowTailShape, {
+      depth: 0.035,
+      bevelEnabled: true,
+      bevelSegments: 2,
+      steps: 1,
+      bevelSize: 0.012,
+      bevelThickness: 0.012
+    });
+
+    const tailL = new THREE.Mesh(bowTailGeo, ribbonPinkMat);
+    tailL.position.set(-0.14, 1.84, 1.92);
+    tailL.rotation.set(-0.34, 0.08, -0.62);
     bowGroup.add(tailL);
 
-    const tailR = new THREE.Mesh(tailGeo, ribbonPinkMat);
-    tailR.position.set(0.28, 1.15, 1.82);
-    tailR.rotation.set(0.2, 0, -0.32);
+    const tailR = new THREE.Mesh(bowTailGeo, ribbonPinkMat);
+    tailR.position.set(0.14, 1.84, 1.92);
+    tailR.rotation.set(-0.34, -0.08, 0.62);
     bowGroup.add(tailR);
 
-    // Circular Medal Tag ("THE GIFT")
-    const medalCanvas = document.createElement('canvas');
-    medalCanvas.width = 512;
-    medalCanvas.height = 512;
-    const mctx = medalCanvas.getContext('2d');
+    // Thin satin hang string connecting knot to circular tag
+    const hangCord = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, 0.36, 8), ribbonPinkMat);
+    hangCord.position.set(0, 1.66, 2.04);
+    hangCord.rotation.x = -0.35;
+    bowGroup.add(hangCord);
 
-    // Background circle
-    mctx.fillStyle = '#fef1f5';
-    mctx.beginPath();
-    mctx.arc(256, 256, 240, 0, Math.PI * 2);
-    mctx.fill();
-
-    // Rose gold foil border
-    mctx.strokeStyle = '#df7b96';
-    mctx.lineWidth = 10;
-    mctx.stroke();
-
-    mctx.strokeStyle = '#f3b4c5';
-    mctx.lineWidth = 3;
-    mctx.beginPath();
-    mctx.arc(256, 256, 222, 0, Math.PI * 2);
-    mctx.stroke();
-
-    // Text: "THE GIFT"
-    mctx.fillStyle = '#a62e4f';
-    mctx.font = 'bold 64px "Arial Rounded MT Bold", "Montserrat", sans-serif';
-    mctx.textAlign = 'center';
-    mctx.textBaseline = 'middle';
-    mctx.fillText('THE GIFT', 256, 225);
-
-    // Cute pink heart
-    mctx.fillStyle = '#df5277';
-    mctx.beginPath();
-    const hx = 256, hy = 290;
-    mctx.moveTo(hx, hy + 24);
-    mctx.bezierCurveTo(hx - 24, hy, hx - 38, hy - 20, hx - 18, hy - 36);
-    mctx.bezierCurveTo(hx, hy - 40, hx, hy - 20, hx, hy - 14);
-    mctx.bezierCurveTo(hx, hy - 20, hx, hy - 40, hx + 18, hy - 36);
-    mctx.bezierCurveTo(hx + 38, hy - 20, hx + 24, hy, hx, hy + 24);
-    mctx.fill();
-
-    // Subtitle "A Little Hug"
-    mctx.fillStyle = '#b36178';
-    mctx.font = '500 28px "Georgia", serif';
-    mctx.fillText('A Little Hug', 256, 355);
+    // Circular Medal Tag ("THE GIFT ♥"): solid matte pastel pink disc + sharp planar label cap facing camera
+    const medalDisc = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.62, 0.62, 0.04, 36),
+      new THREE.MeshStandardMaterial({ color: 0xf2b1c4, roughness: 0.88 })
+    );
+    medalDisc.position.set(0, 1.18, 2.15);
+    medalDisc.rotation.x = Math.PI / 2 - 0.14;
+    medalDisc.castShadow = true;
+    bowGroup.add(medalDisc);
 
     const medalTex = TextureManager.createMedalTexture();
-    const medalMat = new THREE.MeshStandardMaterial({
-      map: medalTex,
-      roughness: 0.35,
-      metalness: 0.08
-    });
-    const medalGeo = new THREE.CylinderGeometry(0.55, 0.55, 0.05, 36);
-    const medal = new THREE.Mesh(medalGeo, medalMat);
-    medal.position.set(0, 0.88, 1.98);
-    medal.rotation.x = Math.PI / 2 - 0.18;
-    bowGroup.add(medal);
+    const medalFace = new THREE.Mesh(
+      new THREE.CircleGeometry(0.61, 36),
+      new THREE.MeshStandardMaterial({ map: medalTex, roughness: 0.86, metalness: 0.0 })
+    );
+    medalFace.position.set(0, 1.18, 2.176);
+    medalFace.rotation.x = -0.14;
+    bowGroup.add(medalFace);
 
-    bowGroup.position.set(0, -0.10, 0.56);
+    bowGroup.visible = isPink;
     bunnyGroup.add(bowGroup);
     this.bunnyBowGroup = bowGroup;
 
-    // Laying down peacefully on its back in the molded velvet tray cushion
-    bunnyGroup.position.set(0, 1.85, -0.2);
-    bunnyGroup.rotation.set(-Math.PI / 2 + 0.12, 0, 0);
+    // Laying down peacefully in the molded tray cushion tilted slightly toward camera like Photo 2
+    bunnyGroup.position.set(0, 1.82, -0.25);
+    bunnyGroup.rotation.set(-Math.PI / 2 + 0.24, 0, 0);
 
     bunnyGroup.userData = {
       isProduct: true,
@@ -818,55 +782,66 @@ class GiftBoxScene {
     const potHeight = 3.6;
     const isPink = (this.currentEdition === 'pink');
 
-    const potMat = isPink
-      ? new THREE.MeshPhysicalMaterial({
-          color: 0xffffff,
-          roughness: 0.06,
-          metalness: 0.08,
-          clearcoat: 1.0,
-          clearcoatRoughness: 0.05,
-          transparent: true,
-          opacity: 0.28,
-          depthWrite: false
-        })
-      : new THREE.MeshStandardMaterial({
-          color: 0xd7cebf,
-          roughness: 0.72
-        });
+    const candleGlassMat = new THREE.MeshPhysicalMaterial({
+      color: 0xffffff,
+      roughness: 0.06,
+      metalness: 0.08,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.05,
+      transparent: true,
+      opacity: 0.20,
+      depthWrite: false
+    });
+    const candleCeramicMat = new THREE.MeshStandardMaterial({
+      color: 0xd7cebf,
+      roughness: 0.72
+    });
+    this.candleGlassMat = candleGlassMat;
+    this.candleCeramicMat = candleCeramicMat;
+
+    const potMat = isPink ? candleGlassMat : candleCeramicMat;
 
     const pot = new THREE.Mesh(new THREE.CylinderGeometry(1.85, 1.75, potHeight, 36), potMat);
     pot.position.y = potHeight / 2;
     pot.castShadow = true;
     candleGroup.add(pot);
+    this.candlePotMesh = pot;
 
     // Thick clear glass base puck & polished upper rim for realistic glass refraction highlights
-    const glassBase = new THREE.Mesh(new THREE.CylinderGeometry(1.75, 1.66, 0.26, 36), potMat);
+    const glassBase = new THREE.Mesh(new THREE.CylinderGeometry(1.75, 1.66, 0.26, 36), candleGlassMat);
     glassBase.position.y = 0.13;
+    glassBase.visible = isPink;
     candleGroup.add(glassBase);
+    this.candleGlassBase = glassBase;
 
-    const glassRim = new THREE.Mesh(new THREE.TorusGeometry(1.82, 0.055, 12, 36), potMat);
+    const glassRim = new THREE.Mesh(new THREE.TorusGeometry(1.82, 0.055, 12, 36), candleGlassMat);
     glassRim.rotation.x = Math.PI / 2;
     glassRim.position.y = potHeight;
+    glassRim.visible = isPink;
     candleGroup.add(glassRim);
+    this.candleGlassRim = glassRim;
 
-    // Chamfered Natural Wood Lid
+    // Chamfered Natural Cork/Oak Wood Lid
     const woodTex = TextureManager.createWoodTexture();
-    const woodMat = new THREE.MeshStandardMaterial({ map: woodTex, roughness: 0.46, metalness: 0.02 });
+    const woodMat = new THREE.MeshStandardMaterial({ map: woodTex, roughness: 0.50, metalness: 0.02 });
     const lidBody = new THREE.Mesh(new THREE.CylinderGeometry(1.92, 1.94, 0.44, 36), woodMat);
     lidBody.position.y = potHeight + 0.22;
     lidBody.castShadow = true;
+    lidBody.visible = isPink;
     candleGroup.add(lidBody);
 
     const lidChamfer = new THREE.Mesh(new THREE.CylinderGeometry(1.82, 1.92, 0.12, 36), woodMat);
     lidChamfer.position.y = potHeight + 0.50;
+    lidChamfer.visible = isPink;
     candleGroup.add(lidChamfer);
     this.candleLidMesh = lidBody;
+    this.candleLidChamferMesh = lidChamfer;
 
-    // Opaque milky white soy wax (Sáp đậu nành trắng đục tự nhiên 100%)
-    const waxColor = 0xfaf5eb;
+    // Soft pastel blush-pink soy wax in Pink Edition (cream in White Edition) — matching Photos 1 & 2
+    const waxColor = isPink ? 0xf2bec8 : 0xf8f6f0;
     const waxMat = new THREE.MeshStandardMaterial({
       color: waxColor,
-      roughness: 0.85,
+      roughness: 0.78,
       metalness: 0.01
     });
 
@@ -877,10 +852,10 @@ class GiftBoxScene {
     candleGroup.add(waxBody);
     this.candleWaxBodyMesh = waxBody;
 
-    // Top molten wax pool surface with subtle golden sheen
+    // Top wax surface inside jar
     const waxTopMat = new THREE.MeshStandardMaterial({
-      color: 0xfefaf2,
-      roughness: 0.52,
+      color: isPink ? 0xf5cad2 : 0xfefaf2,
+      roughness: 0.55,
       metalness: 0.02
     });
     const wax = new THREE.Mesh(new THREE.CylinderGeometry(1.70, 1.70, 0.14, 36), waxTopMat);
@@ -904,7 +879,7 @@ class GiftBoxScene {
       labelMat
     );
     label.position.y = potHeight / 2;
-    label.rotation.y = Math.PI / 2;
+    label.rotation.y = 0.16;
     candleGroup.add(label);
     this.candleLabelMesh = label;
 
@@ -928,11 +903,12 @@ class GiftBoxScene {
     this.products['teajar'] = jarGroup;
 
     const jarH = 3.6, jarR = 1.85;
+    const isPink = (this.currentEdition === 'pink');
 
     const glassMat = new THREE.MeshPhysicalMaterial({
       color: 0xffffff,
       transparent: true,
-      opacity: 0.26,
+      opacity: 0.20,
       roughness: 0.06,
       metalness: 0.08,
       clearcoat: 1.0,
@@ -954,7 +930,7 @@ class GiftBoxScene {
     jarGroup.add(glassRim);
 
     const woodTex = TextureManager.createWoodTexture();
-    const woodMat = new THREE.MeshStandardMaterial({ map: woodTex, roughness: 0.46, metalness: 0.02 });
+    const woodMat = new THREE.MeshStandardMaterial({ map: woodTex, roughness: 0.50, metalness: 0.02 });
     const lidBody = new THREE.Mesh(new THREE.CylinderGeometry(jarR + 0.08, jarR + 0.08, 0.46, 32), woodMat);
     lidBody.position.y = jarH + 0.23;
     lidBody.castShadow = true;
@@ -967,22 +943,25 @@ class GiftBoxScene {
     // Textured herbal tea inner core
     const teaTex = TextureManager.createTeaInsideTexture(this.currentEdition);
     const teaMat = new THREE.MeshStandardMaterial({ map: teaTex, roughness: 0.85 });
-    const teaMesh = new THREE.Mesh(new THREE.CylinderGeometry(jarR - 0.32, jarR - 0.32, jarH - 0.55, 28), teaMat);
-    teaMesh.position.y = (jarH - 0.55) / 2 + 0.22;
+    const teaMesh = new THREE.Mesh(new THREE.CylinderGeometry(jarR - 0.30, jarR - 0.30, jarH - 0.52, 28), teaMat);
+    teaMesh.position.y = (jarH - 0.52) / 2 + 0.22;
     teaMesh.castShadow = true;
     jarGroup.add(teaMesh);
     this.teaMesh = teaMesh;
 
-    // Instanced 3D Dried Chamomile Flower Blossoms (3 draw calls total instead of 400!)
-    const budCenterMat = new THREE.MeshStandardMaterial({ color: 0xe6b148, roughness: 0.72 });
-    const petalRingMat = new THREE.MeshStandardMaterial({ color: 0xf7ebd2, roughness: 0.78 });
-    const stemFleckMat = new THREE.MeshStandardMaterial({ color: 0x9b7a44, roughness: 0.85 });
+    // Densely packed Instanced 3D Dried Chamomile Blossoms / Rosebuds (matching Photos 1, 2 & 3)
+    const budCenterMat = new THREE.MeshStandardMaterial({ color: isPink ? 0xe6b148 : 0x9e3f58, roughness: 0.72 });
+    const petalRingMat = new THREE.MeshStandardMaterial({ color: isPink ? 0xf7ebd2 : 0xd88b9f, roughness: 0.78 });
+    const stemFleckMat = new THREE.MeshStandardMaterial({ color: isPink ? 0x9b7a44 : 0x5c6848, roughness: 0.85 });
+    this.teaBudMat = budCenterMat;
+    this.teaPetalMat = petalRingMat;
+    this.teaStemMat = stemFleckMat;
 
-    const totalFlowers = 54;
+    const totalFlowers = 78;
     const petalsPerFlower = 5;
-    const budInst = new THREE.InstancedMesh(new THREE.SphereGeometry(0.18, 8, 6), budCenterMat, totalFlowers);
-    const petalInst = new THREE.InstancedMesh(new THREE.SphereGeometry(0.105, 6, 5), petalRingMat, totalFlowers * petalsPerFlower);
-    const stemInst = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.025, 0.025, 0.36, 5), stemFleckMat, 16);
+    const budInst = new THREE.InstancedMesh(new THREE.SphereGeometry(0.19, 8, 6), budCenterMat, totalFlowers);
+    const petalInst = new THREE.InstancedMesh(new THREE.SphereGeometry(0.11, 6, 5), petalRingMat, totalFlowers * petalsPerFlower);
+    const stemInst = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.025, 0.025, 0.36, 5), stemFleckMat, 22);
 
     const dummy = new THREE.Object3D();
     const pDummy = new THREE.Object3D();
@@ -995,23 +974,23 @@ class GiftBoxScene {
     let pIdx = 0;
     for (let i = 0; i < totalFlowers; i++) {
       let fx, fy, fz, sc, rx, ry, rz;
-      if (i < 36) {
-        const angle = (i / 36) * Math.PI * 6 + trand() * 0.35;
-        fy = 0.45 + (i / 36) * (jarH - 1.05);
-        const rad = jarR - 0.27;
+      if (i < 58) {
+        const angle = (i / 58) * Math.PI * 10 + trand() * 0.35;
+        fy = 0.36 + (i / 58) * (jarH - 0.72);
+        const rad = jarR - 0.25;
         fx = Math.cos(angle) * rad;
         fz = Math.sin(angle) * rad;
-        sc = 0.85 + trand() * 0.35;
+        sc = 0.88 + trand() * 0.34;
         rx = trand() * Math.PI;
         ry = angle;
         rz = trand() * Math.PI;
       } else {
         const angle = trand() * Math.PI * 2;
-        const dist = trand() * (jarR - 0.42);
+        const dist = trand() * (jarR - 0.38);
         fx = Math.cos(angle) * dist;
-        fy = jarH - 0.42 + trand() * 0.18;
+        fy = jarH - 0.42 + trand() * 0.16;
         fz = Math.sin(angle) * dist;
-        sc = 0.9 + trand() * 0.3;
+        sc = 0.90 + trand() * 0.30;
         rx = trand() * 0.7;
         ry = angle;
         rz = trand() * 0.7;
@@ -1037,10 +1016,10 @@ class GiftBoxScene {
     jarGroup.add(budInst);
     jarGroup.add(petalInst);
 
-    for (let i = 0; i < 16; i++) {
+    for (let i = 0; i < 22; i++) {
       const angle = trand() * Math.PI * 2;
-      const rad = jarR - 0.25;
-      dummy.position.set(Math.cos(angle) * rad, 0.5 + trand() * (jarH - 1.1), Math.sin(angle) * rad);
+      const rad = jarR - 0.23;
+      dummy.position.set(Math.cos(angle) * rad, 0.45 + trand() * (jarH - 0.95), Math.sin(angle) * rad);
       dummy.rotation.set(trand() * Math.PI, trand() * Math.PI, trand() * Math.PI);
       dummy.scale.setScalar(1);
       dummy.updateMatrix();
@@ -1049,7 +1028,7 @@ class GiftBoxScene {
     stemInst.instanceMatrix.needsUpdate = true;
     jarGroup.add(stemInst);
 
-    // Curved Front Label Hugging Glass Cylinder
+    // Curved Front Label Hugging Glass Cylinder (Faces front +Z slightly angled right toward 3/4 view)
     const teaLabelTex = TextureManager.createTeaJarLabelTexture(this.currentEdition);
     const teaLabelMat = new THREE.MeshStandardMaterial({ map: teaLabelTex, roughness: 0.58, transparent: true });
     const teaLabelMesh = new THREE.Mesh(
@@ -1057,8 +1036,9 @@ class GiftBoxScene {
       teaLabelMat
     );
     teaLabelMesh.position.y = jarH / 2;
-    teaLabelMesh.rotation.y = Math.PI / 2;
+    teaLabelMesh.rotation.y = 0.16;
     jarGroup.add(teaLabelMesh);
+    this.teaLabelMesh = teaLabelMesh;
 
     jarGroup.position.set(-7.2, 0.85, 0.8);
     jarGroup.userData = {
@@ -1073,118 +1053,59 @@ class GiftBoxScene {
     this.insideGroup.add(jarGroup);
   }
 
-  // 5. Ceramic Aroma Diffuser Stone (Warm Tealight Alcove + Glistening Golden Oil Dish)
+  // 5. Ceramic Aroma Diffuser Stone (Clean Porcelain Hourglass Vessel, Front Vent Hole & Circular Stamp)
   buildCeramicDiffuser() {
     const diffuserGroup = new THREE.Group();
     diffuserGroup.name = 'diffuser';
     this.products['diffuser'] = diffuserGroup;
 
     const ceramicGlazeMat = new THREE.MeshStandardMaterial({
-      color: 0xf7ebde,
-      roughness: 0.22,
-      metalness: 0.04
+      color: 0xf4e4d6,
+      roughness: 0.24,
+      metalness: 0.03
     });
 
     const points = [];
-    points.push(new THREE.Vector2(1.48, 0));
-    points.push(new THREE.Vector2(1.86, 0.42));
-    points.push(new THREE.Vector2(1.96, 1.25));
-    points.push(new THREE.Vector2(1.62, 2.30));
-    points.push(new THREE.Vector2(1.95, 3.22));
-    points.push(new THREE.Vector2(1.88, 3.52));
-    points.push(new THREE.Vector2(1.52, 3.48));
-    points.push(new THREE.Vector2(1.22, 3.12));
-    points.push(new THREE.Vector2(0, 2.98));
+    points.push(new THREE.Vector2(1.44, 0));
+    points.push(new THREE.Vector2(1.88, 0.45));
+    points.push(new THREE.Vector2(1.98, 1.30));
+    points.push(new THREE.Vector2(1.62, 2.38));
+    points.push(new THREE.Vector2(1.94, 3.22));
+    points.push(new THREE.Vector2(1.86, 3.48));
+    points.push(new THREE.Vector2(1.50, 3.44));
+    points.push(new THREE.Vector2(1.16, 3.06));
+    points.push(new THREE.Vector2(0, 2.86));
 
-    const latheGeo = new THREE.LatheGeometry(points, 40);
+    const latheGeo = new THREE.LatheGeometry(points, 42);
     const bodyMesh = new THREE.Mesh(latheGeo, ceramicGlazeMat);
     bodyMesh.castShadow = true;
     bodyMesh.receiveShadow = true;
     diffuserGroup.add(bodyMesh);
 
-    // Glistening Golden-Amber Essential Oil Pool in Concave Top Bowl
-    const oilMat = new THREE.MeshStandardMaterial({
-      color: 0xf4c86a,
-      roughness: 0.08,
-      metalness: 0.1,
-      transparent: true,
-      opacity: 0.88
-    });
-    const oilPool = new THREE.Mesh(new THREE.CircleGeometry(1.26, 36), oilMat);
-    oilPool.rotation.x = -Math.PI / 2;
-    oilPool.position.y = 3.16;
-    diffuserGroup.add(oilPool);
+    // Flush 3D recessed circular vent hole on front neck (zero half-circle wall clipping)
+    const ventRimMat = new THREE.MeshStandardMaterial({ color: 0xe3cfc0, roughness: 0.35 });
+    const ventRim = new THREE.Mesh(new THREE.TorusGeometry(0.19, 0.028, 10, 24), ventRimMat);
+    ventRim.position.set(0, 2.22, 1.79);
+    ventRim.rotation.x = -0.22;
+    diffuserGroup.add(ventRim);
 
-    // Tiny floating dried chamomile petals in the essential oil pool
-    const oilPetalMat = new THREE.MeshStandardMaterial({ color: 0xfff2d6, roughness: 0.5 });
-    [[0.35, 0.25], [-0.42, -0.18], [0.12, -0.45], [-0.22, 0.42]].forEach(([px, pz], idx) => {
-      const petal = new THREE.Mesh(new THREE.SphereGeometry(0.08, 8, 6), oilPetalMat);
-      petal.scale.set(1.4, 0.35, 0.8);
-      petal.position.set(px, 3.18, pz);
-      petal.rotation.y = idx * 1.1;
-      diffuserGroup.add(petal);
-    });
-
-    // Warm Glowing Inner Tealight Candle Alcove (Instead of flat black cutout)
-    const alcoveMat = new THREE.MeshStandardMaterial({
-      color: 0x5c3622,
-      emissive: 0x451e08,
-      emissiveIntensity: 0.45,
-      roughness: 0.75
-    });
-    const winMesh = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.74, 0.74, 1.18, 24, 1, false, 0, Math.PI),
-      alcoveMat
+    const ventHole = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.175, 0.175, 0.24, 24),
+      new THREE.MeshStandardMaterial({ color: 0x261a15, roughness: 0.92 })
     );
-    winMesh.rotation.y = -Math.PI / 2;
-    winMesh.position.set(0, 1.08, 1.32);
-    winMesh.scale.set(1.0, 1.0, 0.48);
-    diffuserGroup.add(winMesh);
+    ventHole.rotation.x = Math.PI / 2 - 0.22;
+    ventHole.position.set(0, 2.22, 1.69);
+    diffuserGroup.add(ventHole);
 
-    // Mini White Tea-Light Candle Cup & Glowing Flame inside Alcove
-    const teaLightCup = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.32, 0.30, 0.24, 18),
-      new THREE.MeshStandardMaterial({ color: 0xf7f2ea, roughness: 0.6 })
-    );
-    teaLightCup.position.set(0, 0.62, 1.48);
-    diffuserGroup.add(teaLightCup);
-
-    const tealightFlame = new THREE.Mesh(
-      new THREE.SphereGeometry(0.09, 10, 10),
-      new THREE.MeshBasicMaterial({ color: 0xffb84d })
-    );
-    tealightFlame.scale.set(0.8, 1.8, 0.8);
-    tealightFlame.position.set(0, 0.88, 1.48);
-    diffuserGroup.add(tealightFlame);
-
-    const diffGlowSprite = new THREE.Sprite(new THREE.SpriteMaterial({
-      map: TextureManager.createFlameGlowTexture(),
-      color: 0xffaa4d,
-      transparent: true,
-      opacity: 0.75,
-      blending: THREE.AdditiveBlending,
-      depthWrite: false
-    }));
-    diffGlowSprite.scale.set(1.05, 1.05, 1.0);
-    diffGlowSprite.position.set(0, 0.92, 1.54);
-    diffuserGroup.add(diffGlowSprite);
-
-    const vent = new THREE.Mesh(new THREE.CircleGeometry(0.22, 20), new THREE.MeshBasicMaterial({ color: 0x4b2e1e }));
-    vent.position.set(0, 2.3, 1.66);
-    vent.rotation.x = -0.15;
-    diffuserGroup.add(vent);
-
+    // Crisp Circular "THE GIFT" Stamp on Lower Front-Right Curve (facing up-forward for 3/4 view)
     const stampTex = TextureManager.createDiffuserStampTexture();
-    const stampMat = new THREE.MeshStandardMaterial({ map: stampTex, roughness: 0.35 });
-    const stamp = new THREE.Mesh(new THREE.CircleGeometry(0.38, 24), stampMat);
-    stamp.position.set(1.15, 0.7, 1.45);
-    stamp.rotation.set(-0.2, 0.6, 0);
+    const stampMat = new THREE.MeshStandardMaterial({ map: stampTex, roughness: 0.36, transparent: true });
+    const stamp = new THREE.Mesh(new THREE.CircleGeometry(0.46, 28), stampMat);
+    stamp.position.set(0.96, 1.02, 1.66);
+    stamp.rotation.set(-0.22, 0.44, 0);
     diffuserGroup.add(stamp);
 
-    const diffLight = new THREE.PointLight(0xffaa4d, 1.1, 11);
-    diffLight.position.set(0, 1.15, 1.55);
-    diffuserGroup.add(diffLight);
-    this.diffuserLight = diffLight;
+    this.diffuserLight = null;
 
     diffuserGroup.position.set(7.2, 0.85, -4.5);
     diffuserGroup.userData = {
@@ -1242,15 +1163,18 @@ class GiftBoxScene {
     const rimMesh = new THREE.Mesh(rimGeo, new THREE.MeshStandardMaterial({ color: 0xe3ba74, metalness: 0.65, roughness: 0.32 }));
     rimMesh.rotation.x = -Math.PI / 2;
     rimMesh.position.y = -(fd - 0.02) / 2 - 0.004;
+    rimMesh.visible = (this.currentEdition !== 'pink');
     photoGroup.add(rimMesh);
+    this.photoRimMesh = rimMesh;
 
     const photoTex = TextureManager.createCouplePhotoTexture(this.currentEdition);
     const photoMesh = new THREE.Mesh(new THREE.PlaneGeometry(fw - 0.28, fh - 0.28), new THREE.MeshStandardMaterial({ map: photoTex, roughness: 0.32 }));
     photoMesh.rotation.x = -Math.PI / 2;
     photoMesh.position.set(0, fd / 2 + 0.022, 0);
     photoGroup.add(photoMesh);
+    this.photoMesh = photoMesh;
 
-    // Flowing Dusty-Rose Satin Silk Ribbon + Cute Corner Bow
+    // Flowing Dusty-Rose Satin Silk Ribbon draped neatly across upper-right corner (keeps "For you ♡" crisp)
     const ribbonMat = new THREE.MeshStandardMaterial({
       color: 0xe89eb2,
       roughness: 0.28,
@@ -1259,20 +1183,22 @@ class GiftBoxScene {
     });
 
     const ribbonCurve = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(-1.95, fd / 2 + 0.05, 1.55),
-      new THREE.Vector3(-0.35, fd / 2 + 0.12, 1.05),
-      new THREE.Vector3(1.15, fd / 2 + 0.18, 1.45),
-      new THREE.Vector3(2.25, fd / 2 + 0.14, 2.05),
-      new THREE.Vector3(3.15, 0.08, 2.55)
+      new THREE.Vector3(0.45, fd / 2 + 0.06, -2.55),
+      new THREE.Vector3(1.55, fd / 2 + 0.14, -1.55),
+      new THREE.Vector3(2.25, fd / 2 + 0.16, -0.35),
+      new THREE.Vector3(2.75, 0.22, 0.85),
+      new THREE.Vector3(3.45, 0.08, 2.15)
     ]);
 
-    const ribbonGeo = new THREE.TubeGeometry(ribbonCurve, 40, 0.38, 12, false);
+    const ribbonGeo = new THREE.TubeGeometry(ribbonCurve, 40, 0.34, 12, false);
     ribbonGeo.scale(1.0, 0.16, 1.0);
     const ribbonMesh = new THREE.Mesh(ribbonGeo, ribbonMat);
     ribbonMesh.castShadow = true;
+    ribbonMesh.visible = (this.currentEdition !== 'pink');
     photoGroup.add(ribbonMesh);
+    this.photoRibbonMesh = ribbonMesh;
 
-    // Delicate Satin Ribbon Knot & Mini Loops resting on lower-right margin
+    // Delicate Satin Ribbon Knot resting at upper-right border
     const bowMini = new THREE.Group();
     const mKnot = new THREE.Mesh(new THREE.SphereGeometry(0.14, 12, 10), ribbonMat);
     mKnot.scale.set(1.1, 0.7, 0.9);
@@ -1286,9 +1212,11 @@ class GiftBoxScene {
     ml2.rotation.set(Math.PI / 2 - 0.15, -0.3, -0.5);
     ml2.position.set(0.22, 0.04, 0.05);
     bowMini.add(ml2);
-    bowMini.position.set(1.15, fd / 2 + 0.14, 1.45);
-    bowMini.rotation.y = -0.35;
+    bowMini.position.set(1.55, fd / 2 + 0.14, -1.55);
+    bowMini.rotation.y = 0.45;
+    bowMini.visible = (this.currentEdition !== 'pink');
     photoGroup.add(bowMini);
+    this.photoBowMini = bowMini;
 
     photoGroup.position.set(7.2, 1.95, 0.8);
     photoGroup.userData = {
@@ -1414,56 +1342,56 @@ class GiftBoxScene {
       floretPositions.forEach(fp => allFlorets.push(fp));
     };
 
-    // Three delicate fanning stems tucked under the wax seal at (0, ..., 0.35)
+    // Three fanning dried flower twigs tucked under wax seal fanning up-left (matching Photos 1 & 2)
     addTwigWithFloret(
       [[-0.12, 0.0, 0.25], [-0.75, 0.015, -0.35], [-1.35, 0.02, -1.05], [-1.85, 0.015, -1.55]],
-      [[-1.85, 0.02, -1.55, 1.05], [-1.42, 0.025, -1.12, 0.92], [-1.05, 0.02, -0.68, 0.85]],
-      0.019
+      [[-1.85, 0.02, -1.55, 1.15], [-1.52, 0.03, -1.25, 1.05], [-1.25, 0.02, -0.92, 0.95], [-0.95, 0.025, -0.60, 0.85]],
+      0.022
     );
     addTwigWithFloret(
       [[-0.22, 0.0, 0.28], [-0.95, 0.015, -0.05], [-1.68, 0.02, -0.45], [-2.25, 0.012, -0.78]],
-      [[-2.25, 0.015, -0.78, 1.0], [-1.72, 0.025, -0.48, 0.9], [-1.25, 0.02, -0.18, 0.8]],
-      0.017
+      [[-2.25, 0.015, -0.78, 1.12], [-1.88, 0.028, -0.58, 1.02], [-1.55, 0.025, -0.38, 0.92], [-1.18, 0.02, -0.18, 0.88]],
+      0.020
     );
     addTwigWithFloret(
       [[-0.08, 0.0, 0.18], [-0.48, 0.015, -0.52], [-0.88, 0.02, -1.25], [-1.18, 0.012, -1.78]],
-      [[-1.18, 0.015, -1.78, 0.95], [-0.92, 0.025, -1.32, 0.88], [-0.55, 0.02, -0.75, 0.78]],
-      0.016
+      [[-1.18, 0.015, -1.78, 1.08], [-0.96, 0.028, -1.42, 0.98], [-0.72, 0.025, -1.02, 0.92], [-0.48, 0.02, -0.64, 0.82]],
+      0.019
     );
-    // Fine secondary twigs for lush natural fullness
+    // Secondary branching twigs for lush clustered Gypsophila volume
     addTwigWithFloret(
       [[-0.95, 0.015, -0.05], [-1.32, 0.02, 0.12], [-1.62, 0.015, -0.02]],
-      [[-1.62, 0.02, -0.02, 0.85], [-1.32, 0.025, 0.12, 0.78]],
-      0.012
+      [[-1.62, 0.02, -0.02, 0.95], [-1.32, 0.028, 0.12, 0.90], [-1.45, 0.032, -0.12, 0.85]],
+      0.015
     );
     addTwigWithFloret(
       [[-0.75, 0.015, -0.35], [-1.25, 0.025, -0.58], [-1.52, 0.02, -0.82]],
-      [[-1.52, 0.025, -0.82, 0.9]],
-      0.012
+      [[-1.52, 0.025, -0.82, 1.0], [-1.25, 0.03, -0.62, 0.92], [-1.72, 0.022, -0.98, 0.88]],
+      0.015
     );
 
-    // Instanced Baby's Breath petals, centers & calyces (3 draw calls total instead of 84!)
+    // Instanced Baby's Breath petals, centers & calyces (larger visible cream-white clusters)
     const fCount = allFlorets.length;
-    const calyxInst = new THREE.InstancedMesh(new THREE.SphereGeometry(0.026, 6, 5), calyxMat, fCount);
-    const centerInst = new THREE.InstancedMesh(new THREE.SphereGeometry(0.025, 6, 5), centerMat, fCount);
-    const flPetalInst = new THREE.InstancedMesh(new THREE.SphereGeometry(0.036, 6, 5), petalMat, fCount * 4);
+    const calyxInst = new THREE.InstancedMesh(new THREE.SphereGeometry(0.042, 6, 5), calyxMat, fCount);
+    const centerInst = new THREE.InstancedMesh(new THREE.SphereGeometry(0.052, 7, 5), centerMat, fCount);
+    const flPetalInst = new THREE.InstancedMesh(new THREE.SphereGeometry(0.068, 7, 5), petalMat, fCount * 4);
     const fDummy = new THREE.Object3D();
     let fpIdx = 0;
 
     allFlorets.forEach(([fx, fy, fz, scale], idx) => {
       const by = sprigY + fy;
-      fDummy.position.set(fx, by - 0.015 * scale, fz);
+      fDummy.position.set(fx, by - 0.022 * scale, fz);
       fDummy.scale.setScalar(scale);
       fDummy.updateMatrix();
       calyxInst.setMatrixAt(idx, fDummy.matrix);
 
-      fDummy.position.set(fx, by + 0.01 * scale, fz);
+      fDummy.position.set(fx, by + 0.018 * scale, fz);
       fDummy.updateMatrix();
       centerInst.setMatrixAt(idx, fDummy.matrix);
 
       for (let k = 0; k < 4; k++) {
         const ang = (k / 4) * Math.PI * 2 + 0.35;
-        fDummy.position.set(fx + Math.cos(ang) * 0.028 * scale, by + 0.012 * scale, fz + Math.sin(ang) * 0.028 * scale);
+        fDummy.position.set(fx + Math.cos(ang) * 0.052 * scale, by + 0.02 * scale, fz + Math.sin(ang) * 0.052 * scale);
         fDummy.updateMatrix();
         flPetalInst.setMatrixAt(fpIdx++, fDummy.matrix);
       }
@@ -1711,7 +1639,7 @@ class GiftBoxScene {
     }
 
     if (this.bunnyNoseMesh) {
-      this.bunnyNoseMesh.material.color.set(isPink ? 0xeb7b95 : 0x8a6e5f);
+      this.bunnyNoseMesh.material.color.set(isPink ? 0xf2a4b8 : 0xb59a8c);
     }
 
     if (this.bunnyPadMat) {
@@ -1719,24 +1647,48 @@ class GiftBoxScene {
     }
 
     if (this.bunnyMouthMat) {
-      this.bunnyMouthMat.color.set(isPink ? 0x783244 : 0x5a3e35);
+      this.bunnyMouthMat.color.set(isPink ? 0xa47a84 : 0x7d655b);
     }
+
+    if (this.candlePotMesh && this.candleGlassMat && this.candleCeramicMat) {
+      this.candlePotMesh.material = isPink ? this.candleGlassMat : this.candleCeramicMat;
+      this.candlePotMesh.material.needsUpdate = true;
+    }
+    if (this.candleGlassBase) this.candleGlassBase.visible = isPink;
+    if (this.candleGlassRim) this.candleGlassRim.visible = isPink;
+    if (this.candleLidMesh) this.candleLidMesh.visible = isPink;
+    if (this.candleLidChamferMesh) this.candleLidChamferMesh.visible = isPink;
 
     if (this.candleLabelMesh) {
       this.candleLabelMesh.material.map = TextureManager.createCandleLabelTexture(edition);
       this.candleLabelMesh.material.needsUpdate = true;
     }
     if (this.candleWaxMesh) {
-      this.candleWaxMesh.material.color.set(0xf8f6f0);
+      this.candleWaxMesh.material.color.set(isPink ? 0xf5ced5 : 0xf8f6f0);
     }
     if (this.candleWaxBodyMesh) {
-      this.candleWaxBodyMesh.material.color.set(0xf8f6f0);
+      this.candleWaxBodyMesh.material.color.set(isPink ? 0xf2c6ce : 0xf8f6f0);
     }
 
     if (this.teaMesh) {
       this.teaMesh.material.map = TextureManager.createTeaInsideTexture(edition);
       this.teaMesh.material.needsUpdate = true;
     }
+    if (this.teaBudMat) this.teaBudMat.color.set(isPink ? 0xe6b148 : 0x9e3f58);
+    if (this.teaPetalMat) this.teaPetalMat.color.set(isPink ? 0xf7ebd2 : 0xd88b9f);
+    if (this.teaStemMat) this.teaStemMat.color.set(isPink ? 0x9b7a44 : 0x5c6848);
+    if (this.teaLabelMesh) {
+      this.teaLabelMesh.material.map = TextureManager.createTeaJarLabelTexture(edition);
+      this.teaLabelMesh.material.needsUpdate = true;
+    }
+
+    if (this.photoMesh) {
+      this.photoMesh.material.map = TextureManager.createCouplePhotoTexture(edition);
+      this.photoMesh.material.needsUpdate = true;
+    }
+    if (this.photoRimMesh) this.photoRimMesh.visible = !isPink;
+    if (this.photoRibbonMesh) this.photoRibbonMesh.visible = !isPink;
+    if (this.photoBowMini) this.photoBowMini.visible = !isPink;
 
     if (this.letterMesh) {
       this.letterMesh.material.map = TextureManager.createSeedPaperTexture(edition);

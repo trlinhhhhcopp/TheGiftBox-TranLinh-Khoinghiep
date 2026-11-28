@@ -11,9 +11,9 @@ class App3D {
     this.drawer = document.getElementById('detail-drawer');
     this.menuPanel = document.getElementById('floating-controls');
 
-    // Camera preset views (High top-down angle framing entire box + open lid + greeting card clearly)
+    // Camera preset views (3/4 overhead framing matching reference box presentation)
     this.cameraPresets = {
-      overview: { pos: new THREE.Vector3(3.2, 41.0, 14.0), target: new THREE.Vector3(2.6, 1.5, 0.5) },
+      overview: { pos: new THREE.Vector3(3.6, 39.5, 31.0), target: new THREE.Vector3(4.2, 6.2, -2.5) },
       top: { pos: new THREE.Vector3(0, 39.0, 0.8), target: new THREE.Vector3(0, 2.0, 0.5) },
       front: { pos: new THREE.Vector3(0, 24.0, 24.0), target: new THREE.Vector3(0, 2.0, 0) },
       box: { pos: new THREE.Vector3(12, 30, 24), target: new THREE.Vector3(0, 2.0, 0) }

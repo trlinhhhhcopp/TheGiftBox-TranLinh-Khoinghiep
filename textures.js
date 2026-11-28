@@ -154,12 +154,12 @@ const TextureManager = {
 
     const isPink = (edition === 'pink');
 
-    // Luxurious Soft Pastel Background (Rich sweet strawberry pastel pink)
+    // Luxurious Soft Pastel Blush-Pink Background (Matches Photo 2 box lid)
     if (isPink) {
       const grad = ctx.createLinearGradient(0, 0, 1024, 1024);
-      grad.addColorStop(0, '#f99bb7');
-      grad.addColorStop(0.4, '#ee638d');
-      grad.addColorStop(1, '#e24d7b');
+      grad.addColorStop(0, '#fbd8e4');
+      grad.addColorStop(0.5, '#f6bfd2');
+      grad.addColorStop(1, '#efa8c0');
       ctx.fillStyle = grad;
     } else {
       const grad = ctx.createLinearGradient(0, 0, 1024, 1024);
@@ -339,6 +339,26 @@ const TextureManager = {
     ctx.beginPath();
     ctx.ellipse(-8, -40, 52, 14, -0.22, 0, Math.PI * 2);
     ctx.fill();
+
+    // Cute Pastel Periwinkle-Blue Bow on Sleeping Bunny's Head (Exact match to Photo 2!)
+    if (isPink) {
+      ctx.save();
+      ctx.translate(22, -48);
+      ctx.rotate(-0.2);
+      ctx.fillStyle = '#9bb2e6';
+      ctx.strokeStyle = '#5c72a8';
+      ctx.lineWidth = 3.5;
+      ctx.beginPath();
+      ctx.ellipse(-18, -4, 16, 10, -0.3, 0, Math.PI * 2);
+      ctx.fill(); ctx.stroke();
+      ctx.beginPath();
+      ctx.ellipse(18, -4, 16, 10, 0.3, 0, Math.PI * 2);
+      ctx.fill(); ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(0, -2, 8, 0, Math.PI * 2);
+      ctx.fill(); ctx.stroke();
+      ctx.restore();
+    }
 
     // Sleeping Eyes: Happy Peaceful Curves (⌒ ⌒)
     ctx.strokeStyle = isPink ? '#8d2d4c' : '#453831';
@@ -655,46 +675,58 @@ const TextureManager = {
     return texture;
   },
 
-  // 7. Tea Jar Content Texture (Chamomile dried flower buds)
+  // 7. Tea Jar Content Texture (Chamomile dried flowers for Pink / Rosebuds for White Edition Photo 3)
   createTeaInsideTexture(edition = 'pink') {
     const canvas = document.createElement('canvas');
     canvas.width = 512;
     canvas.height = 512;
     const ctx = canvas.getContext('2d');
+    const isPink = (edition === 'pink');
 
-    // Warm golden amber base
-    ctx.fillStyle = '#cca162';
+    ctx.fillStyle = isPink ? '#b88c4f' : '#6c3845';
     ctx.fillRect(0, 0, 512, 512);
 
-    // Dense cluster of dried golden Chamomile flower buds
-    for (let i = 0; i < 350; i++) {
-      const bx = Math.random() * 512;
-      const by = Math.random() * 512;
-      const br = 8 + Math.random() * 14;
+    let s = 55;
+    const rand = () => {
+      s = (s * 1664525 + 1013904223) % 4294967296;
+      return s / 4294967296;
+    };
 
-      const grad = ctx.createRadialGradient(bx, by, 2, bx, by, br);
-      grad.addColorStop(0, '#f2d68b');
-      grad.addColorStop(0.6, '#deb062');
-      grad.addColorStop(1, '#a6783c');
+    for (let i = 0; i < 420; i++) {
+      const bx = rand() * 512;
+      const by = rand() * 512;
+      const br = 9 + rand() * 14;
+
+      const grad = ctx.createRadialGradient(bx - 2, by - 2, 2, bx, by, br);
+      if (isPink) {
+        grad.addColorStop(0, '#f3d78e');
+        grad.addColorStop(0.55, '#d6a558');
+        grad.addColorStop(1, '#8c612d');
+      } else {
+        grad.addColorStop(0, '#d88b9f');
+        grad.addColorStop(0.55, '#9d4860');
+        grad.addColorStop(1, '#582231');
+      }
       ctx.fillStyle = grad;
-
       ctx.beginPath();
       ctx.arc(bx, by, br, 0, Math.PI * 2);
       ctx.fill();
 
-      // Tiny dried petals
-      ctx.strokeStyle = 'rgba(255, 240, 200, 0.5)';
-      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = isPink ? 'rgba(255, 244, 210, 0.55)' : 'rgba(245, 200, 212, 0.45)';
+      ctx.lineWidth = 1.6;
       for (let p = 0; p < 6; p++) {
         const ang = (p / 6) * Math.PI * 2;
         ctx.beginPath();
         ctx.moveTo(bx, by);
-        ctx.lineTo(bx + Math.cos(ang) * (br + 4), by + Math.sin(ang) * (br + 4));
+        ctx.lineTo(bx + Math.cos(ang) * (br + 3), by + Math.sin(ang) * (br + 3));
         ctx.stroke();
       }
     }
 
-    return new THREE.CanvasTexture(canvas);
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.generateMipmaps = true;
+    tex.minFilter = THREE.LinearMipmapLinearFilter;
+    return tex;
   },
 
   // 8. Diffuser Ceramic Stamp Texture (Photo 2: Circular stamp THE GIFT)
@@ -704,65 +736,64 @@ const TextureManager = {
     canvas.height = 256;
     const ctx = canvas.getContext('2d');
 
-    // Ivory ceramic base
-    ctx.fillStyle = '#f7f4ed';
+    // Warm creamy porcelain ceramic base matching 3D vessel seamlessly
+    ctx.fillStyle = '#f4e4d6';
     ctx.fillRect(0, 0, 256, 256);
 
     const cx = 128, cy = 128;
 
-    // Outer circle impression
-    ctx.strokeStyle = '#b8ab96';
-    ctx.lineWidth = 4;
+    // Debossed outer circle impression
+    ctx.strokeStyle = '#8f7b66';
+    ctx.lineWidth = 5;
     ctx.beginPath();
-    ctx.arc(cx, cy, 105, 0, Math.PI * 2);
+    ctx.arc(cx, cy, 104, 0, Math.PI * 2);
     ctx.stroke();
 
-    // Inner circle
-    ctx.lineWidth = 2;
+    // Inner ring
+    ctx.strokeStyle = '#a38f79';
+    ctx.lineWidth = 2.5;
     ctx.beginPath();
-    ctx.arc(cx, cy, 96, 0, Math.PI * 2);
+    ctx.arc(cx, cy, 94, 0, Math.PI * 2);
     ctx.stroke();
 
     ctx.textAlign = 'center';
-    ctx.fillStyle = '#a69780';
-    ctx.font = 'bold 40px "Playfair Display", Georgia, serif';
+    ctx.fillStyle = '#786450';
+    ctx.font = 'bold 42px "Playfair Display", Georgia, serif';
     try { ctx.letterSpacing = '4px'; } catch (e) {}
-    ctx.fillText('THE', cx, 115);
-    ctx.fillText('GIFT', cx, 165);
+    ctx.fillText('THE', cx, 114);
+    ctx.fillText('GIFT', cx, 166);
 
     return new THREE.CanvasTexture(canvas);
   },
 
-  // 9. Bunny Bow Medallion Texture (Photo 2: Round pink tag THE GIFT ♥)
+  // 9. Bunny Bow Medallion Texture (Photo 1 & 2: Round pastel pink tag THE GIFT ♥)
   createMedalTexture() {
     const canvas = document.createElement('canvas');
-    canvas.width = 256;
-    canvas.height = 256;
+    canvas.width = 512;
+    canvas.height = 512;
     const ctx = canvas.getContext('2d');
 
-    const cx = 128, cy = 128;
+    const cx = 256, cy = 256;
 
-    // Pink circular card
-    ctx.fillStyle = '#f9cbd8';
-    ctx.beginPath();
-    ctx.arc(cx, cy, 120, 0, Math.PI * 2);
-    ctx.fill();
+    // Solid pastel pink cardstock fill (reads rich pink under studio lights without washing out)
+    ctx.fillStyle = '#f2b1c4';
+    ctx.fillRect(0, 0, 512, 512);
 
-    ctx.strokeStyle = '#e57b98';
-    ctx.lineWidth = 3;
+    ctx.strokeStyle = '#df7896';
+    ctx.lineWidth = 8;
     ctx.beginPath();
-    ctx.arc(cx, cy, 110, 0, Math.PI * 2);
+    ctx.arc(cx, cy, 224, 0, Math.PI * 2);
     ctx.stroke();
 
     ctx.textAlign = 'center';
-    ctx.fillStyle = '#48353c';
-    ctx.font = 'bold 30px "Playfair Display", Georgia, serif';
-    try { ctx.letterSpacing = '2px'; } catch (e) {}
-    ctx.fillText('THE GIFT', cx, 120);
+    ctx.fillStyle = '#24181c';
+    ctx.font = 'bold 72px "Plus Jakarta Sans", "Playfair Display", Georgia, serif';
+    try { ctx.letterSpacing = '3px'; } catch (e) {}
+    ctx.fillText('THE GIFT', cx, 232);
 
-    // Heart below
-    ctx.fillStyle = '#d3446c';
-    const hx = cx, hy = 150, hs = 14;
+    // Cute vivid pink heart below
+    ctx.fillStyle = '#dc4772';
+    const hx = cx, hy = 312, hs = 30;
     ctx.beginPath();
     ctx.moveTo(hx, hy + hs * 0.3);
     ctx.bezierCurveTo(hx - hs * 0.6, hy - hs * 0.6, hx - hs * 1.2, hy + hs * 0.2, hx, hy + hs * 1.2);
@@ -772,18 +803,32 @@ const TextureManager = {
     return new THREE.CanvasTexture(canvas);
   },
 
-  // 10. Wood Texture
+  // 10. Natural Warm Cork/Oak Wood Lid Texture (Matches Photo 1 & 2 wooden lids)
   createWoodTexture() {
     const canvas = document.createElement('canvas');
     canvas.width = 512;
     canvas.height = 512;
     const ctx = canvas.getContext('2d');
-    ctx.fillStyle = '#d9b68b';
+    const grad = ctx.createLinearGradient(0, 0, 512, 512);
+    grad.addColorStop(0, '#ddb07e');
+    grad.addColorStop(0.5, '#d29e69');
+    grad.addColorStop(1, '#c68e58');
+    ctx.fillStyle = grad;
     ctx.fillRect(0, 0, 512, 512);
-    for (let i = 0; i < 400; i++) {
-      const y = Math.random() * 512;
-      ctx.fillStyle = Math.random() > 0.5 ? 'rgba(145, 105, 68, 0.15)' : 'rgba(245, 220, 185, 0.15)';
-      ctx.fillRect(0, y, 512, Math.random() * 4 + 1);
+
+    let s = 21;
+    const rand = () => {
+      s = (s * 1664525 + 1013904223) % 4294967296;
+      return s / 4294967296;
+    };
+    for (let i = 0; i < 480; i++) {
+      const y = rand() * 512;
+      ctx.fillStyle = rand() > 0.5 ? 'rgba(135, 88, 45, 0.16)' : 'rgba(250, 224, 190, 0.16)';
+      ctx.fillRect(0, y, 512, rand() * 3.5 + 0.8);
+    }
+    for (let i = 0; i < 320; i++) {
+      ctx.fillStyle = 'rgba(120, 74, 34, 0.22)';
+      ctx.fillRect(rand() * 512, rand() * 512, 2 + rand() * 4, 1.5);
     }
     return new THREE.CanvasTexture(canvas);
   },
@@ -945,56 +990,50 @@ const TextureManager = {
     ctx.fillStyle = baseGrad;
     ctx.fillRect(0, 0, 512, 512);
 
-    // Inner recessed stamp dish (richer warm rose shadow)
+    // Inner recessed stamp dish (richer warm rose shadow for crisp bunny silhouette contrast)
     const dishGrad = ctx.createRadialGradient(cx + 15, cy + 15, 20, cx, cy, 178);
-    dishGrad.addColorStop(0, '#e38ca3');
-    dishGrad.addColorStop(0.75, '#d67c95');
-    dishGrad.addColorStop(1, '#c76c86');
+    dishGrad.addColorStop(0, '#dd7e98');
+    dishGrad.addColorStop(0.75, '#ce6d88');
+    dishGrad.addColorStop(1, '#bd5e7a');
     ctx.fillStyle = dishGrad;
     ctx.beginPath();
     ctx.arc(cx, cy, 176, 0, Math.PI * 2);
     ctx.fill();
 
     // Soft inner specular ring where stamp pressed down
-    ctx.strokeStyle = 'rgba(255, 224, 234, 0.55)';
+    ctx.strokeStyle = 'rgba(255, 228, 236, 0.65)';
     ctx.lineWidth = 6;
     ctx.beginPath();
     ctx.arc(cx, cy, 174, Math.PI * 0.9, Math.PI * 1.85);
     ctx.stroke();
 
-    // Softly Embossed Bunny Medallion (Monochromatic wax relief shading, no harsh strokes)
+    // Softly Embossed Bunny Medallion (Crisp raised blush bunny clearly readable like Photo 1 & 2)
     const drawBunnyShape = (ox, oy, fill) => {
       ctx.fillStyle = fill;
-      // Left ear
       ctx.beginPath();
       ctx.ellipse(cx - 28 + ox, cy - 52 + oy, 18, 46, -0.14, 0, Math.PI * 2);
       ctx.fill();
-      // Right ear
       ctx.beginPath();
       ctx.ellipse(cx + 28 + ox, cy - 52 + oy, 18, 46, 0.14, 0, Math.PI * 2);
       ctx.fill();
-      // Fluffy round bunny cheeks/head
       ctx.beginPath();
       ctx.ellipse(cx + ox, cy + 20 + oy, 62, 50, 0, 0, Math.PI * 2);
       ctx.fill();
     };
 
-    // Subtle cast shadow under raised bunny relief
-    drawBunnyShape(5, 6, 'rgba(170, 80, 105, 0.45)');
-    // Soft highlight edge on top-left of wax relief
-    drawBunnyShape(-2, -2, '#fbd2de');
-    // Main smooth wax bunny relief color
-    drawBunnyShape(0, 0, '#f3b2c4');
+    drawBunnyShape(6, 7, 'rgba(145, 55, 80, 0.50)');
+    drawBunnyShape(-2, -2, '#fde0e8');
+    drawBunnyShape(0, 0, '#f7c5d3');
 
     // Subtle recessed inner ear hollows
-    ctx.fillStyle = '#e08ca3';
+    ctx.fillStyle = '#da7a95';
     ctx.beginPath();
     ctx.ellipse(cx - 27, cy - 50, 8, 26, -0.14, 0, Math.PI * 2);
     ctx.ellipse(cx + 27, cy - 50, 8, 26, 0.14, 0, Math.PI * 2);
     ctx.fill();
 
-    // Delicate recessed eyes & sweet nose
-    ctx.fillStyle = '#c46782';
+    // Crisp dark-rose stamped eyes & nose matching Photo 1 & 2
+    ctx.fillStyle = '#a64360';
     ctx.beginPath();
     ctx.arc(cx - 21, cy + 12, 5.5, 0, Math.PI * 2);
     ctx.arc(cx + 21, cy + 12, 5.5, 0, Math.PI * 2);
@@ -1071,15 +1110,15 @@ const TextureManager = {
     canvas.height = 640;
     const ctx = canvas.getContext('2d');
 
-    // Sweet pastel pink card base with rounded corners
-    ctx.fillStyle = '#feeef3';
+    // Sweet pastel pink card base matching Photo 1 & Photo 2
+    ctx.fillStyle = '#fbdbe4';
     ctx.fillRect(0, 0, 1024, 640);
 
     // 4 Corner Pink Hearts (♥)
     const drawCornerHeart = (hx, hy) => {
       ctx.save();
-      ctx.fillStyle = '#e8618b';
-      const hs = 14;
+      ctx.fillStyle = '#ea6a92';
+      const hs = 15;
       ctx.beginPath();
       ctx.moveTo(hx, hy + hs * 0.3);
       ctx.bezierCurveTo(hx - hs * 0.6, hy - hs * 0.6, hx - hs * 1.2, hy + hs * 0.2, hx, hy + hs * 1.2);
@@ -1096,21 +1135,21 @@ const TextureManager = {
     ctx.textAlign = 'center';
 
     // Header Title
-    ctx.fillStyle = '#2b2326';
-    ctx.font = 'bold 50px "Playfair Display", Georgia, serif';
+    ctx.fillStyle = '#1e1619';
+    ctx.font = 'bold 52px "Playfair Display", Georgia, serif';
     try { ctx.letterSpacing = '2px'; } catch (e) {}
     ctx.fillText('3-step ritual card', 512, 135);
 
     // Subtitle
-    ctx.fillStyle = '#5a424a';
+    ctx.fillStyle = '#3b2830';
     ctx.font = 'italic 500 32px "Playfair Display", Georgia, serif';
     try { ctx.letterSpacing = '1px'; } catch (e) {}
     ctx.fillText('for your healing journey', 512, 190);
 
     // 3 Columns: x1 = 250, x2 = 512, x3 = 774
     const colY = 320;
-    ctx.strokeStyle = '#2b2326';
-    ctx.lineWidth = 4;
+    ctx.strokeStyle = '#1e1619';
+    ctx.lineWidth = 5.2;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
 
@@ -1296,54 +1335,41 @@ const TextureManager = {
     canvas.height = 900;
     const ctx = canvas.getContext('2d');
 
-    // Luxurious blush pink background
+    // Crisp pastel blush pink card matching Photo 2 ("THE GIFT / A Little Hug, A Meaningful Feeling. ♥")
     const grad = ctx.createLinearGradient(0, 0, 600, 900);
-    grad.addColorStop(0, '#feebf1');
-    grad.addColorStop(0.5, '#fcdbe5');
-    grad.addColorStop(1, '#f8cad6');
+    grad.addColorStop(0, '#fae0e8');
+    grad.addColorStop(0.5, '#f8d5df');
+    grad.addColorStop(1, '#f3c6d4');
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, 600, 900);
 
-    // Stitched frame border
-    ctx.strokeStyle = '#e27796';
-    ctx.lineWidth = 3;
-    ctx.setLineDash([10, 8]);
-    ctx.strokeRect(35, 35, 530, 830);
-    ctx.setLineDash([]);
-
-    // Elegant inner border
-    ctx.strokeStyle = 'rgba(235, 120, 150, 0.4)';
-    ctx.lineWidth = 1.5;
-    ctx.strokeRect(50, 50, 500, 800);
+    // Subtle soft paper edge highlight
+    ctx.strokeStyle = 'rgba(255, 250, 252, 0.6)';
+    ctx.lineWidth = 4;
+    ctx.strokeRect(10, 10, 580, 880);
 
     // Header "THE GIFT"
     ctx.textAlign = 'center';
-    ctx.fillStyle = '#b83b60';
-    ctx.font = 'bold 54px "Playfair Display", Georgia, serif';
-    try { ctx.letterSpacing = '6px'; } catch (e) {}
-    ctx.fillText('THE GIFT', 300, 220);
+    ctx.fillStyle = '#d44c77';
+    ctx.font = 'bold 62px "Playfair Display", Georgia, serif';
+    try { ctx.letterSpacing = '4px'; } catch (e) {}
+    ctx.fillText('THE GIFT', 300, 360);
 
-    // Subtitle
-    ctx.fillStyle = '#8f5567';
-    ctx.font = '500 24px "Plus Jakarta Sans", sans-serif';
-    try { ctx.letterSpacing = '3px'; } catch (e) {}
-    ctx.fillText('SPECIAL EDITION', 300, 270);
+    // Message matching Photo 2
+    ctx.fillStyle = '#7d5260';
+    ctx.font = 'italic 500 30px "Playfair Display", Georgia, serif';
+    try { ctx.letterSpacing = '0.5px'; } catch (e) {}
+    ctx.fillText('A Little Hug,', 300, 445);
+    ctx.fillText('A Meaningful Feeling.', 300, 490);
 
-    // Central Heart
-    const hx = 300, hy = 450, hs = 55;
-    ctx.fillStyle = '#e8618b';
+    // Cute Blush Heart below message
+    const hx = 300, hy = 610, hs = 20;
+    ctx.fillStyle = '#e0678d';
     ctx.beginPath();
     ctx.moveTo(hx, hy + hs * 0.3);
     ctx.bezierCurveTo(hx - hs * 0.6, hy - hs * 0.6, hx - hs * 1.2, hy + hs * 0.2, hx, hy + hs * 1.2);
     ctx.bezierCurveTo(hx + hs * 1.2, hy + hs * 0.2, hx + hs * 0.6, hy - hs * 0.6, hx, hy + hs * 0.3);
     ctx.fill();
-
-    // Message
-    ctx.fillStyle = '#523a43';
-    ctx.font = 'italic 500 30px "Playfair Display", Georgia, serif';
-    try { ctx.letterSpacing = '1px'; } catch (e) {}
-    ctx.fillText('A Little Hug,', 300, 620);
-    ctx.fillText('A Meaningful Feeling ♡', 300, 670);
 
     const texture = new THREE.CanvasTexture(canvas);
     texture.generateMipmaps = true;
