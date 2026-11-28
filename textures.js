@@ -1375,7 +1375,7 @@ const TextureManager = {
     const ctx = canvas.getContext('2d');
     const isPink = (edition === 'pink');
 
-    ctx.fillStyle = isPink ? '#fbf2e6' : '#efe3d1';
+    ctx.fillStyle = isPink ? '#f3dec9' : '#e6d4be';
     ctx.fillRect(0, 0, 512, 512);
 
     let s = 77;
@@ -1389,7 +1389,7 @@ const TextureManager = {
       const x = rand() * 512;
       const y = rand() * 512;
       const r = 8 + rand() * 14;
-      ctx.fillStyle = rand() > 0.45 ? 'rgba(255, 252, 247, 0.22)' : 'rgba(218, 194, 168, 0.16)';
+      ctx.fillStyle = rand() > 0.45 ? 'rgba(255, 251, 244, 0.28)' : 'rgba(204, 174, 144, 0.20)';
       ctx.beginPath();
       ctx.arc(x, y, r, 0, Math.PI * 2);
       ctx.fill();
@@ -1397,12 +1397,12 @@ const TextureManager = {
 
     // Draw thousands of fine curved plush fur wisps (seamless wrap via tiling edges)
     ctx.lineCap = 'round';
-    for (let i = 0; i < 4200; i++) {
+    for (let i = 0; i < 4800; i++) {
       const x = rand() * 512;
       const y = rand() * 512;
       const len = 4 + rand() * 7;
       const ang = (rand() - 0.5) * 1.4 + Math.PI * 0.5;
-      const col = rand() > 0.45 ? 'rgba(255, 253, 249, 0.55)' : 'rgba(205, 178, 152, 0.25)';
+      const col = rand() > 0.42 ? 'rgba(255, 253, 248, 0.65)' : 'rgba(192, 160, 130, 0.32)';
       ctx.strokeStyle = col;
       ctx.lineWidth = 1.0 + rand() * 0.8;
       ctx.beginPath();

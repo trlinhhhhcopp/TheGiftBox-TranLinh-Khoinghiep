@@ -386,22 +386,22 @@ body.menu-open #detail-drawer {
 /* Bottom Products Carousel / Shelf */
 .bottom-shelf {
   position: absolute;
-  bottom: 24px;
+  bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 10;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 7px;
+  justify-content: safe center;
+  gap: 4px;
   background: var(--card-bg);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  padding: 8px 12px;
+  padding: 6px 8px;
   border-radius: 30px;
   border: 1px solid var(--card-border);
   box-shadow: var(--shadow-soft);
-  max-width: 95vw;
+  max-width: 97vw;
   overflow-x: auto;
   scrollbar-width: none;
 }
@@ -413,12 +413,12 @@ body.menu-open #detail-drawer {
 .shelf-item-pill {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 7px 12px;
+  gap: 4px;
+  padding: 5px 8.5px;
   border-radius: 20px;
   background: rgba(255, 250, 245, 0.76);
   border: 1px solid rgba(224, 192, 178, 0.55);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--text-main);
   cursor: pointer;
@@ -793,14 +793,32 @@ body.menu-open #detail-drawer {
 /* ==========================================================================
    Responsive Styles for Mobile, Tablet & Touch Devices
    ========================================================================== */
-@media (max-width: 1180px) {
+@media (max-width: 1500px) {
   .top-nav {
     justify-content: space-between;
+    gap: 12px;
   }
 
   .top-actions {
     position: static;
     transform: none;
+  }
+}
+
+@media (max-width: 1400px) and (min-width: 769px) {
+  .bottom-shelf {
+    gap: 3px;
+    padding: 5px 7px;
+  }
+
+  .shelf-item-pill {
+    padding: 4.5px 7px;
+    font-size: 10.5px;
+    gap: 3.5px;
+  }
+
+  .pill-icon {
+    font-size: 13px;
   }
 }
 
@@ -824,11 +842,18 @@ body.menu-open #detail-drawer {
   }
 
   .brand-wrapper {
+    flex: 1;
+    min-width: 0;
     padding: 5px 10px;
     gap: 8px;
     border-radius: 18px;
-    max-width: calc(100% - 166px);
+    max-width: none;
     overflow: hidden;
+  }
+
+  .brand-text {
+    flex: 1;
+    min-width: 0;
   }
 
   .brand-title-row {
@@ -845,6 +870,7 @@ body.menu-open #detail-drawer {
   }
 
   .brand-logo-badge {
+    flex-shrink: 0;
     font-size: 11px;
     padding: 3px 8px;
     border-radius: 12px;
@@ -856,7 +882,7 @@ body.menu-open #detail-drawer {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 130px;
+    max-width: 100%;
   }
 
   .brand-text p {
@@ -865,6 +891,7 @@ body.menu-open #detail-drawer {
 
   /* Mobile Top Action Icons: 36x36 circular buttons */
   .top-actions {
+    flex-shrink: 0;
     position: static;
     transform: none;
     gap: 5px;
@@ -895,7 +922,8 @@ body.menu-open #detail-drawer {
   }
 
   /* Floating Controls on Mobile: High-end Bottom Sheet Modal */
-  .floating-controls {
+  .floating-controls,
+  .floating-controls.collapsed {
     position: fixed;
     top: auto;
     bottom: 0;
@@ -917,6 +945,7 @@ body.menu-open #detail-drawer {
     transform: translateY(100%);
     opacity: 0;
     pointer-events: none;
+    visibility: hidden;
     transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
@@ -927,6 +956,7 @@ body.menu-open #detail-drawer {
     transform: translateY(0);
     opacity: 1;
     pointer-events: auto;
+    visibility: visible;
   }
 
   /* Detail Drawer on Mobile: Sleek Bottom Sheet Modal */
